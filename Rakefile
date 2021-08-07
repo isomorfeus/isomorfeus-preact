@@ -3,22 +3,22 @@ require 'bundler/cli'
 require 'bundler/cli/exec'
 require 'fileutils'
 
-require_relative 'ruby/lib/react/version'
+require_relative 'ruby/lib/preact/version'
 
-task default: %w[ruby_react_specs]
+task default: %w[ruby_preact_specs]
 
-task :ruby_react_specs do
+task :ruby_preact_specs do
   puts <<~'ASCII'
-  _____                 _
- |  __ \               | |
- | |__) |___  __ _  ___| |_
- |  _  // _ \/ _` |/ __| __|
- | | \ \  __/ (_| | (__| |_
- |_|  \_\___|\__,_|\___|\__|
+  _____                     _   
+ |  __ \                   | |  
+ | |__) | __ ___  __ _  ___| |_ 
+ |  ___/ '__/ _ \/ _` |/ __| __|
+ | |   | | |  __/ (_| | (__| |_ 
+ |_|   |_|  \___|\__,_|\___|\__|
 
   ASCII
   pwd = Dir.pwd
-  Dir.chdir('ruby/test_app_react')
+  Dir.chdir('ruby/test_app_preact')
   FileUtils.rm_f('Gemfile.lock')
   FileUtils.rm_rf('spec')
   FileUtils.cp_r('../common_spec', 'spec')
@@ -44,9 +44,9 @@ task :push_ruby_packages do
 end
 
 task :push_ruby_packages_to_rubygems do
-  system("gem push ruby/isomorfeus-react-#{React::VERSION}.gem")
+  system("gem push ruby/isomorfeus-preact-#{Preact::VERSION}.gem")
 end
 
 task :push_ruby_packages_to_github do
-  system("gem push --key github --host https://rubygems.pkg.github.com/isomorfeus ruby/isomorfeus-react-#{React::VERSION}.gem")
+  system("gem push --key github --host https://rubygems.pkg.github.com/isomorfeus ruby/isomorfeus-preact-#{Preact::VERSION}.gem")
 end

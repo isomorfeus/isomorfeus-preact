@@ -1,33 +1,39 @@
 require 'spec_helper'
 
-RSpec.describe 'LucidApp' do
-  it 'can render a component that is using inheritance' do
-    doc = visit('/')
-    doc.evaluate_ruby do
-      class TestComponent < LucidApp::Base
-        render do
-          DIV(id: :test_component) { 'TestComponent rendered' }
-        end
-      end
-      Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
-    end
-    node = doc.wait_for('#test_component')
-    expect(node.all_text).to include('TestComponent rendered')
-  end
+RSpec.describe 'Preact::Component' do
+  # tests are running in production mode, so we dont see all warning messages of preact like in development
 
-  it 'can render a component that is using the mixin' do
-    doc = visit('/')
-    doc.evaluate_ruby do
-      class TestComponent
-        include LucidApp::Mixin
-        render do
-          DIV(id: :test_component) { 'TestComponent rendered' }
-        end
-      end
-      Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+  context 'it can render a component that is using' do
+    before do
+      @doc = visit('/')
     end
-    node = doc.wait_for('#test_component')
-    expect(node.all_text).to include('TestComponent rendered')
+
+    it 'inheritance' do
+      @doc.evaluate_ruby do
+        class TestComponent < Preact::Component::Base
+          render do
+            DIV(id: :test_component) { 'TestComponent rendered' }
+          end
+        end
+        Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      end
+      node = @doc.wait_for('#test_component')
+      expect(node.all_text).to include('TestComponent rendered')
+    end
+
+    it 'mixin' do
+      @doc.evaluate_ruby do
+        class TestComponent
+          include Preact::Component::Mixin
+          render do
+            DIV(id: :test_component) { 'TestComponent rendered' }
+          end
+        end
+        Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      end
+      node = @doc.wait_for('#test_component')
+      expect(node.all_text).to include('TestComponent rendered')
+    end
   end
 
   context 'it has state and can' do
@@ -37,7 +43,7 @@ RSpec.describe 'LucidApp' do
 
     it 'define a default state value and access it' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           state.something = 'Something state intialized!'
           render do
             DIV(id: :test_component) { state.something }
@@ -51,7 +57,7 @@ RSpec.describe 'LucidApp' do
 
     it 'define a default state value and change it' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           def change_state(event)
             state.something = false
           end
@@ -75,7 +81,7 @@ RSpec.describe 'LucidApp' do
 
     it 'use a uninitialized state value and change it' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           def change_state(event)
             state.something = true
           end
@@ -104,7 +110,7 @@ RSpec.describe 'LucidApp' do
 
     it 'access them' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           render do
             DIV(id: :test_component) do
               SPAN props.text
@@ -122,7 +128,7 @@ RSpec.describe 'LucidApp' do
 
     it 'access a required prop of any type' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :any
           render do
             DIV(id: :test_component) do
@@ -141,7 +147,7 @@ RSpec.describe 'LucidApp' do
 
     it 'access a required, exact type' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, class: String
           render do
             DIV(id: :test_component) { props.a_prop.class.to_s }
@@ -155,7 +161,7 @@ RSpec.describe 'LucidApp' do
 
     it 'access a required, more generic type' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, is_a: Enumerable
           render do
             DIV(id: :test_component) { props.a_prop.class.to_s }
@@ -169,7 +175,7 @@ RSpec.describe 'LucidApp' do
 
     it 'accept a missing prop' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, class: String
           render do
             DIV(id: :test_component) { "nothing#{props.a_prop}here" }
@@ -183,7 +189,7 @@ RSpec.describe 'LucidApp' do
 
     it 'accept a unwanted type in production' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, class: String
           render do
             DIV(id: :test_component) { "nothing#{props.a_prop}here" }
@@ -197,25 +203,21 @@ RSpec.describe 'LucidApp' do
 
     it 'accept a missing, optional prop' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, class: String, required: false
           render do
             DIV(id: :test_component) { "nothing#{props.a_prop}here" }
           end
         end
-        begin
-          Isomorfeus::TopLevel.mount_component(TestComponent, { }, '#test_anchor')
-        rescue Exception => e
-          e
-        end
+        Isomorfeus::TopLevel.mount_component(TestComponent, { }, '#test_anchor')
       end
       node = @doc.wait_for('#test_component')
       expect(node.all_text).to include('nothinghere')
     end
 
-    it 'uses a default value for a missing, optional prop' do
+    it 'use a default value for a missing, optional prop' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, class: String, default: 'Prop not passed!'
           render do
             DIV(id: :test_component) { props.a_prop }
@@ -227,9 +229,9 @@ RSpec.describe 'LucidApp' do
       expect(node.all_text).to include('Prop not passed!')
     end
 
-    it 'uses a default value for a missing, optional prop, new style' do
+    it 'use a default value for a missing, optional prop, new style' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           prop :a_prop, validate.String.default('Prop not passed!')
           render do
             DIV(id: :test_component) { props.a_prop }
@@ -240,6 +242,20 @@ RSpec.describe 'LucidApp' do
       node = @doc.wait_for('#test_component')
       expect(node.all_text).to include('Prop not passed!')
     end
+
+    it 'convert props to hash' do
+      @doc.evaluate_ruby do
+        class TestComponent < Preact::Component::Base
+          prop :a_prop, class: String, required: false
+          render do
+            DIV(id: :test_component) { props.to_h[:a_prop] }
+          end
+        end
+        Isomorfeus::TopLevel.mount_component(TestComponent, { a_prop: 'heyho' }, '#test_anchor')
+      end
+      node = @doc.wait_for('#test_component')
+      expect(node.all_text).to include('heyho')
+    end
   end
 
   context 'it can use callbacks like' do
@@ -249,7 +265,7 @@ RSpec.describe 'LucidApp' do
 
     it 'component_did_catch' do
       @doc.evaluate_ruby do
-        class ComponentWithError < LucidComponent::Base
+        class ComponentWithError < Preact::Component::Base
           def text
             'Error caught!'
           end
@@ -257,7 +273,7 @@ RSpec.describe 'LucidApp' do
             DIV(id: :error_component) { send(props.text_method) }
           end
         end
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           render do
             DIV(id: :test_component) { ComponentWithError(text_method: state.text_method) }
           end
@@ -273,7 +289,7 @@ RSpec.describe 'LucidApp' do
 
     it 'component_did_mount' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           render do
             DIV(id: :test_component) { state.some_text }
           end
@@ -289,7 +305,7 @@ RSpec.describe 'LucidApp' do
 
     it 'component_did_update' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           render do
             DIV(id: :test_component) { state.some_text }
           end
@@ -311,7 +327,7 @@ RSpec.describe 'LucidApp' do
     it 'component_will_unmount' do
       result = @doc.evaluate_ruby do
         IT = { unmount_received: false }
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           render do
             DIV(id: :test_component) { state.some_text }
           end
@@ -332,9 +348,9 @@ RSpec.describe 'LucidApp' do
       @doc = visit('/')
     end
 
-    it 'on_click' do
+    it 'on_click by symbol' do
       @doc.evaluate_ruby do
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           def change_state(event)
             state.something = true
           end
@@ -343,6 +359,52 @@ RSpec.describe 'LucidApp' do
               DIV(id: :changed_component, on_click: :change_state) { "#{state.something}" }
             else
               DIV(id: :test_component, on_click: :change_state) { "nothing#{state.something}here" }
+            end
+          end
+        end
+        Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      end
+      node = @doc.wait_for('#test_component')
+      expect(node.all_text).to include('nothinghere')
+      node.click
+      node = @doc.wait_for('#changed_component')
+      expect(node.all_text).to include('true')
+    end
+
+    it 'on_click by method_ref' do
+      @doc.evaluate_ruby do
+        class TestComponent < Preact::Component::Base
+          def change_state(event)
+            state.something = true
+          end
+          render do
+            if state.something
+              DIV(id: :changed_component, on_click: method_ref(:change_state)) { "#{state.something}" }
+            else
+              DIV(id: :test_component, on_click: method_ref(:change_state)) { "nothing#{state.something}here" }
+            end
+          end
+        end
+        Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      end
+      node = @doc.wait_for('#test_component')
+      expect(node.all_text).to include('nothinghere')
+      node.click
+      node = @doc.wait_for('#changed_component')
+      expect(node.all_text).to include('true')
+    end
+
+    it 'on_click by method_ref and can pass additional args' do
+      @doc.evaluate_ruby do
+        class TestComponent < Preact::Component::Base
+          def change_state(event, info, arg)
+            state.something = arg
+          end
+          render do
+            if state.something
+              DIV(id: :changed_component, on_click: method_ref(:change_state)) { "#{state.something}" }
+            else
+              DIV(id: :test_component, on_click: method_ref(:change_state, true)) { "nothing#{state.something}here" }
             end
           end
         end
@@ -364,7 +426,7 @@ RSpec.describe 'LucidApp' do
     it 'when they are blocks' do
       result = @doc.evaluate_ruby do
         IT = { ref_received: false }
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           ref :div_ref do |element|
             IT[:ref_received] = true if element[:id] == 'test_component'
           end
@@ -382,7 +444,7 @@ RSpec.describe 'LucidApp' do
     it 'when they are simple refs' do
       @doc.evaluate_ruby do
         IT = { ref_received: false }
-        class TestComponent < LucidApp::Base
+        class TestComponent < Preact::Component::Base
           def report_ref(event)
             IT[:ref_received] = true if ruby_ref(:div_ref).current[:id] == 'test_component'
           end

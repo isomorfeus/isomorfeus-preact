@@ -4,12 +4,12 @@ RSpec.describe 'Component Resolution' do
   before do
     @doc = visit('/')
     # create several kinds components, nested
-    # resolution for React::Component, LucidComponent, LucidMaterial::Component is the same
-    # but we need to check in addition to one of the above React::FunctionComponent, which has the same resolution as the React::MemoComponent
+    # resolution for Preact::Component, LucidComponent, LucidMaterial::Component is the same
+    # but we need to check in addition to one of the above Preact::FunctionComponent, which has the same resolution as the Preact::MemoComponent
     # and we need to check Native Components (see test_app, isomorfeus_loader.rb)
     # and we need to check resolution from element blocks
     @doc.evaluate_ruby do
-      class TopPure < React::Component::Base
+      class TopPure < Preact::Component::Base
         render do
           DIV 'TopPure'
         end
@@ -17,7 +17,7 @@ RSpec.describe 'Component Resolution' do
 
       module Deeply
         module Nested
-          class Pure < React::Component::Base
+          class Pure < Preact::Component::Base
             render do
               DIV 'Deeply::Nested::Pure'
             end
@@ -25,7 +25,7 @@ RSpec.describe 'Component Resolution' do
         end
       end
 
-      class TopFunction < React::FunctionComponent::Base
+      class TopFunction < Preact::FunctionComponent::Base
         render do
           DIV 'TopFunction'
         end
@@ -33,7 +33,7 @@ RSpec.describe 'Component Resolution' do
 
       module VeryDeeply
         module VeryNested
-          class VeryFunction < React::FunctionComponent::Base
+          class VeryFunction < Preact::FunctionComponent::Base
             render do
               DIV 'VeryDeeply::VeryNested::VeryFunction'
             end
@@ -45,9 +45,9 @@ RSpec.describe 'Component Resolution' do
     @test_anchor = @doc.find('#test_anchor')
   end
 
-  it 'can resolve components from a top level React::Component' do
+  it 'can resolve components from a top level Preact::Component' do
     @doc.evaluate_ruby do
-      class TestComponent < React::Component::Base
+      class TestComponent < Preact::Component::Base
         render do
           TopPure()
           Deeply::Nested::Pure()
@@ -70,12 +70,12 @@ RSpec.describe 'Component Resolution' do
     expect(html).to include('NestedNative.AnotherComponent')
   end
 
-  it 'can resolve components from a nested React::Component' do
+  it 'can resolve components from a nested Preact::Component' do
     @doc.evaluate_ruby do
       module Super
         module SuperDeeply
           module SuperNested
-            class TestComponent < React::Component::Base
+            class TestComponent < Preact::Component::Base
               render do
                 TopPure()
                 Deeply::Nested::Pure()
@@ -101,9 +101,9 @@ RSpec.describe 'Component Resolution' do
     expect(html).to include('NestedNative.AnotherComponent')
   end
 
-  it 'can resolve components from a top level React::Component DIV element' do
+  it 'can resolve components from a top level Preact::Component DIV element' do
     @doc.evaluate_ruby do
-      class TestComponent < React::Component::Base
+      class TestComponent < Preact::Component::Base
         render do
           DIV do
             TopPure()
@@ -128,12 +128,12 @@ RSpec.describe 'Component Resolution' do
     expect(html).to include('NestedNative.AnotherComponent')
   end
 
-  it 'can resolve components from a nested React::Component DIV Element' do
+  it 'can resolve components from a nested Preact::Component DIV Element' do
     @doc.evaluate_ruby do
       module Super
         module SuperDeeply
           module SuperNested
-            class TestComponent < React::Component::Base
+            class TestComponent < Preact::Component::Base
               render do
                 DIV do
                   TopPure()
@@ -161,9 +161,9 @@ RSpec.describe 'Component Resolution' do
     expect(html).to include('NestedNative.AnotherComponent')
   end
 
-  it 'can resolve components from a top level React::FunctionComponent' do
+  it 'can resolve components from a top level Preact::FunctionComponent' do
     @doc.evaluate_ruby do
-      class TestComponent < React::FunctionComponent::Base
+      class TestComponent < Preact::FunctionComponent::Base
         render do
           TopPure()
           Deeply::Nested::Pure()
@@ -186,12 +186,12 @@ RSpec.describe 'Component Resolution' do
     expect(html).to include('NestedNative.AnotherComponent')
   end
 
-  it 'can resolve components from a nested React::FunctionComponent' do
+  it 'can resolve components from a nested Preact::FunctionComponent' do
     @doc.evaluate_ruby do
       module Super
         module SuperDeeply
           module SuperNested
-            class TestComponent < React::FunctionComponent::Base
+            class TestComponent < Preact::FunctionComponent::Base
               render do
                 TopPure()
                 Deeply::Nested::Pure()
@@ -220,7 +220,7 @@ RSpec.describe 'Component Resolution' do
   it 'can resolve function components from within the same module' do
     @doc.evaluate_ruby do
       module ExampleFunction
-        class AComponent < React::FunctionComponent::Base
+        class AComponent < Preact::FunctionComponent::Base
           render do
             DIV "AComponent"
           end
@@ -228,7 +228,7 @@ RSpec.describe 'Component Resolution' do
       end
 
       module ExampleFunction
-        class AnotherComponent < React::FunctionComponent::Base
+        class AnotherComponent < Preact::FunctionComponent::Base
           render do
             DIV "AnotherComponent"
             AComponent()

@@ -1,5 +1,0 @@
-require 'react_native/react'
-require 'react_native/component/elements'
-require 'react_native/lucid_app/react_native_component_constructor'
-require 'react_native/lucid_component/react_native_component_constructor'
-require 'react_native/lucid_func/react_native_component_constructor'

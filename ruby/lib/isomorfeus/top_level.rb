@@ -92,9 +92,9 @@ module Isomorfeus
         end
 
         top = if hydrated
-                ReactDOM.hydrate(React.create_element(component, props), element)
+                Preact.hydrate(Preact.create_element(component, props), element)
               else
-                ReactDOM.render(React.create_element(component, props), element)
+                Preact.render(Preact.create_element(component, props), element)
               end
         Isomorfeus.top_component = top if top
       end

@@ -6,20 +6,20 @@ module LucidPropDeclaration
           validate_hash = validate_hash.to_h if validate_hash.class == Isomorfeus::Props::ValidateHashProxy
           if validate_hash.key?(:default)
             %x{
-              if (base.lucid_react_component) {
-                let react_prop_name = Opal.React.lower_camelize(prop_name);
+              if (base.lucid_preact_component) {
+                let preact_prop_name = Opal.Preact.lower_camelize(prop_name);
                 #{value = validate_hash[:default]}
-                if (!base.lucid_react_component.defaultProps) { base.lucid_react_component.defaultProps = {}; }
-                base.lucid_react_component.defaultProps[react_prop_name] = value;
-                if (!base.lucid_react_component.propTypes) { base.lucid_react_component.propTypes = {}; }
-                base.lucid_react_component.propTypes[react_prop_name] = base.lucid_react_component.prototype.validateProp;
-              } else if (base.react_component) {
-                let react_prop_name = Opal.React.lower_camelize(prop_name);
+                if (!base.lucid_preact_component.defaultProps) { base.lucid_preact_component.defaultProps = {}; }
+                base.lucid_preact_component.defaultProps[preact_prop_name] = value;
+                if (!base.lucid_preact_component.propTypes) { base.lucid_preact_component.propTypes = {}; }
+                base.lucid_preact_component.propTypes[preact_prop_name] = base.lucid_preact_component.prototype.validateProp;
+              } else if (base.preact_component) {
+                let preact_prop_name = Opal.Preact.lower_camelize(prop_name);
                 #{value = validate_hash[:default]}
-                if (!base.react_component.defaultProps) { base.react_component.defaultProps = {}; }
-                base.react_component.defaultProps[react_prop_name] = value;
-                if (!base.react_component.propTypes) { base.react_component.propTypes = {}; }
-                base.react_component.propTypes[react_prop_name] = base.react_component.prototype.validateProp;
+                if (!base.preact_component.defaultProps) { base.preact_component.defaultProps = {}; }
+                base.preact_component.defaultProps[preact_prop_name] = value;
+                if (!base.preact_component.propTypes) { base.preact_component.propTypes = {}; }
+                base.preact_component.propTypes[preact_prop_name] = base.preact_component.prototype.validateProp;
               }
             }
           end

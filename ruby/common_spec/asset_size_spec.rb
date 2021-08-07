@@ -4,7 +4,7 @@ require 'redux/version'
 
 DATA_START_TEXT = 'window.chartData = '
 DATA_END_TEXT = 'window.defaultSizes = "parsed";'
-LIB_KEYS = ['isomorfeus-react/ruby/lib', "isomorfeus-redux-#{Redux::VERSION}/lib"]
+LIB_KEYS = ['isomorfeus-preact/ruby/lib', "isomorfeus-redux-#{Redux::VERSION}/lib"]
 
 RSpec.describe 'Asset sizes' do
   def nested_hash_object(obj, key, value)

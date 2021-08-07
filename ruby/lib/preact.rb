@@ -3,7 +3,7 @@ module Preact
     self.render_buffer = [];
 
     self.set_validate_prop = function(component, prop_name) {
-      let core = component.react_component;
+      let core = component.preact_component;
       if (typeof core.propTypes == "undefined") {
         core.propTypes = {};
         core.propValidations = {};
@@ -63,7 +63,7 @@ module Preact
     };
 
     self.native_to_ruby_event = function(event) {
-       if (event.hasOwnProperty('target')) { return #{::Preact::SyntheticEvent.new(`event`)}; }
+       if (event.hasOwnProperty('target')) { return #{::Browser::Event.new(`event`)}; }
        else if (Array.isArray(event)) { return event; }
        else { return Opal.Hash.$new(event); }
     };
@@ -119,7 +119,7 @@ module Preact
     %x{
       self.prop_dictionary = {};
 
-      self.to_native_react_props = function(ruby_style_props) {
+      self.to_native_preact_props = function(ruby_style_props) {
         let result = {};
         let keys = ruby_style_props.$$keys;
         let keys_length = keys.length;
@@ -136,14 +136,14 @@ module Preact
                 #{`active_c.__ruby_instance`.instance_exec(`ruby_event`, `info`, &`value`)};
               }
             } else if (type === "object" && typeof value.m === "object" && typeof value.m.$call === "function" ) {
-              if (!value.react_event_handler_function) {
-                value.react_event_handler_function = function(event, info) {
+              if (!value.preact_event_handler_function) {
+                value.preact_event_handler_function = function(event, info) {
                   let ruby_event = self.native_to_ruby_event(event);
                   if (value.a.length > 0) { value.m.$call.apply(value.m, [ruby_event, info].concat(value.a)); }
                   else { value.m.$call(ruby_event, info); }
                 };
               }
-              result[self.lower_camelize(key)] = value.react_event_handler_function;
+              result[self.lower_camelize(key)] = value.preact_event_handler_function;
             } else if (type === "string" ) {
               let active_component = self.active_component();
               let method_ref;
@@ -159,13 +159,13 @@ module Preact
                 else { method_ref = active_component.__ruby_instance.$method_ref(value); } // create ref for native
               }
               if (method_ref) {
-                if (!method_ref.react_event_handler_function) {
-                  method_ref.react_event_handler_function = function(event, info) {
+                if (!method_ref.preact_event_handler_function) {
+                  method_ref.preact_event_handler_function = function(event, info) {
                     let ruby_event = self.native_to_ruby_event(event);
                     method_ref.m.$call(ruby_event, info)
                   };
                 }
-                result[self.lower_camelize(key)] = method_ref.react_event_handler_function;
+                result[self.lower_camelize(key)] = method_ref.preact_event_handler_function;
               } else {
                 let component_name;
                 if (active_component.__ruby_instance) { component_name = active_component.__ruby_instance.$to_s(); }
@@ -201,7 +201,7 @@ module Preact
       self.internal_render = function(component, props, string_child, block) {
         const operabu = self.render_buffer;
         let native_props;
-        if (props && props !== nil) { native_props = self.to_native_react_props(props); }
+        if (props && props !== nil) { native_props = self.to_native_preact_props(props); }
         if (string_child) {
           operabu[operabu.length - 1].push(Opal.global.Preact.createElement(component, native_props, string_child));
         } else if (block && block !== nil) {
@@ -219,63 +219,12 @@ module Preact
     }
   end
 
-  # def self.create_factory(type)
-  #   native_function = `Opal.global.Preact.createFactory(type)`
-  #   proc { `native_function.call()` }
-  # end
-
-  # def self.forwardRef(&block)
-  #   # TODO whats the return here? A Preact:Element?, doc says a Preact node, whats that?
-  #   `Opal.global.Preact.forwardRef( function(props, ref) { return block.$call().$to_n(); })`
-  # end
-
-  # def self.is_valid_element(react_element)
-  #   `Opal.global.Preact.isValidElement(react_element)`
-  # end
-
-  # def self.lazy(import_statement_function)
-  #   `Opal.global.Preact.lazy(import_statement_function)`
-  # end
-
-  # def self.memo(function_component, &block)
-  #   if block_given?
-  #     %x{
-  #       var fun = function(prev_props, next_props) {
-  #         return #{block.call(::Preact::Component::Props.new(`{props: prev_props}`), ::Preact::Component::Props.new(`{props: next_props}`))};
-  #       }
-  #       return Opal.global.Preact.memo(function_component, fun);
-  #     }
-  #   else
-  #     `Opal.global.Preact.memo(function_component)`
-  #   end
-  # end
-
-  #
-
-  def self.render(component, container_node, replace_node)
-    # container is a native DOM element
-    if block_given?
-      `Opal.global.PreactDOM.render(native_react_element, container, function() { block.$call() })`
-    else
-      `Opal.global.PreactDOM.render(native_react_element, container)`
-    end
-  end
-
-  def self.hydrate(component, container_node, replace_node)
-    # container is a native DOM element
-    if block_given?
-      `Opal.global.PreactDOM.hydrate(native_react_element, container, function() { block.$call() })`
-    else
-      `Opal.global.PreactDOM.hydrate(native_react_element, container)`
-    end
-  end
-
   def self.create_element(type, props = nil, children = nil, &block)
     %x{
       const operabu = self.render_buffer;
       let component = null;
       let native_props = null;
-      if (typeof type.react_component !== 'undefined') { component = type.react_component; }
+      if (typeof type.preact_component !== 'undefined') { component = type.preact_component; }
       else { component = type; }
       if (block !== nil) {
         operabu.push([]);
@@ -286,23 +235,23 @@ module Preact
         children = operabu.pop();
       } else if (children === nil) { children = []; }
       else if (typeof children === 'string') { children = [children]; }
-      if (props && props !== nil) { native_props = self.to_native_react_props(props); }
+      if (props && props !== nil) { native_props = self.to_native_preact_props(props); }
       return Opal.global.Preact.createElement.apply(this, [component, native_props].concat(children));
     }
   end
 
   def self.to_child_array(props_children)
-    `Opal.global.Preact.Children.toArray(children)`
+    `Opal.global.Preact.toChildArray(children)`
   end
 
-  def self.clone_element(ruby_react_element, props = nil, children = nil, &block)
+  def self.clone_element(ruby_preact_element, props = nil, children = nil, &block)
     block_result = `null`
     if block_given?
       block_result = block.call
       block_result = `null` unless block_result
     end
-    native_props = props ? `Opal.Preact.to_native_react_props(props)` : `null`
-    `Opal.global.Preact.cloneElement(ruby_react_element.$to_n(), native_props, block_result)`
+    native_props = props ? `Opal.Preact.to_native_preact_props(props)` : `null`
+    `Opal.global.Preact.cloneElement(ruby_preact_element.$to_n(), native_props, block_result)`
   end
 
   def self.create_context(const_name, default_value)
@@ -316,5 +265,53 @@ module Preact
 
   def self.create_ref
     Preact::Ref.new(`Opal.global.Preact.createRef()`)
+  end
+
+  def self.hydrate(native_preact_element, container_node, replace_node)
+    # container is a native DOM element
+    if block_given?
+      `Opal.global.Preact.hydrate(native_preact_element, container_node, function() { block.$call() })`
+    else
+      `Opal.global.Preact.hydrate(native_preact_element, container_node)`
+    end
+  end
+
+  def self.memo(function_component, &block)
+    if block_given?
+      %x{
+        var fun = function(prev_props, next_props) {
+          return #{block.call(::Peact::Component::Props.new(`{props: prev_props}`), ::Preact::Component::Props.new(`{props: next_props}`))};
+        }
+        return Opal.global.Preact.memo(function_component, fun);
+      }
+    else
+      `Opal.global.Preact.memo(function_component)`
+    end
+  end
+
+  def self.render(native_preact_element, container_node, replace_node)
+    # container is a native DOM element
+    if block_given?
+      `Opal.global.Preact.render(native_preact_element, container_node, function() { block.$call() })`
+    else
+      `Opal.global.Preact.render(native_preact_element, container_node)`
+    end
+  end
+
+  if on_ssr?
+    def self.render_to_string(native_preact_element)
+      `Opal.global.Preact.renderToString(native_preact_element)`
+    end
+  end
+
+  def self.unmount_component_at_node(element_or_query)
+    if `(typeof element_or_query === 'string')` || (`(typeof element_or_query.$class === 'function')` && element_or_query.class == String)
+      element = `document.body.querySelector(element_or_query)`
+    elsif `(typeof element_or_query.$is_a === 'function')` && element_or_query.is_a?(Browser::Element)
+      element = element_or_query.to_n
+    else
+      element = element_or_query
+    end
+    `Opal.global.Preact.unmountComponentAtNode(element)`
   end
 end

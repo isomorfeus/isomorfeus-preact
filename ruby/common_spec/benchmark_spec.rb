@@ -4,15 +4,13 @@ RSpec.describe 'Component benchmarks' do
   it 'Load Time' do
     doc = visit('/')
     doc.wait_for('#test_anchor')
-    react_lt, react_rt, material_rt, paper_rt, redux_rt, app_lt = doc.evaluate_ruby do
-      [IR_LOAD_TIME, IR_REACT_REQUIRE_TIME, IR_MATERIAL_REQUIRE_TIME, IR_PAPER_REQUIRE_TIME, IX_REQUIRE_TIME, APP_LOAD_TIME]
+    preact_lt, preact_rt, redux_rt, app_lt = doc.evaluate_ruby do
+      [IR_LOAD_TIME, IR_REACT_REQUIRE_TIME, IX_REQUIRE_TIME, APP_LOAD_TIME]
     end
-    puts "opal load time: #{app_lt - (redux_rt + react_rt + material_rt + paper_rt + react_lt)}ms"
+    puts "opal load time: #{app_lt - (redux_rt + preact_rt + preact_lt)}ms"
     puts "isomorfeus-redux require time: #{redux_rt}ms"
-    puts "isomorfeus-react require time: #{react_rt}ms"
-    puts "isomorfeus-react-material-ui require time: #{material_rt}ms"
-    puts "isomorfeus-react-paper require time: #{paper_rt}ms"
-    puts "isomorfeus-react start_app! time: #{react_lt}ms"
+    puts "isomorfeus-preact require time: #{preact_rt}ms"
+    puts "isomorfeus-preact start_app! time: #{preact_lt}ms"
     puts "application load_time: #{app_lt}ms"
     expect(app_lt < 500).to be true
   end
@@ -20,12 +18,12 @@ RSpec.describe 'Component benchmarks' do
   it 'Native DIV Element' do
     doc = visit('/')
     time = doc.evaluate_ruby do
-      class BenchmarkComponent < React::Component::Base
+      class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
             result = []
             10000.times do
-              result << `Opal.global.React.createElement('div', null, 'A')`
+              result << `Opal.global.Preact.createElement('div', null, 'A')`
             end
             result
           end
@@ -43,7 +41,7 @@ RSpec.describe 'Component benchmarks' do
   it 'DIV Element (String param)' do
     doc = visit('/')
     time = doc.evaluate_ruby do
-      class BenchmarkComponent < React::Component::Base
+      class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
             10000.times do
@@ -64,7 +62,7 @@ RSpec.describe 'Component benchmarks' do
   it 'DIV Element (String block)' do
     doc = visit('/')
     time = doc.evaluate_ruby do
-      class BenchmarkComponent < React::Component::Base
+      class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
             10000.times do
@@ -85,7 +83,7 @@ RSpec.describe 'Component benchmarks' do
   it 'Native Component' do
     doc = visit('/')
     time = doc.evaluate_ruby do
-      class BenchmarkComponent < React::Component::Base
+      class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
             10000.times do
@@ -106,12 +104,12 @@ RSpec.describe 'Component benchmarks' do
   it 'Function Component' do
     doc = visit('/')
     time = doc.evaluate_ruby do
-      class Fun < React::FunctionComponent::Base
+      class Fun < Preact::FunctionComponent::Base
         render do
           DIV 'A'
         end
       end
-      class BenchmarkComponent < React::Component::Base
+      class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
             10000.times do
@@ -129,41 +127,15 @@ RSpec.describe 'Component benchmarks' do
     expect(time > 0 && time < 1000).to be_truthy
   end
 
-  it 'Memo Component' do
+  it 'Preact Component' do
     doc = visit('/')
     time = doc.evaluate_ruby do
-      class Memo < React::MemoComponent::Base
+      class Pure < Preact::Component::Base
         render do
           DIV 'A'
         end
       end
-      class BenchmarkComponent < React::Component::Base
-        render do
-          Fragment do
-            10000.times do
-              Memo()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Memo Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
-  end
-
-  it 'React Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Pure < React::Component::Base
-        render do
-          DIV 'A'
-        end
-      end
-      class BenchmarkComponent < React::Component::Base
+      class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
             10000.times do
@@ -177,7 +149,7 @@ RSpec.describe 'Component benchmarks' do
       Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
       (Time.now - start) * 1000
     end
-    puts "10000 React Components took: #{time}ms"
+    puts "10000 Preact Components took: #{time}ms"
     expect(time > 0 && time < 1000).to be_truthy
   end
 
@@ -292,227 +264,5 @@ RSpec.describe 'Component benchmarks' do
     end
     puts "10000 Themed and Styled Lucid Components took: #{time}ms"
     expect(time > 0 && time < 1500).to be_truthy
-  end
-
-  it 'LucidMaterial Func' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Fun < LucidMaterial::Func::Base
-        render do
-          DIV 'A'
-        end
-      end
-      class BenchmarkComponent < LucidMaterial::App::Base
-        render do
-          Fragment do
-            10000.times do
-              Fun()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Lucid Material Funcs took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
-  end
-
-
-  it 'Lucid Material Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Lucy < LucidMaterial::Component::Base
-        render do
-          DIV 'A'
-        end
-      end
-      class BenchmarkComponent < LucidMaterial::App::Base
-        render do
-          Fragment do
-            10000.times do
-              Lucy()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Lucid Material Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
-  end
-
-  it 'Styled Lucid Material Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Lucy < LucidMaterial::Component::Base
-        styles do
-          {root: { color: 'black' }}
-        end
-        render do
-          DIV(class_name: styles.root) { 'A' }
-        end
-      end
-      class BenchmarkComponent < LucidMaterial::App::Base
-        render do
-          Fragment do
-            10000.times do
-              Lucy()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Styled Lucid Material Components took: #{time}ms"
-    expect(time > 0 && time < 1500).to be_truthy
-  end
-
-  it 'Themed and Styled Lucid Material Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Lucy < LucidMaterial::Component::Base
-        styles do |theme|
-          {root: { color: theme.root.color }}
-        end
-        render do
-          DIV(class_name: styles.root) { 'A' }
-        end
-      end
-      class BenchmarkComponent < LucidMaterial::App::Base
-        theme do
-          { root: { color: 'black' }}
-        end
-        render do
-          Fragment do
-            10000.times do
-              Lucy()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Themed and Styled Lucid Material Components took: #{time}ms"
-    expect(time > 0 && time < 2000).to be_truthy
-  end
-
-  it 'LucidPaper Func' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Fun < LucidPaper::Func::Base
-        render do
-          DIV 'A'
-        end
-      end
-      class BenchmarkComponent < LucidPaper::App::Base
-        render do
-          Fragment do
-            10000.times do
-              Fun()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Lucid Paper Funcs took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
-  end
-
-
-  it 'Lucid Paper Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Lucy < LucidPaper::Component::Base
-        render do
-          DIV 'A'
-        end
-      end
-      class BenchmarkComponent < LucidPaper::App::Base
-        render do
-          Fragment do
-            10000.times do
-              Lucy()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Lucid Paper Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
-  end
-
-  it 'Styled Lucid Paper Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Lucy < LucidPaper::Component::Base
-        render do
-          DIV(theme: { color: 'black' }) { 'A' }
-        end
-      end
-      class BenchmarkComponent < LucidPaper::App::Base
-        render do
-          Fragment do
-            10000.times do
-              Lucy()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Styled Lucid Paper Components took: #{time}ms"
-    expect(time > 0 && time < 1500).to be_truthy
-  end
-
-  it 'Themed and Styled Lucid Paper Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
-      class Lucy < LucidPaper::Component::Base
-        render do
-          DIV(theme: { color: theme.root.color }) { 'A' }
-        end
-      end
-      class BenchmarkComponent < LucidPaper::App::Base
-        theme do
-          { root: { color: 'black' }}
-        end
-        render do
-          Fragment do
-            10000.times do
-              Lucy()
-            end
-          end
-        end
-      end
-
-      start = Time.now
-      Isomorfeus::TopLevel.mount_component(BenchmarkComponent, {}, '#test_anchor')
-      (Time.now - start) * 1000
-    end
-    puts "10000 Themed and Styled Lucid Paper Components took: #{time}ms"
-    expect(time > 0 && time < 2000).to be_truthy
   end
 end

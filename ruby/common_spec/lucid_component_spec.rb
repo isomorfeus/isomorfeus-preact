@@ -321,7 +321,7 @@ RSpec.describe 'LucidComponent' do
           end
         end
         Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
-        ReactDOM.unmount_component_at_node('#test_anchor')
+        Preact.unmount_component_at_node('#test_anchor')
         IT[:unmount_received]
       end
       expect(result).to be true
