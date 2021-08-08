@@ -13,7 +13,7 @@ module LucidFunc
           return ruby_state;
         }
         base.instance_reducer = function(state, action) { return state; }
-        base.preact_component = Opal.global.Preact.memo(function(props) {
+        base.preact_component = function(props) {
           const og = Opal.global;
           const oper = Opal.Preact;
           oper.render_buffer.push([]);
@@ -48,7 +48,7 @@ module LucidFunc
           // console.log("function popping", oper.render_buffer, oper.render_buffer.toString());
           let result = oper.render_buffer.pop();
           return (result.length === 1) ? result[0] : result;
-        }, base.equality_checker);
+        };
         base.preact_component.displayName = #{component_name};
       }
 

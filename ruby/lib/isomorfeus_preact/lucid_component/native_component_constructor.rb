@@ -7,7 +7,7 @@ module LucidComponent
       component_name = base.to_s + 'Wrapper'
       # language=JS
       %x{
-        base.preact_component = Opal.global.Preact.memo(function(props) {
+        base.preact_component = function(props) {
           let opag = Opal.global;
           let classes;
           let store;
@@ -27,7 +27,7 @@ module LucidComponent
           new_props.theme = theme;
           new_props.store = store;
           return opag.Preact.createElement(base.lucid_preact_component, new_props);
-        }, Opal.Preact.props_are_equal);
+        };
         base.preact_component.displayName = #{component_name};
       }
     end

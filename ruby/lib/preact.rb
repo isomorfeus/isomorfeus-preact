@@ -267,25 +267,12 @@ module Preact
     Preact::Ref.new(`Opal.global.Preact.createRef()`)
   end
 
-  def self.hydrate(native_preact_element, container_node, replace_node)
+  def self.hydrate(native_preact_element, container_node, replace_node, &block)
     # container is a native DOM element
     if block_given?
       `Opal.global.Preact.hydrate(native_preact_element, container_node, function() { block.$call() })`
     else
       `Opal.global.Preact.hydrate(native_preact_element, container_node)`
-    end
-  end
-
-  def self.memo(function_component, &block)
-    if block_given?
-      %x{
-        var fun = function(prev_props, next_props) {
-          return #{block.call(::Peact::Component::Props.new(`{props: prev_props}`), ::Preact::Component::Props.new(`{props: next_props}`))};
-        }
-        return Opal.global.Preact.memo(function_component, fun);
-      }
-    else
-      `Opal.global.Preact.memo(function_component)`
     end
   end
 
