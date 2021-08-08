@@ -27,20 +27,17 @@ module Isomorfeus
             props = `Opal.Hash.$new(JSON.parse(props_json))`
             raw_hydrated = root_element.JS.getAttribute('data-iso-hydrated')
             hydrated = (raw_hydrated && raw_hydrated == "true")
-            #state_json = root_element.JS.getAttribute('data-iso-state')
-            #if state_json
-              %x{
-                if (global.ServerSideRenderingStateJSON) {
-                var state = global.ServerSideRenderingStateJSON;
-                  var keys = Object.keys(state);
-                  for(var i=0; i < keys.length; i++) {
-                    if (Object.keys(state[keys[i]]).length > 0) {
-                      global.Opal.Isomorfeus.store.native.dispatch({ type: keys[i].toUpperCase(), set_state: state[keys[i]] });
-                    }
+            %x{
+              if (global.ServerSideRenderingStateJSON) {
+              var state = global.ServerSideRenderingStateJSON;
+                var keys = Object.keys(state);
+                for(var i=0; i < keys.length; i++) {
+                  if (Object.keys(state[keys[i]]).length > 0) {
+                    global.Opal.Isomorfeus.store.native.dispatch({ type: keys[i].toUpperCase(), set_state: state[keys[i]] });
                   }
                 }
               }
-            #end
+            }
             Isomorfeus.execute_init_after_store_classes
             begin
               result = Isomorfeus::TopLevel.mount_component(component, props, root_element, hydrated)
