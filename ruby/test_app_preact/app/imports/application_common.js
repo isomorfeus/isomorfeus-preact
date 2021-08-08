@@ -3,11 +3,10 @@ import * as Redux from 'redux';
 global.Redux = Redux;
 import * as Preact from 'preact';
 import * as PreactHooks from 'preact/hooks'
-import { memo, unmountComponentAtNode } from 'preact/compat';
+import { memo } from 'preact/compat';
 global.Preact = Preact;
 global.PreactHooks = PreactHooks;
 global.Preact.memo = memo;
-global.Preact.unmountComponentAtNode = unmountComponentAtNode;
 import * as ReactJSS from 'react-jss';
 global.ReactJSS = ReactJSS;
 import * as Formik from 'formik';

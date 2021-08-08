@@ -312,6 +312,6 @@ module Preact
     else
       element = element_or_query
     end
-    `Opal.global.Preact.unmountComponentAtNode(element)`
+    `Opal.global.Preact.render(null, element)`
   end
 end
