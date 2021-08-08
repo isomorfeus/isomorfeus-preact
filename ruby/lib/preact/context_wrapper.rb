@@ -11,7 +11,6 @@ module Preact
     end
 
     def Consumer(*args, &block)
-      # why not use internal_prepare_args and render?
       %x{
         let operabu = Opal.Preact.render_buffer;
         let props = null;
@@ -23,7 +22,7 @@ module Preact
           if (block !== nil) {
             operabu.push([]);
             // console.log("consumer pushed", operabu, operabu.toString());
-            let block_result = block.$call();
+            let block_result = block.$call(value);
             if (block_result && block_result !== nil) { Opal.Preact.render_block_result(block_result); }
             // console.log("consumer popping", operabu, operabu.toString());
             children = operabu.pop();
@@ -37,7 +36,6 @@ module Preact
     end
 
     def Provider(*args, &block)
-      # why not use internal_prepare_args and render?
       %x{
         var props = null;
         if (args.length > 0) { props = Opal.Preact.to_native_preact_props(args[0]); }
