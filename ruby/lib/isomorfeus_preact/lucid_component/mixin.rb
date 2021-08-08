@@ -11,7 +11,6 @@ module LucidComponent
       base.include(::LucidComponent::Api)
       base.include(::LucidComponent::StylesApi)
       base.include(::LucidComponent::Initializer)
-      base.include(::Preact::Component::Features)
     end
   end
 end

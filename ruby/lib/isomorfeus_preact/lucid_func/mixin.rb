@@ -1,7 +1,6 @@
 module LucidFunc
   module Mixin
     def self.included(base)
-      base.include(::Preact::Component::Features)
       base.include(::LucidFunc::Initializer)
       base.include(::Preact::FunctionComponent::Api)
       base.extend(::LucidFunc::NativeComponentConstructor)
