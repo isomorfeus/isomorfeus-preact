@@ -3,13 +3,8 @@ module LucidComponent
     def self.included(base)
       base.include(::Native::Wrapper)
       base.extend(::LucidComponent::NativeLucidComponentConstructor)
-      if on_browser? || on_ssr?
-        base.extend(::LucidComponent::NativeComponentConstructor)
-        base.include(::Preact::Component::Elements)
-      elsif on_mobile?
-        base.extend(::LucidComponent::ReactNativeComponentConstructor)
-        base.include(::ReactNative::Component::Elements)
-      end
+      base.extend(::LucidComponent::NativeComponentConstructor)
+      base.include(::Preact::Component::Elements)
       base.extend(::LucidPropDeclaration::Mixin)
       base.include(::Preact::Component::Api)
       base.include(::Preact::Component::Callbacks)

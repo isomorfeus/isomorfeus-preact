@@ -30,11 +30,10 @@ if RUBY_ENGINE == 'opal'
   require 'lucid_prop_declaration/mixin'
   require 'preact/component/props'
 
-  # HTML Elements support
+  # HTML Elements and Fragment support
   require 'preact/component/elements'
 
-  # Preact Features
-  require 'preact/component/features'
+  # Preact Wrappers
   require 'preact/context_wrapper'
   require 'preact/native_constant_wrapper'
 
