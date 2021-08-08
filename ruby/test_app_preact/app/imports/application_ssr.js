@@ -7,13 +7,15 @@ import './application_common.js';
 // for example modules which depend on objects provided by node js
 import { renderToString } from 'preact-render-to-string';
 global.Preact.renderToString = renderToString;
-import { StaticRouter, Link, NavLink, Route, Switch } from 'react-router-dom';
+import { Router, Link, Redirect, Route, Switch } from 'wouter-preact';
+import staticLocationHook from 'wouter-preact/static-location';
 // global.History = History;
-global.Router = StaticRouter;
+global.Router = Router;
 global.Link = Link;
-global.NavLink = NavLink;
+global.NavLink = Redirect;
 global.Route = Route;
 global.Switch = Switch;
+global.staticLocationHook = staticLocationHook;
 
 import init_app from 'isomorfeus_loader.rb';
 init_app();

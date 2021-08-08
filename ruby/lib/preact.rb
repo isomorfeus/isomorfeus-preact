@@ -276,6 +276,14 @@ module Preact
     end
   end
 
+  def self.location_hook(location)
+    %x{
+      if (Opal.global.locationHook) { return Opal.global.locationHook; }
+      else if (Opal.global.staticLocationHook) { return Opal.global.staticLocationHook(location); }
+      else { #{raise "Wouter Location Hooks not imported!"}; }
+    }
+  end
+
   def self.render(native_preact_element, container_node, replace_node)
     # container is a native DOM element
     if block_given?
