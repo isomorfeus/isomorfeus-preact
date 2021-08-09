@@ -24,11 +24,11 @@ module LucidComponent
       else
         # get class state
         # check if we have a component local state value
-        if @native && @native.JS[:props].JS[:store]
-          if @native.JS[:props].JS[:store].JS[:class_state] &&
-              @native.JS[:props].JS[:store].JS[:class_state].JS[@component_name] &&
-              @native.JS[:props].JS[:store].JS[:class_state].JS[@component_name].JS.hasOwnProperty(key)
-            return @native.JS[:props].JS[:store].JS[:class_state].JS[@component_name].JS[key]
+        if @native && @native.JS[:props].JS[:iso_store]
+          if @native.JS[:props].JS[:iso_store].JS[:class_state] &&
+              @native.JS[:props].JS[:iso_store].JS[:class_state].JS[@component_name] &&
+              @native.JS[:props].JS[:iso_store].JS[:class_state].JS[@component_name].JS.hasOwnProperty(key)
+            return @native.JS[:props].JS[:iso_store].JS[:class_state].JS[@component_name].JS[key]
           end
         else
           a_state = Isomorfeus.store.get_state
