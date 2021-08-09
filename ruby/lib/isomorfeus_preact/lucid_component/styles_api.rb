@@ -2,32 +2,25 @@ module LucidComponent
   module StylesApi
     def self.included(base)
       base.instance_exec do
-        # styles
         def styles(styles_hash = nil, &block)
-          if block_given?
+          component_name = self.to_s
+          styles_hash = block.call if block_given?
+          if styles_hash
             %x{
-              base.jss_styles = function(theme) {
-                let wrapped_theme = Opal.Preact.Component.Styles.$new(theme);
-                var result = block.$call(wrapped_theme);
-                return result.$to_n();
-              }
+              let css;
+              if (typeof styles_hash.$to_n === 'function') { css = styles_hash.$to_n(); }
+              else { css = styles_hash; }
+              let nano_styles = Opal.global.NanoCSSInstance.sheet(css, component_name);
+              base.css_styles = #{::LucidComponent::StylesWrapper.new(`nano_styles`)};
             }
-            nil
-          elsif styles_hash
-            `base.jss_styles = #{styles_hash.to_n}` if styles_hash
-            styles_hash
-          elsif `typeof base.jss_styles === 'object'`
-            `Opal.Hash.$new(base.jss_styles)`
-          else
-            nil
           end
+          `base.css_styles`
         end
         alias_method :styles=, :styles
       end
 
-      # styles
       def styles
-        props.classes
+        `self.$class().css_styles`
       end
     end
   end
