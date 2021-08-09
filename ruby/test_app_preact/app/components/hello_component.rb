@@ -29,29 +29,15 @@ class HelloComponent < LucidComponent::Base
   end
 
   render do
+    a = store.a_value
+    c = class_store.a_value
+    store.a_value = "a_value" unless a
+    class_store.a_value = "c_value" unless c
     DIV 'Rendered!!'
-    DIV "#{class_store.a_value}"
-    DIV "#{store.a_value}"
-    DIV(class_name: styles.test){ "#{app_store.a_value}" }
-    Formik.Formik(initial_values: { email: 'test@test', name: 'Test Test' }.to_n, on_submit: :incr) do
-      Formik.Form do
-        Formik.Field(type: :email, name: :email, validate: PropTest.validate_prop_function(:email))
-        Formik.ErrorMessage(name: :email, component: :div)
-        Formik.Field(type: :text, name: :name, validate: PropTest.validate_prop_function(:name))
-        Formik.ErrorMessage(name: :name, component: :div)
-        BUTTON(type: "submit") { 'Submit' }
-      end
-    end
-    Formik.Formik(inner_ref: ref(:form), initial_values: { email: 'test@test', name: 'Test Test' }.to_n, validate: PropTest.validate_function,
-                  on_submit: :validate_form) do
-      Formik.Form do
-        Formik.Field(type: :email, name: :email)
-        Formik.ErrorMessage(name: :email, component: :div)
-        Formik.Field(type: :text, name: :name)
-        Formik.ErrorMessage(name: :name, component: :div)
-        BUTTON(type: :submit) { 'validate' }
-      end
-    end
+    DIV "#{c}"
+    DIV "#{a}"
+    DIV(class: styles.test){ "#{a}" }
+    DIV "Here was a Form"
     MemoTest()
     # keep, was a BUG: component resolution
     YetAnother::Switch()
