@@ -16,22 +16,19 @@ module Preact
         }
       end
 
-      def classes
-        @classes ||= Preact::Component::Styles.new(@native, 'classes')
-      end
-
       def children
         @native.JS[:props].JS[:children]
       end
 
-      def theme
-        @theme ||= Preact::Component::Styles.new(@native, 'theme')
-      end
-
       def isomorfeus_store
+        # TODO
         @native.JS[:props].JS[:isomorfeus_store]
       end
 
+      def theme
+        `#@native.props.iso_theme`
+      end
+      
       # for router convenience
       def history
         return @history if @history
