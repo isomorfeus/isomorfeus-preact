@@ -10,7 +10,7 @@ gem 'opal', github: 'janbiedermann/opal', branch: 'es6_modules_1_1'
 gem 'opal-webpack-loader', '>= 0.11.4'
 
 gem 'isomorfeus-redux', '~> 4.1.1'
-gem 'isomorfeus-react', path: '..'
+gem 'isomorfeus-preact', path: '..'
 
 group :test do
   gem 'rspec', '~> 3.8.0'
