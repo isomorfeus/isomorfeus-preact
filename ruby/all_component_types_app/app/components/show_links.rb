@@ -1,12 +1,12 @@
-class ShowLinks < React::Component::Base
+class ShowLinks < Preact::Component::Base
   render do
     H2 { 'Functionality' }
     DIV do
-      H3 { 'React::FunctionComponent, Props:' }
+      H3 { 'Preact::FunctionComponent, Props:' }
       Link(to: '/fun_fun/10') { 'Render 10 Components' }
     end
     DIV do
-      H3 { 'React::Component, Props, State:' }
+      H3 { 'Preact::Component, Props, State:' }
       Link(to: '/com_fun/10') { 'Render 10 Components'  }
     end
     DIV do
@@ -35,7 +35,7 @@ class ShowLinks < React::Component::Base
     DIV { '~ 3000 nodes -> amazon' }
     DIV { '~ 10000 nodes -> youtube, twitter' }
     DIV do
-      H3 { 'React::FunctionComponent, Props:' }
+      H3 { 'Preact::FunctionComponent, Props:' }
       Link(to: '/fun_run/1000') { 'Render 1000 nodes' }
       SPAN { ' | ' }
       Link(to: '/fun_run/3000') { 'Render 3000 nodes' }
@@ -43,7 +43,7 @@ class ShowLinks < React::Component::Base
       Link(to: '/fun_run/10000') { 'Render 10000 nodes' }
     end
     DIV do
-      H3 { 'React::Component, Props, State:' }
+      H3 { 'Preact::Component, Props, State:' }
       Link(to: '/com_run/1000') { 'Render 1000 nodes' }
       SPAN { ' | ' }
       Link(to: '/com_run/3000') { 'Render 3000 nodes' }

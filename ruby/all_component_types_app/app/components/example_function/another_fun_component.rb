@@ -1,5 +1,5 @@
 module ExampleFunction
-  class AnotherFunComponent < React::FunctionComponent::Base
+  class AnotherFunComponent < Preact::FunctionComponent::Base
     def show_red_alert(event)
       `alert("RED ALERT!")`
     end

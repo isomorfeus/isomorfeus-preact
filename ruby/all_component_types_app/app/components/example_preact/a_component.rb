@@ -1,5 +1,5 @@
-module ExampleReact
-  class AComponent < React::Component::Base
+module ExamplePreact
+  class AComponent < Preact::Component::Base
     prop :text, default: 'prop not passed'
 
     state.some_bool = true

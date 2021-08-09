@@ -1,5 +1,5 @@
 module ExampleFunction
-  class AFunComponent < React::FunctionComponent::Base
+  class AFunComponent < Preact::FunctionComponent::Base
     render do
       SPAN(on_click: props.on_click) { 'Click for orange alert! Props: ' }
       SPAN { props.text }

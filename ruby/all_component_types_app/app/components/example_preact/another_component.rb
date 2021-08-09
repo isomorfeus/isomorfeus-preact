@@ -1,5 +1,5 @@
-module ExampleReact
-  class AnotherComponent < React::Component::Base
+module ExamplePreact
+  class AnotherComponent < Preact::Component::Base
     def show_red_alert(event)
       `alert("RED ALERT!")`
     end
