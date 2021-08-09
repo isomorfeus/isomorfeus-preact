@@ -2,6 +2,10 @@ module LucidComponent
   class StylesWrapper
     include ::Native::Wrapper
 
+    def is_wrapped_style
+      true
+    end
+
     def fade_in
       'fadeIn'
     end
