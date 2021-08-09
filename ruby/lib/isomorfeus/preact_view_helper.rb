@@ -132,43 +132,14 @@ module Isomorfeus
           let rendered_tree;
           let ssr_styles;
           let component;
-          if (typeof global.Opal.global.MuiStyles !== 'undefined' && typeof global.Opal.global.MuiStyles.ServerStyleSheets !== 'undefined') {
-            component = '#{component_name}'.split(".").reduce(function(o, x) {
-              return (o !== null && typeof o[x] !== "undefined" && o[x] !== null) ? o[x] : null;
-            }, global.Opal.global)
-            if (!component) { component = global.Opal.Isomorfeus.$cached_component_class('#{component_name}'); }
-            try {
-              let sheets = new global.Opal.global.MuiStyles.ServerStyleSheets();
-              let app = global.Opal.Preact.$create_element(component, global.Opal.Hash.$new(#{Oj.dump(props, mode: :strict)}));
-              rendered_tree = global.Opal.global.Preact.renderToString(sheets.collect(app));
-              ssr_styles = sheets.toString();
-            } catch (e) {
-              global.Exception = e;
-            }
-          } else if (typeof global.Opal.global.ReactJSS !== 'undefined' && typeof global.Opal.global.ReactJSS.SheetsRegistry !== 'undefined') {
-            component = '#{component_name}'.split(".").reduce(function(o, x) {
-              return (o !== null && typeof o[x] !== "undefined" && o[x] !== null) ? o[x] : null;
-            }, global.Opal.global)
-            if (!component) { component = global.Opal.Isomorfeus.$cached_component_class('#{component_name}'); }
-            try {
-              let sheets = new global.Opal.global.ReactJSS.SheetsRegistry();
-              let generate_id = global.Opal.global.ReactJSS.createGenerateId();
-              let app = global.Opal.Preact.$create_element(component, global.Opal.Hash.$new(#{Oj.dump(props, mode: :strict)}));
-              let element = global.Opal.global.Preact.createElement(global.Opal.global.ReactJSS.JssProvider, { registry: sheets, generateId: generate_id }, app);
-              rendered_tree = global.Opal.global.Preact.renderToString(element);
-              ssr_styles = sheets.toString();
-            } catch (e) {
-              global.Exception = e;
-            }
-          } else {
             try {
               rendered_tree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string('#{component_name}', #{Oj.dump(props, mode: :strict)});
             } catch (e) {
               global.Exception = e;
             }
-          }
           let application_state = global.Opal.Isomorfeus.store.native.getState();
           if (typeof global.Opal.Isomorfeus.Transport !== 'undefined') { global.Opal.Isomorfeus.Transport.$disconnect(); }
+          if (typeof global.NanoCSSInstance !== 'undefined') { ssr_styles = global.NanoCSSInstance.raw }
           return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
         JAVASCRIPT
 
