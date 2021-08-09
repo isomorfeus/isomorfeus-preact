@@ -2,11 +2,10 @@
   "name": "TestAppApp",
   "private": true,
   "dependencies": {
-    "formik": "^2.2.9",
     "opal-webpack-loader": "^0.11.4",
     "preact": "^10.5.14",
     "preact-render-to-string": "^5.1.19",
-    "react-jss": "^10.7.1",
+    "nano-css": "^5.3.4",
     "wouter-preact": "^2.7.4",
     "redux": "^4.1.0"
   },
