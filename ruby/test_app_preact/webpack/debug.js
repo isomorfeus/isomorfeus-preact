@@ -46,31 +46,6 @@ const common_config = {
     module: {
         rules: [
             {
-                test: /.scss$/,
-                use: [ "style-loader",
-                    {
-                        loader: "css-loader",
-                        options: { sourceMap: true }
-                    },
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            includePaths: [path.resolve(__dirname, '../app/styles')],
-                            sourceMap: true // set to false to speed up hot reloads
-                        }
-                    }
-                ]
-            },
-            {
-                test: /.css$/,
-                use: [ "style-loader",
-                    {
-                        loader: "css-loader",
-                        options: { sourceMap: true }
-                    }
-                ]
-            },
-            {
                 test: /.(png|svg|jpg|gif|woff|woff2|eot|ttf|otf)$/,
                 use: [ "file-loader" ]
             },
