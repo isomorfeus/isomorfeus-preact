@@ -67,16 +67,6 @@ module Preact
         end
       end
 
-      def component_fun(class_name, **ruby_props)
-        %x{
-          return function(props) {
-            let outer_props = Opal.Preact.to_native_preact_props(#{ruby_props});
-            let new_props = Object.assign({}, props, outer_props);
-            return Opal.global.Preact.createElement(#{class_name.constantize}.preact_component, new_props)
-          }
-        }
-      end
-
       def get_preact_element(arg, &block)
         if block_given?
           # execute block, fetch last element from buffer
