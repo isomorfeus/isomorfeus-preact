@@ -11,13 +11,6 @@ module LucidComponent
           @class_store ||= ::LucidComponent::ClassStoreProxy.new(self.to_s)
         end
 
-        def store_updates(switch)
-          case switch
-          when :on then `base.store_updates = true`
-          when :off then `base.store_updates = false`
-          end
-        end
-
         # preloading
         def preload(&block)
           `base.preload_block = block`
