@@ -7,11 +7,15 @@ module LucidComponent
           styles_hash = block.call if block_given?
           if styles_hash
             %x{
-              let css;
-              if (typeof styles_hash.$to_n === 'function') { css = styles_hash.$to_n(); }
-              else { css = styles_hash; }
-              let nano_styles = Opal.global.NanoCSSInstance.sheet(css, component_name);
-              base.css_styles = #{::LucidComponent::StylesWrapper.new(`nano_styles`)};
+              if (typeof styles_hash.$is_wrapped_style !== 'undefined') {
+                base.css_styles = styles_hash;
+              } else {
+                let css;
+                if (typeof styles_hash.$to_n === 'function') { css = styles_hash.$to_n(); }
+                else { css = styles_hash; }
+                let nano_styles = Opal.global.NanoCSSInstance.sheet(css, component_name);
+                base.css_styles = #{::LucidComponent::StylesWrapper.new(`nano_styles`)};
+              }
             }
           end
           `base.css_styles`
