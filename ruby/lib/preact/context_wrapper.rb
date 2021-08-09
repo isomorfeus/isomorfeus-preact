@@ -31,7 +31,7 @@ module Preact
           }
           return children;
         });
-        operabu[operabu.length - 1].push(react_element);
+        operabu[operabu.length - 1].push(preact_element);
       }
     end
 
