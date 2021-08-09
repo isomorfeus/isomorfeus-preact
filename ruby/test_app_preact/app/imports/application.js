@@ -1,17 +1,9 @@
 // entry file for the browser environment
 // import stylesheets here
 var start = new Date();
-import '../styles/application.css';
 
 // import npm modules that are valid to use only in the browser
-import { Router, Link, Redirect, Route, Switch } from 'wouter-preact';
 import locationHook from 'wouter-preact/use-location';
-// global.History = History;
-global.Router = Router;
-global.Link = Link;
-global.Redirect = Redirect;
-global.Route = Route;
-global.Switch = Switch;
 global.locationHook = locationHook;
 // import modules common to browser and server side rendering (ssr)
 // environments from application_common.js
