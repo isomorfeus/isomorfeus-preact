@@ -18,7 +18,7 @@ module ExampleMaterial
 
     render do
       AMaterialComponent(on_click: :show_orange_alert, text: 'Yes') do
-        SPAN(on_click: :show_red_alert, class_name: styles.root) { 'Click for red alert! (Child 1), ' }
+        SPAN(on_click: :show_red_alert, class: styles.root) { 'Click for red alert! (Child 1), ' }
         SPAN { 'Child 2, '}
         SPAN { 'etc. '}
       end

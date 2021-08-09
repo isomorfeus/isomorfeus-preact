@@ -13,7 +13,7 @@ module ExampleLucid
     render do
       letter = app_store.letter
       if letter
-        SPAN(on_click: :change_letter, class_name: styles.master) { letter + props.letter + ' ' }
+        SPAN(on_click: :change_letter, class: styles.master) { letter + props.letter + ' ' }
       else
         app_store.letter = 'A'
       end

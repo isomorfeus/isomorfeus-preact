@@ -31,12 +31,12 @@ module ExampleMaterial
     end
 
     render do
-      SPAN(on_click: props.on_click, class_name: styles.root) { 'Click for orange alert! Props: ' }
+      SPAN(on_click: props.on_click, class: styles.root) { 'Click for orange alert! Props: ' }
       SPAN { props.text }
-      SPAN(on_click: :change_state, class_name: styles.root) { ", state is: #{state.some_bool} (Click!)" }
-      SPAN(on_click: :change_store, class_name: styles.root) { ", store is: #{store.a_bool} (Click!)" }
-      SPAN(on_click: :change_class_store, class_name: styles.root) { ", class_store is: #{class_store.b_bool} (Click!)" }
-      SPAN(on_click: :change_app_store, class_name: styles.root) { ", app_store is: #{app_store.c_bool} (Click!)" }
+      SPAN(on_click: :change_state, class: styles.root) { ", state is: #{state.some_bool} (Click!)" }
+      SPAN(on_click: :change_store, class: styles.root) { ", store is: #{store.a_bool} (Click!)" }
+      SPAN(on_click: :change_class_store, class: styles.root) { ", class_store is: #{class_store.b_bool} (Click!)" }
+      SPAN(on_click: :change_app_store, class: styles.root) { ", app_store is: #{app_store.c_bool} (Click!)" }
       SPAN { ', Children: '  }
       SPAN { props.children }
       SPAN { '| '}
