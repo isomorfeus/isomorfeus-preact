@@ -723,24 +723,6 @@ RSpec.describe 'LucidComponent' do
       JAVASCRIPT
       expect(style).to eq('100px')
     end
-
-    it 'without the styles accessing classes still renders' do
-      @doc.evaluate_ruby do
-        class TestNoStyleComponent < LucidComponent::Base
-          render do
-            DIV(id: :test_component, class: styles.master) { "nothinghere" }
-          end
-        end
-        class OuterApp < LucidApp::Base
-          render do
-            TestNoStyleComponent()
-          end
-        end
-        Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
-      end
-      node = @doc.wait_for('#test_component')
-      expect(node).to be_truthy
-    end
   end
 
   context 'it has a theme and styles and renders them' do
@@ -751,11 +733,11 @@ RSpec.describe 'LucidComponent' do
     it 'with the styles block DSL' do
       @doc.evaluate_ruby do
         class TestComponent < LucidComponent::Base
-          styles do |theme|
-            { master: { width: theme.root.width }}
+          styles do
+            { master: { fontSize: 12 }}
           end
           render do
-            DIV(id: :test_component, class: styles.master) { "nothinghere" }
+            DIV(id: :test_component, class: styles.master + theme.root) { "nothinghere" }
           end
         end
         class OuterApp < LucidApp::Base
@@ -770,30 +752,6 @@ RSpec.describe 'LucidComponent' do
       end
       node = @doc.wait_for('#test_component')
       # the following should be replaced by node.styles once its working correctly
-      style = @doc.execute_script <<~JAVASCRIPT
-        var styles = window.getComputedStyle(document.querySelector('#test_component'))
-        return styles.width
-      JAVASCRIPT
-      expect(style).to eq('100px')
-    end
-
-    it 'with the theme accessor' do
-      @doc.evaluate_ruby do
-        class TestNoStyleComponent < LucidComponent::Base
-          render do
-            DIV(id: :test_component, style: { width: theme.root.width }.to_n) { "nothinghere" }
-          end
-        end
-        class OuterApp < LucidApp::Base
-          theme(root: { width: 100 })
-          render do
-            TestNoStyleComponent()
-          end
-        end
-        Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
-      end
-      node = @doc.wait_for('#test_component')
-      expect(node).to be_truthy
       style = @doc.execute_script <<~JAVASCRIPT
         var styles = window.getComputedStyle(document.querySelector('#test_component'))
         return styles.width

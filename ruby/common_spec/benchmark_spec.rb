@@ -238,11 +238,11 @@ RSpec.describe 'Component benchmarks' do
     doc = visit('/')
     time = doc.evaluate_ruby do
       class Lucy < LucidComponent::Base
-        styles do |theme|
-          {root: { color: theme.root.color }}
+        styles do
+          {root: { fontSize: 12 }}
         end
         render do
-          DIV(class: styles.root) { 'A' }
+          DIV(class: styles.root + theme.root) { 'A' }
         end
       end
       class BenchmarkComponent < LucidApp::Base
