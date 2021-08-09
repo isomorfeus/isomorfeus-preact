@@ -44,7 +44,6 @@ module LucidComponent
               this.state.preloaded = this.__ruby_instance.$execute_preload_block();
               oper.active_redux_components.pop();
             }
-            console.log('new instance');
           }
           static get displayName() {
             return #{component_name};
