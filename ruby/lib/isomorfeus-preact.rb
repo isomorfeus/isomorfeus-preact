@@ -47,7 +47,6 @@ if RUBY_ENGINE == 'opal'
   require 'preact/component/location'
   require 'preact/component/history'
   require 'preact/component/resolution'
-  require 'preact/component/styles'
   require 'preact/component/mixin'
   require 'preact/component/base'
 
