@@ -647,7 +647,7 @@ RSpec.describe 'LucidComponent' do
             { master: { width: 100 }}
           end
           render do
-            DIV(id: :test_component, class_name: styles.master) { "nothinghere" }
+            DIV(id: :test_component, class: styles.master) { "nothinghere" }
           end
         end
         class OuterApp < LucidApp::Base
@@ -671,7 +671,7 @@ RSpec.describe 'LucidComponent' do
         class TestComponent < LucidComponent::Base
           styles(master: { width: 100 })
           render do
-            DIV(id: :test_component, class_name: styles.master) { "nothinghere" }
+            DIV(id: :test_component, class: styles.master) { "nothinghere" }
           end
         end
         class OuterApp < LucidApp::Base
@@ -695,7 +695,7 @@ RSpec.describe 'LucidComponent' do
         class SuperComponent < LucidComponent::Base
           styles(master: { width: 100 })
           render do
-            DIV(id: :super_component, class_name: styles.master) { "nothinghere" }
+            DIV(id: :super_component, class: styles.master) { "nothinghere" }
           end
         end
         # TODO for some reason, when use SuperComponent for inheritance, this fails on travis with 'Cyclic __proto__ value'
@@ -705,7 +705,7 @@ RSpec.describe 'LucidComponent' do
             SuperComponent.styles
           end
           render do
-            DIV(id: :test_component, class_name: styles.master) { "nothinghere" }
+            DIV(id: :test_component, class: styles.master) { "nothinghere" }
           end
         end
         class OuterApp < LucidApp::Base
@@ -728,7 +728,7 @@ RSpec.describe 'LucidComponent' do
       @doc.evaluate_ruby do
         class TestNoStyleComponent < LucidComponent::Base
           render do
-            DIV(id: :test_component, class_name: styles.master) { "nothinghere" }
+            DIV(id: :test_component, class: styles.master) { "nothinghere" }
           end
         end
         class OuterApp < LucidApp::Base
@@ -755,7 +755,7 @@ RSpec.describe 'LucidComponent' do
             { master: { width: theme.root.width }}
           end
           render do
-            DIV(id: :test_component, class_name: styles.master) { "nothinghere" }
+            DIV(id: :test_component, class: styles.master) { "nothinghere" }
           end
         end
         class OuterApp < LucidApp::Base

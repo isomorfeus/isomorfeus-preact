@@ -44,7 +44,7 @@ class MyComponent < LucidMaterial::Component::Base # is a React::Context Consume
 
   render do
     # during render styles can be accessed with `styles`, which is equivalent to the `classes` in the MaterialUI documentation.
-    DIV(class_name: styles.root) { 'Some text' }
+    DIV(class: styles.root) { 'Some text' }
     # the theme from LucidMaterial::App can be accessed directly too:
     DIV(style: { width: theme.master.width }) { 'Some text' }
   end

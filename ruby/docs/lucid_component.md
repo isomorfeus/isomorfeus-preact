@@ -74,7 +74,7 @@ class MyApp < LucidApp::Base # is a React::Context Consumer
   end
 
   render do
-    DIV(class_name: styles.root) { 'Some text' }
+    DIV(class: styles.root) { 'Some text' }
   end
 end
 ```
@@ -111,7 +111,7 @@ class MyComponent < LucidComponent::Base # is a React::Context Consumer
     # and for managing application wide state:
     app_store.yet_another_var
     # during render styles can be accessed with `styles`:
-    DIV(class_name: styles.root) { 'Some text' }
+    DIV(class: styles.root) { 'Some text' }
     # theme value from LucidMaterial::App can be accessed directly too:
     DIV(styles: { width: theme.master.width }.to_n) { 'Some text' }
     # note the .to_n, the styles property requires a native object

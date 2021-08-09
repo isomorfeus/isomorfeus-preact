@@ -213,7 +213,7 @@ RSpec.describe 'Component benchmarks' do
           {root: { color: 'black' }}
         end
         render do
-          DIV(class_name: styles.root) { 'A' }
+          DIV(class: styles.root) { 'A' }
         end
       end
       class BenchmarkComponent < LucidApp::Base
@@ -242,7 +242,7 @@ RSpec.describe 'Component benchmarks' do
           {root: { color: theme.root.color }}
         end
         render do
-          DIV(class_name: styles.root) { 'A' }
+          DIV(class: styles.root) { 'A' }
         end
       end
       class BenchmarkComponent < LucidApp::Base
