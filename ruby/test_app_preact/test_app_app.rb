@@ -14,7 +14,7 @@ class TestAppApp < Roda
         <head>
           <title>Welcome to TestAppApp</title>
           #{owl_script_tag 'application.js'}
-          <style id="jss-server-side" type="text/css">#{ssr_styles}</style>
+          <style id="css-server-side" type="text/css">#{ssr_styles}</style>
         </head>
         <body>
           #{rendered_tree}
@@ -41,7 +41,7 @@ class TestAppApp < Roda
       <html>
         <head>
           <title>Welcome to TestAppApp</title>
-          <style id="jss-server-side" type="text/css">#{ssr_styles}</style>
+          <style id="css-server-side" type="text/css">#{ssr_styles}</style>
         </head>
         <body>
           #{rendered_tree}
