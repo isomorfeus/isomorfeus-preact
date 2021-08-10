@@ -14,7 +14,7 @@ require_tree 'components'
       super(props);
     }
     render() {
-      var rounds = parseInt(this.props.match.params.count);
+      var rounds = parseInt(this.props.params.count);
       var result = []
       for (var i = 0; i < rounds; i ++) {
         result.push(global.Preact.createElement(global.ExampleJS.AnotherComponent, {key: i}));
@@ -74,7 +74,7 @@ require_tree 'components'
       super(props);
     }
     render() {
-      var rounds = parseInt(this.props.match.params.count)/10;
+      var rounds = parseInt(this.props.params.count)/10;
       var result = []
       for (var i = 0; i < rounds; i ++) {
         result.push(global.Preact.createElement(global.ExampleJS.AnotherComponent, {key: i}));
