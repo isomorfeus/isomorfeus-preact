@@ -18,10 +18,6 @@ class ShowLinks < Preact::Component::Base
       Link(to: '/func_fun/10') { 'Render 10 Components'  }
     end
     DIV do
-      H3 { 'LucidMaterial::Component, Props, State, Store:' }
-      Link(to: '/mat_fun/10') { 'Render 10 Components'  }
-    end
-    DIV do
       H3 { 'Javascript Component, Props:' }
       Link(to: '/js_fun/10') { 'Render 10 Components'  }
     end
@@ -89,22 +85,6 @@ class ShowLinks < Preact::Component::Base
       Link(to: '/lucssy_run/3000') { 'Render 3000 nodes' }
       SPAN { ' | ' }
       Link(to: '/lucssy_run/10000') { 'Render 10000 nodes' }
-    end
-    DIV do
-      H3 { 'MaterialComponent, Props, State, Store, Style:' }
-      Link(to: '/mat_run/1000') { 'Render 1000 nodes' }
-      SPAN { ' | ' }
-      Link(to: '/mat_run/3000') { 'Render 3000 nodes' }
-      SPAN { ' | ' }
-      Link(to: '/mat_run/10000') { 'Render 10000 nodes' }
-    end
-    DIV do
-      H3 { 'Only MaterialComponent, Props, State, Store, Style:' }
-      Link(to: '/mats_run/1000') { 'Render 1000 nodes' }
-      SPAN { ' | ' }
-      Link(to: '/mats_run/3000') { 'Render 3000 nodes' }
-      SPAN { ' | ' }
-      Link(to: '/mats_run/10000') { 'Render 10000 nodes' }
     end
     DIV do
       H3 { 'Javascript Component, Props:' }

@@ -1,20 +1,16 @@
 // entry file for the server side rendering environment (ssr)
-// import npm modules that are only valid to use in the server side rendering environment
-// for example modules which depend on objects provided by node js
-import ReactDOMServer from 'react-dom/server';
-global.ReactDOMServer = ReactDOMServer;
-import { StaticRouter, Link, NavLink, Route, Switch } from 'react-router-dom';
-// global.History = History;
-global.Router = StaticRouter;
-global.Link = Link;
-global.NavLink = NavLink;
-global.Route = Route;
-global.Switch = Switch;
-import WebSocket from 'ws';
-global.WebSocket = WebSocket;
+
 // import modules common to browser and server side rendering (ssr)
 // environments from application_common.js
 import './web_common.js';
+// import npm modules that are only valid to use in the server side rendering environment
+// for example modules which depend on objects provided by node js
+import { renderToString } from 'preact-render-to-string';
+global.Preact.renderToString = renderToString;
+import staticLocationHook from 'wouter-preact/static-location';
+global.staticLocationHook = staticLocationHook;
+import WebSocket from 'ws';
+global.WebSocket = WebSocket;
 
 import init_app from 'web_loader.rb';
 init_app();
