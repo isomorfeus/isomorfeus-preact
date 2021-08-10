@@ -4,22 +4,27 @@ require_relative 'iodine_config'
 
 class AllComponentTypesApp < Roda
   include OpalWebpackLoader::ViewHelper
-  include Isomorfeus::ReactViewHelper
+  include Isomorfeus::PreactViewHelper
 
   plugin :public, root: 'public'
 
   def page_content(env, location)
-    <<~HTML
-      <html>
-        <head>
-          <title>Welcome to AllComponentTypesApp</title>
-          #{owl_script_tag 'application.js'}
-        </head>
-        <body>
-          #{mount_component('AllComponentTypesApp', { location_host: env['HTTP_HOST'], location: location }, 'application_ssr.js')}
-        </body>
-      </html>
-    HTML
+    begin
+      <<~HTML
+        <html>
+          <head>
+            <title>Welcome to AllComponentTypesApp</title>
+            #{owl_script_tag 'application.js'}
+          </head>
+          <body>
+            #{mount_component('AllComponentTypesApp', { location_host: env['HTTP_HOST'], location: location }, 'application_ssr.js')}
+          </body>
+        </html>
+      HTML
+    rescue Exception => e
+      STDERR.puts e.message
+      STDERR.puts e.backtrace.join("\n")
+    end
   end
 
   route do |r|
