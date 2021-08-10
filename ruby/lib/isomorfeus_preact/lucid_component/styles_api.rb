@@ -13,7 +13,7 @@ module LucidComponent
                 let css;
                 if (typeof styles_hash.$to_n === 'function') { css = styles_hash.$to_n(); }
                 else { css = styles_hash; }
-                let nano_styles = Opal.global.NanoCSSInstance.sheet(css, component_name);
+                let nano_styles = Opal.global.NanoCSSInstance.sheet(css, component_name.replace(/:/g, '_'));
                 base.css_styles = #{::LucidComponent::StylesWrapper.new(`nano_styles`)};
               }
             }
