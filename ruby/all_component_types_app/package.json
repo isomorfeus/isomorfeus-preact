@@ -32,9 +32,5 @@
     "webpack-assets-manifest": "^4.0.6",
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^4.0.0-rc.0"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2"
   }
 }
