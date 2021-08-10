@@ -1,10 +1,10 @@
 ### Lifecycle Callbacks
 
-All lifecycle callbacks that are available in the matching React version are available as DSL. Callback names are underscored.
+All lifecycle callbacks that are available in the matching Preact version are available as DSL. Callback names are underscored.
 
 Example:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     SPAN { 'some more text' }
   end

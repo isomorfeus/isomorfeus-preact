@@ -1,10 +1,10 @@
 ### Events
-Event names are underscored in ruby: `onClick` becomes `on_click`. The conversion for React is done automatically.
+Event names are underscored in ruby: `onClick` becomes `on_click`. The conversion for Preact is done automatically.
 
-Event can be simple methods, but must be referenced when passed as prop by `method_ref`. This is to make sure,
+Events can be simple methods, but must be referenced when passed as prop by `method_ref`. This is to make sure,
 that they are passed by reference during render to react to prevent unnecessary renders. Example:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   def handle_click(event, info)
     state.toggler = !state.toggler
   end
@@ -19,7 +19,7 @@ Some events pass a optional 'info' arg.
 
 With method_ref additional args can be passed to the event handler:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   def handle_click(event, info, arg)
     puts "#{arg}"
   end
@@ -32,10 +32,10 @@ end
 ```
 Multiple args can be passed and are appended in order.
 
-To the event handler the event is passed as argument. The event is a ruby object `React::SyntheticEvent` and supports all the methods, properties
-and events as the React.Synthetic event. Methods are underscored. Example:
+To the event handler the event is passed as argument. The event is a ruby object `Preact::SyntheticEvent` and supports all the methods, properties
+and events as the Preact.Synthetic event. Methods are underscored. Example:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   def handle_click(event, info)
     event.prevent_default
     event.current_target

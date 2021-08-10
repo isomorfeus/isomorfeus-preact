@@ -1,12 +1,12 @@
-### Using React Router
-First the Components of React Router must be imported and made available in the global context:
+### Using Preact Router
+First the Components of Preact Router must be imported and made available in the global context:
 ```javascript
-import * as ReactRouter from 'react-router';
-import * as ReactRouterDOM from 'react-router-dom';
+import * as PreactRouter from 'react-router';
+import * as PreactRouterDOM from 'react-router-dom';
 import { BrowserRouter, Link, NavLink, Route, Switch } from 'react-router-dom';
 
-global.ReactRouter = ReactRouter;
-global.ReactRouterDOM = ReactRouterDOM;
+global.PreactRouter = PreactRouter;
+global.PreactRouterDOM = PreactRouterDOM;
 global.Router = BrowserRouter;
 global.Link = Link;
 global.NavLink = NavLink;
@@ -16,7 +16,7 @@ global.Switch = Switch;
 Only import whats needed, or import HashRouter instead of BrowserRouter.
 Then the Router components can be used:
 ```ruby
-class RouterComponent < React::Component::Base
+class RouterComponent < Preact::Component::Base
   render do
     DIV do
       # The location prop is important for SSR when using StaticRouter:
@@ -38,7 +38,7 @@ In addition to that, it allows for passing additional props to the component, be
 The child components then get the Router props
 (match, history, location) passed in their props. They can be accessed like this:
 ```ruby
-class MyOtherComponent < React::Component::Base
+class MyOtherComponent < Preact::Component::Base
 
   render do
     Sem.Container(text_align: 'left', text: true) do
@@ -58,7 +58,7 @@ class MyOtherComponent < React::Component::Base
   end
 end
 ```
-Otherwise the React Router documentation applies: https://reacttraining.com/react-router/
+Otherwise the Preact Router documentation applies: https://reacttraining.com/react-router/
 
 #### Server Side Rendering
 

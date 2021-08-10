@@ -13,49 +13,29 @@ For the Gemfile:
 ```ruby
 gem 'opal', github: 'janbiedermann/opal', branch: 'es6_modules_1_1'
 gem 'opal-webpack-loader', '~> 0.11.4'
-gem 'isomorfeus-react', '>= 17.0.0'
+gem 'isomorfeus-preact', '>= 10.5.0'
 ```
 
 Required Javascript Npms:
 
-#### When using React
-- react
-- react-dom
-
-For package.json:
-```json
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-```
-
-#### Common requirements
+#### Preact
+- preact
+- preact-render-to-string for server side rendering
+- preact-deep-force-update for refreshing the render tree after hot module reloading
 - opal-webpack-loader
-- react-router
-- react-router-dom
+- wouter for routing
 - redux
-
-For LucidComponent styling support, required when using LucidComponents:
-- react-jss
+- nano-css for LucidComponent styling support, required when using LucidComponents
 
 For package.json:
 ```json
     "opal-webpack-loader": "^0.11.4",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-jss": "^10.7.1",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
-    "redux": "^4.1.0",
-```
-
-#### Optional MaterialUI support
-- @material-ui/core
-- @material-ui/styles
-
-For package.json:
-```json
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/styles": "^4.11.4",
+    "preact": "^10.5.14",
+    "preact-deep-force-update": "^0.1.0",
+    "preact-render-to-string": "^5.1.19",
+    "nano-css": "^5.3.4",
+    "wouter-preact": "^2.7.4",
+    "redux": "^4.1.0"
 ```
 
 Then the usual:
@@ -63,52 +43,63 @@ Then the usual:
 - `bundle install`
 
 ### Importing Javascript Dependencies
-React, Redux and accompanying libraries must be imported and made available in the global namespace in the application javascript entry file,
-with webpack this can be ensured by assigning them to the global namespace:
+Preact, Redux and accompanying libraries must be imported and made available in the global namespace in the application javascript entry file. With webpack this can be ensured by assigning them to the global namespace:
+
+Common imports:
 ```javascript
 import * as Redux from 'redux';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import * as ReactJSS from 'react-jss';
 global.Redux = Redux;
-global.React = React;
-global.ReactDOM = ReactDOM;
-global.ReactJSS = ReactJSS;
-
-// for routing support
-import { BrowserRouter, Link, NavLink, Redirect, Route, Switch } from 'react-router-dom';
-global.Router = BrowserRouter; // import and assign StaticRouter instead for Server Side Rendering
+import * as Preact from 'preact';
+global.Preact = Preact;
+import * as PreactHooks from 'preact/hooks'
+global.PreactHooks = PreactHooks;
+import { Router, Link, Redirect, Route, Switch } from 'wouter-preact';
+global.Router = Router;
 global.Link = Link;
-global.NavLink = NavLink;
 global.Redirect = Redirect;
 global.Route = Route;
 global.Switch = Switch;
+import * as NanoCSS from 'nano-css';
+global.NanoCSS = NanoCSS;
+import { addon as NanoCSSAddOnRule } from 'nano-css/addon/rule';
+import { addon as NanoCSSAddOnSheet } from 'nano-css/addon/sheet';
+import { addon as NanoCSSAddOnNesting } from 'nano-css/addon/nesting';
+import { addon as NanoCSSAddOnHydrate } from 'nano-css/addon/hydrate';
+import { addon as NanoCSSAddOnUnitless } from 'nano-css/addon/unitless';
+import { addon as NanoCSSAddOnGlobal } from 'nano-css/addon/global';
+import { addon as NanoCSSAddOnKeyframes } from 'nano-css/addon/keyframes';
+import { addon as NanoCSSAddOnAnimateFadeIn } from 'nano-css/addon/animate/fadeIn';
+import { addon as NanoCSSAddOnAnimateFadeOut } from 'nano-css/addon/animate/fadeOut';
+global.NanoCSSAddOns = {
+  rule: NanoCSSAddOnRule,
+  sheet: NanoCSSAddOnSheet,
+  nesting: NanoCSSAddOnNesting,
+  hydrate: NanoCSSAddOnHydrate,
+  unitless: NanoCSSAddOnUnitless,
+  global: NanoCSSAddOnGlobal,
+  keyframes: NanoCSSAddOnKeyframes,
+  fade_in: NanoCSSAddOnAnimateFadeIn,
+  fade_out: NanoCSSAddOnAnimateFadeOut
+};
 ```
 
-#### For the optional MaterialUI support:
+Imports for the browser:
 ```javascript
-import * as Mui from '@material-ui/core'
-import * as MuiStyles from '@material-ui/styles'
-global.Mui = Mui;
-global.MuiStyles = MuiStyles;
+import deepForceUpdate from 'preact-deep-force-update';
+global.deepForceUpdate = deepForceUpdate;
+import locationHook from 'wouter-preact/use-location';
+global.locationHook = locationHook;
+```
+
+Imports for server side rendering:
+```javascript
+import { renderToString } from 'preact-render-to-string';
+global.Preact.renderToString = renderToString;
+import staticLocationHook from 'wouter-preact/static-location';
+global.staticLocationHook = staticLocationHook;
 ```
 
 Loading the opal code:
 ```ruby
-require 'isomorfeus-react'
-require 'isomorfeus-react-material-ui' # optional, for MaterialUI support
+require 'isomorfeus-preact'
 ```
-
-#### For the optional Paper support:
-```javascript
-import * as Paper from 'react-native-paper';
-global.Paper = Paper;
-```
-
-Loading the opal code:
-```ruby
-require 'isomorfeus-react'
-require 'isomorfeus-react-paper' # optional, for Paper support
-```
-
-Additional steps are required to configure webpack properly, please see [Using Paper on the Web](https://callstack.github.io/react-native-paper/using-on-the-web.html)

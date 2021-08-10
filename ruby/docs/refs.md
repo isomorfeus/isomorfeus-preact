@@ -2,14 +2,14 @@
 Refs must be declared using the `ref` DSL. This is to make sure, that they are not recreated during render and can be properly
 compared by reference by shouldComponentUpdate(). Use the DSL like so:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   ref :my_ref # a simple ref
   ref :my_other_ref do |element|  # a ref with block
     element.type
   end
   
   def report_ref(event)
-    my_ref = ruby_ref(:my_ref) # ruby_ref() returns a ruby React::Ref object
+    my_ref = ruby_ref(:my_ref) # ruby_ref() returns a ruby Preact::Ref object
     my_ref.current # is the element or component of this ref
     # if its a dom element a Browser::DOM::Element will be returned
     # if its a ruby component, its instance will be returned

@@ -1,10 +1,10 @@
 ### Render blocks
 render or element or component blocks work like ruby blocks, the result of the last expression in a block is returned and then rendered,
-but only if it is a string or a React Element.
+but only if it is a string or a Preact Element.
 HTML Elements and Components at any place in the blocks are rendered too.
 Examples:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     SPAN { "string" } # this string is rendered in a SPAN HTML Element
     SPAN { "another string" } # this string is rendered in a SPAN too
@@ -12,7 +12,7 @@ class MyComponent < React::Component::Base
 end
 ```
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     "string" # this string is NOT rendered, its not returned from the block and its not wrapped in a Element,
              # to render it, wrap it in a element or fragment
@@ -21,7 +21,7 @@ class MyComponent < React::Component::Base
 end
 ```
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     Fragment { "string" } # this string is rendered without surrounding element
     100 # this is not a string, so its NOT rendered, to render it, simply convert it to a string: "#{100}" or 100.to_s
@@ -37,7 +37,7 @@ Its disadvantages are:
 
 The first render block example in "string param syntax":
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     SPAN "string" # this string is rendered in a SPAN HTML Element, short and handy
     SPAN "another string" # this string is rendered in a SPAN too, short and handy
@@ -52,11 +52,11 @@ end
 
 Also &nbsp\; doesn't work in strings, instead "\u00A0" must be used.
 
-### Passing React Elements of Ruby Components via property
+### Passing Preact Elements of Ruby Components via property
 
-Some Javascript components accept a React Element as property. To get the react element for a component use `get_react_element`:
+Some Javascript components accept a Preact Element as property. To get the Preact element for a component use `get_preact_element`:
 ```ruby
-element = get_react_element do
+element = get_preact_element do
   Mui.Hidden(sm_down: true) { 'Timeline' }
 end
 # then pass the element
@@ -65,23 +65,23 @@ Mui.Tab(label: element)
 Mui.Tab(label: element)
 ```
 
-### Direct Rendering of React Elements
-Native React Elements can be directly rendered: 
+### Direct Rendering of Preact Elements
+Native Preact Elements can be directly rendered: 
 ```ruby
-class Working < React::Component::Base
+class Working < Preact::Component::Base
   render do
     # element passed in props
     el = props.element 
     # render the element
-    render_react_element(el)
+    render_preact_element(el)
 
     # or create a element
-    element = get_react_element do
+    element = get_preact_element do
       Mui.Hidden(sm_down: true) { 'Timeline' }
     end
     # and render it 5 times:
     5.times do
-      render_react_element(element)
+      render_preact_element(element)
     end
   end
 end
@@ -91,13 +91,13 @@ end
 Though possible its not recommended to pass procs in props. Passing procs in props will cause unnecessary renders.
 Instead its best to pass methods by reference using `method_ref`. Example:
 ```ruby
-class AnotherComponent < React::Component::Base
+class AnotherComponent < Preact::Component::Base
   render do
     props.passed_method.call(2)
   end
 end
 
-class BestWay < React::Component::Base
+class BestWay < Preact::Component::Base
   def a_method(count)
     count.times do
       DIV 'yeah'

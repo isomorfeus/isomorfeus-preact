@@ -1,23 +1,23 @@
-### React Javascript Components
+### Preact Javascript Components
 
-Native React Javascript Components must be available in the global namespace. When importing them with webpack
+Native Preact Javascript Components must be available in the global namespace. When importing them with webpack
 this can be ensured by assigning them to the global namespace:
 ```javascript
-import * as Sem from 'semantic-ui-react'
+import * as Sem from 'semantic-ui-preact'
 global.Sem = Sem;
 ```
 They can then be used like so:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     Sem.Button(as: 'a') { 'useful text' }
   end
 end
 ```
 
-Some Javascript components accept another Javascript component as property, like for example React Router. The Ruby class won't work here,
-instead the Javascript React component of the Ruby class must be passed.
-It can be accessed by using Opals JS syntax to get the React Component of the Ruby class:
+Some Javascript components accept another Javascript component as property, like for example Preact Router. The Ruby class won't work here,
+instead the Javascript Preact component of the Ruby class must be passed.
+It can be accessed by using Opals JS syntax to get the Preact Component of the Ruby class:
 ```ruby
 Route(path: '/', strict: true, component: MyComponent.JS[:react_component])
 ```

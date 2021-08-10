@@ -1,9 +1,9 @@
 ### Props
 
-In ruby props are underscored: `className -> class_name`. The conversion for React is done automatically.
+In ruby props are underscored: `className -> class_name`. The conversion for Preact is done automatically.
 Within a component props can be accessed using `props`:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   render do
     DIV { props.text }
   end
@@ -11,7 +11,7 @@ end
 ```
 Props are passed as arguments to the component:
 ```ruby
-class MyOtherComponent < React::Component::Base
+class MyOtherComponent < Preact::Component::Base
   render do
     MyComponent(text: 'some other text')
   end
@@ -22,7 +22,7 @@ end
 #### Using options hash style
 Props can be declared and type checked and a default value can be given:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   prop :text, class: String # a required prop of class String, class must match exactly
   prop :maybe_text, class: String, allow_nil: true # a required prop of class String, class must match exactly but a nil value is also ok.
   prop :other, is_a: Enumerable # a required prop, which can be a Array for example, but at least must be a Enumerable
@@ -41,7 +41,7 @@ end
 #### Using validate method style
 Props can be declared and type checked and a default value can be given using a validate method chain::
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   prop :text, validate.String # a required prop of class String, class must match exactly
   prop :other, validate.Enumerable # a required prop, which can be a Array for example, but at least must be a Enumerable
   prop :cool, validate.default('yet some more text') # a optional prop with a default value
@@ -55,7 +55,7 @@ end
 ```
 More complex variations are possible and can be expressed in a concise way:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   prop :float, validate.Float.cast.default(1.0).min(0.5).and.max(1.5)
   prop :text, validate.String.matches(/(a|b|c).*/).length(5)
   
@@ -130,7 +130,7 @@ A ensure_block can be passed. That block gets a value and is expected to return 
 If a ensure_block is given, setting a default value, the cast and type checks are skipped.
 Example:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   prop :float_a, ensure_block: proc { |v| v = 1 if v < 1; v }
   prop :float_b, validate.ensure { |v| v = 2 if v > 2; v }
   
@@ -146,7 +146,7 @@ A validate_block can be passed. That block gets a value and is expected to retur
 Setting a default value, a ensure block, cast and type checks are executed before the validate_block
 Example:
 ```ruby
-class MyComponent < React::Component::Base
+class MyComponent < Preact::Component::Base
   prop :float_a, validate_block: proc { |v| raise 'error' unless v.is_a?(Float) }
   prop :float_b, validate.validate_block { |v| raise 'error' unless v.is_a?(Float) }
   

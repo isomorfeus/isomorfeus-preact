@@ -6,7 +6,7 @@ Components that depend on a browser can be shielded from rendering in node by us
 
 Example:
 ```ruby
-class MyOtherComponent < React::Component::Base
+class MyOtherComponent < Preact::Component::Base
 
   render do
     if on_browser?
