@@ -67,7 +67,7 @@ module LucidApp
             oper.active_components.pop();
             let children = oper.render_buffer.pop();
             // console.log("lucid app popping", oper.render_buffer, oper.render_buffer.toString());
-            return Opal.global.Preact.createElement.apply(this, [Opal.global.LucidApplicationContext.Provider, { value: { iso_store: this.state.isomorfeus_store_state, iso_theme: base.css_theme }}].concat(children));
+            return Opal.global.Preact.createElement(Opal.global.LucidApplicationContext.Provider, { value: { iso_store: this.state.isomorfeus_store_state, iso_theme: base.css_theme }}, children);
           }
           data_access() {
             this.state.isomorfeus_store_state;
