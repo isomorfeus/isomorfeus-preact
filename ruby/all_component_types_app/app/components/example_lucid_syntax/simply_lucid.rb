@@ -2,6 +2,10 @@ module ExampleLucidSyntax
   class SimplyLucid < LucidComponent::Base
     prop :letter, default: 'prop not passed'
 
+    styles do
+      { master: { color: 'green'}}
+    end
+
     def change_letter(event)
       letter = app_store.letter
       code = `letter.charCodeAt(0)`
@@ -13,7 +17,7 @@ module ExampleLucidSyntax
     render do
       letter = app_store.letter
       if letter
-        SPAN({ on_click: :change_letter }, letter + props.letter + ' ')
+        SPAN({ on_click: :change_letter, class: styles.master }, letter + props.letter + ' ')
       else
         app_store.letter = 'A'
       end

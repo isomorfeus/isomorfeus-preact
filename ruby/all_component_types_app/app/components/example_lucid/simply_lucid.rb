@@ -2,6 +2,10 @@ module ExampleLucid
   class SimplyLucid < LucidComponent::Base
     prop :letter, default: 'prop not passed'
 
+    styles do
+      { master: { color: 'red'}}
+    end
+
     def change_letter(event)
       letter = app_store.letter
       code = `letter.charCodeAt(0)`
