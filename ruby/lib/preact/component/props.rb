@@ -28,27 +28,6 @@ module Preact
       def theme
         `#@native.props.iso_theme`
       end
-      
-      # for router convenience
-      def history
-        return @history if @history
-        return nil if `typeof #@native.props.history === 'undefined'`
-        if `typeof #@native.props.history.action !== 'undefined'`
-          @history = Preact::Component::History.new(@native)
-        else
-          @native.JS[:props].JS[:history]
-        end
-      end
-
-      def location
-        return @location if @location
-        return nil if `typeof #@native.props.location === 'undefined'`
-        if `typeof #@native.props.location.pathname !== 'undefined'`
-          @location = Preact::Component::Location.new(@native)
-        else
-          @native.JS[:props].JS[:location]
-        end
-      end
 
       def params
         return @params if @params
