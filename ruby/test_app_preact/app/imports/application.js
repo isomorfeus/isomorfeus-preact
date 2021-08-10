@@ -5,7 +5,7 @@ var start = new Date();
 // import npm modules that are valid to use only in the browser
 import locationHook from 'wouter-preact/use-location';
 global.locationHook = locationHook;
-import deepForceUpdate from 'preact-deep-force-update'
+import deepForceUpdate from 'preact-deep-force-update';
 global.deepForceUpdate = deepForceUpdate;
 // import modules common to browser and server side rendering (ssr)
 // environments from application_common.js
