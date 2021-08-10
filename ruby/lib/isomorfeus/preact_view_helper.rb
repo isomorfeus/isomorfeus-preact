@@ -31,14 +31,19 @@ module Isomorfeus
           begin
             asset = Net::HTTP.get(URI(asset_path))
           rescue Exception => e
+            # STDERR.puts "Server Side Rendering: Failed loading asset #{asset_path} from webpack dev server. Error: #{e.message}"
+            # STDERR.puts e.backtrace.join("\n")
             Isomorfeus.raise_error(message: "Server Side Rendering: Failed loading asset #{asset_path} from webpack dev server. Error: #{e.message}", stack: e.backtrace )
           end
           if asset.strip.start_with?('<')
+            # STDERR.puts "Server Side Rendering: Failed loading asset #{asset_path} from webpack dev server, asset is not javascript. Did the webpack build succeed?"
             Isomorfeus.raise_error(message: "Server Side Rendering: Failed loading asset #{asset_path} from webpack dev server, asset is not javascript. Did the webpack build succeed?")
           end
           begin
             Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset)
           rescue Exception => e
+            # STDERR.puts "Server Side Rendering: Failed creating context for #{asset_path}. Error: #{e.message}"
+            # STDERR.puts e.backtrace.join("\n")
             Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_path}. Error: #{e.message}", stack: e.backtrace)
           end
         else
