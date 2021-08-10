@@ -50,14 +50,10 @@ module Preact
         end
       end
 
-      def match
-        return @match if @match
-        return nil if `typeof #@native.props.match === 'undefined'`
-        if `typeof #@native.props.match.path !== 'undefined'`
-          @match = Preact::Component::Match.new(@native)
-        else
-          @native.JS[:props].JS[:match]
-        end
+      def params
+        return @params if @params
+        return nil if `typeof #@native.props.params === 'undefined'`
+        @params = ::Preact::Component::Params.new(`#@native.props.params`)
       end
 
       def to_h
