@@ -3,11 +3,15 @@ require 'bundler/cli'
 require 'bundler/cli/exec'
 require 'fileutils'
 
-require_relative 'ruby/lib/preact/version'
+require_relative 'lib/preact/version'
 
-task default: %w[ruby_preact_specs]
+task :default => :specs
 
-task :ruby_preact_specs do
+task :node_modules do
+  system("yarn install")
+end
+
+task :specs => :node_modules do
   puts <<~'ASCII'
   _____                     _   
  |  __ \                   | |  
@@ -18,7 +22,7 @@ task :ruby_preact_specs do
 
   ASCII
   pwd = Dir.pwd
-  Dir.chdir('ruby/test_app_preact')
+  Dir.chdir('test_app_preact')
   FileUtils.rm_f('Gemfile.lock')
   FileUtils.rm_rf('spec')
   FileUtils.cp_r('../common_spec', 'spec')
@@ -38,15 +42,15 @@ task :ruby_preact_specs do
   Dir.chdir(pwd)
 end
 
-task :push_ruby_packages do
-  Rake::Task['push_ruby_packages_to_rubygems'].invoke
-  Rake::Task['push_ruby_packages_to_github'].invoke
+task :push_packages do
+  Rake::Task['push_packages_to_rubygems'].invoke
+  Rake::Task['push_packages_to_github'].invoke
 end
 
-task :push_ruby_packages_to_rubygems do
-  system("gem push ruby/isomorfeus-preact-#{Preact::VERSION}.gem")
+task :push_packages_to_rubygems do
+  system("gem push isomorfeus-preact-#{Preact::VERSION}.gem")
 end
 
-task :push_ruby_packages_to_github do
-  system("gem push --key github --host https://rubygems.pkg.github.com/isomorfeus ruby/isomorfeus-preact-#{Preact::VERSION}.gem")
+task :push_packages_to_github do
+  system("gem push --key github --host https://rubygems.pkg.github.com/isomorfeus isomorfeus-preact-#{Preact::VERSION}.gem")
 end
