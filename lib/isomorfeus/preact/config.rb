@@ -141,7 +141,9 @@ module Isomorfeus
   end
 
   class << self
-    def raise_error(error_class: nil, message: nil, stack: nil)
+    def raise_error(error: nil, error_class: nil, message: nil, stack: nil)
+      error_class = error.class unless error == nil
+        
       error_class = RuntimeError unless error_class
       execution_environment = if on_browser? then 'on Browser'
                               elsif on_ssr? then 'in Server Side Rendering'
@@ -151,8 +153,13 @@ module Isomorfeus
                               else
                                 'on Client'
                               end
-      error = error_class.new("Isomorfeus in #{env} #{execution_environment}:\n#{message}")
-      error.set_backtrace(stack) if stack
+      if error
+        message = error.message
+        stack = error.backtrace
+      else
+        error = error_class.new("Isomorfeus in #{env} #{execution_environment}:\n#{message}")
+        error.set_backtrace(stack) if stack
+      end
 
       ecn = error_class ? error_class.name : ''
       m = message ? message : ''
@@ -160,7 +167,7 @@ module Isomorfeus
       if RUBY_ENGINE == 'opal'
         `console.error(ecn, m, s)` if Isomorfeus.development?
       else
-        STDERR.puts "#{ecn}: #{m}\n #{s.join("\n")}"
+        STDERR.puts "#{ecn}: #{m}\n #{s.is_a?(Array) ? s.join("\n") : s}"
       end
       raise error
     end
