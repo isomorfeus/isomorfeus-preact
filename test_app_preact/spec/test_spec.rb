@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe 'opal-webpack-loader compiled successfully' do
+RSpec.describe 'isomorfeus-asset-manager compiled successfully' do
   it 'and opal code can be executed in the browser' do
     doc = visit('/')
     expect(doc.evaluate_script('1 + 4')).to eq(5)

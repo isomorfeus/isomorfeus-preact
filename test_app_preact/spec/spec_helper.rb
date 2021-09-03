@@ -6,11 +6,8 @@ require 'rspec/expectations'
 require 'isomorfeus-puppetmaster'
 require_relative '../test_app_app'
 
-ASSETS_COMPILED ||= system('yarn run production_build')
-
 Isomorfeus::Puppetmaster.download_path = File.join(Dir.pwd, 'download_path_tmp')
-Isomorfeus::Puppetmaster.driver = :chrome
-Isomorfeus::Puppetmaster.server = :iodine
+Isomorfeus::Puppetmaster.driver = :chromium
 Isomorfeus::Puppetmaster.app = TestAppApp
 Isomorfeus::Puppetmaster.boot_app
 
