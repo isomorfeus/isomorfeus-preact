@@ -1,16 +1,20 @@
 require_relative 'app_loader'
 
+Isomorfeus.server_side_rendering = true
+
 class TestAppApp < Roda
   include Isomorfeus::PreactViewHelper
+  extend Isomorfeus::Transport::Middlewares
+  use_isomorfeus_middlewares
 
   plugin :public, root: 'public'
 
   def page_content(host, location)
-    STDERR.puts "AHA"
     rendered_tree = mount_component('TestAppApp', { location_host: host, location: location })
     <<~HTML
       <html>
         <head>
+          <meta charset="UTF-8">
           <title>Welcome to TestAppApp</title>
           #{script_tag 'web.js'}
           <style id="css-server-side" type="text/css">#{ssr_styles}</style>
@@ -25,7 +29,11 @@ class TestAppApp < Roda
 
   route do |r|
     r.root do
-      page_content(env['HTTP_HOST'], '/')
+      begin
+        page_content(env['HTTP_HOST'], '/')
+      rescue Exception => e
+        Isomorfeus.raise_error(error: e)
+      end
     end
 
     r.public
@@ -39,6 +47,7 @@ class TestAppApp < Roda
       content = <<~HTML
       <html>
         <head>
+          <meta charset="UTF-8">
           <title>Welcome to TestAppApp</title>
           <style id="css-server-side" type="text/css">#{ssr_styles}</style>
         </head>
