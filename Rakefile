@@ -8,7 +8,7 @@ require_relative 'lib/preact/version'
 task :default => :specs
 
 task :node_modules do
-  system("yarn install")
+  system("npm install")
 end
 
 task :specs => :node_modules do
@@ -27,7 +27,6 @@ task :specs => :node_modules do
   FileUtils.rm_rf('spec')
   FileUtils.cp_r('../common_spec', 'spec')
   FileUtils.rm_rf('public/assets')
-  system('yarn install')
   if Gem.win_platform?
     Bundler.with_original_env do
       system('bundle install')
