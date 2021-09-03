@@ -5,13 +5,12 @@ RSpec.describe 'Component benchmarks' do
     doc = visit('/')
     doc.wait_for('#test_anchor')
     preact_lt, preact_rt, redux_rt, app_lt = doc.evaluate_ruby do
-      [IR_LOAD_TIME, IR_REACT_REQUIRE_TIME, IX_REQUIRE_TIME, APP_LOAD_TIME]
+      [IP_LOAD_TIME, IP_REQUIRE_TIME, IX_REQUIRE_TIME, APP_LOAD_TIME]
     end
-    puts "opal load time: #{app_lt - (redux_rt + preact_rt + preact_lt)}ms"
     puts "isomorfeus-redux require time: #{redux_rt}ms"
     puts "isomorfeus-preact require time: #{preact_rt}ms"
     puts "isomorfeus-preact start_app! time: #{preact_lt}ms"
-    puts "application load_time: #{app_lt}ms"
+    puts "application load_time (not including js imports and opal): #{app_lt}ms"
     expect(app_lt < 500).to be true
   end
 
