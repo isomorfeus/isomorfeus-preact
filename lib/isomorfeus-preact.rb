@@ -68,8 +68,9 @@ else
   require 'opal'
   require 'opal-activesupport'
   require 'opal-zeitwerk'
-  require 'isomorfeus-redux'
   require 'isomorfeus-speednode'
+  require 'isomorfeus-asset-manager'
+  require 'isomorfeus-redux'
   require 'preact/version'
   require 'isomorfeus/preact/config'
 
@@ -104,7 +105,6 @@ else
   Isomorfeus.zeitwerk_lock = Concurrent::ReentrantReadWriteLock.new if Isomorfeus.development?
   # nothing to push_dir to zeitwerk here, as components are available only within browser/SSR
 
-  require 'isomorfeus-asset-manager'
   require 'isomorfeus/preact/imports'
   Isomorfeus.node_paths << File.expand_path(File.join(File.dirname(__FILE__), '..', 'node_modules'))
   Isomorfeus::Preact::Imports.add
