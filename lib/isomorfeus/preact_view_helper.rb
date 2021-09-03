@@ -31,7 +31,9 @@ module Isomorfeus
             runtime.vm.delete_context(uuid)
           end
           begin
-            asset = asset_manager.transition(asset_key)
+            asset = Isomorfeus.assets[asset_key]
+            raise "#{self.class.name}: Asset not found: #{asset_key}" unless asset
+            asset_manager.transition(asset_key, asset)
             Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
           rescue Exception => e
             Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
@@ -39,7 +41,9 @@ module Isomorfeus
         else
           # initialize speednode context
           unless Isomorfeus.ssr_contexts.key?(thread_id_asset)
-            asset = asset_manager.transition(asset_key)
+            asset = Isomorfeus.assets[asset_key]
+            raise "#{self.class.name}: Asset not found: #{asset_key}" unless asset
+            asset_manager.transition(asset_key, asset)
             Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
           end
         end
@@ -83,7 +87,11 @@ module Isomorfeus
           } else { return global.FirstPassFinished = true; };
         JAVASCRIPT
         # execute first render pass
-        first_pass_skipped = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+        begin
+          first_pass_skipped = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+        rescue Exception => e
+          Isomorfeus.raise_error(error: e)
+        end
         # wait for first pass to finish
         unless first_pass_skipped
           first_pass_finished, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec('return [global.FirstPassFinished, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
