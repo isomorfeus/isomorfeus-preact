@@ -39,6 +39,7 @@ yarn-debug.log*
 
 /vendor/bundle
 Gemfile.lock
+package-lock.json
 yarn.lock
 .idea
 .vscode
