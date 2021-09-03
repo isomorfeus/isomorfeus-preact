@@ -7,15 +7,15 @@ module LucidApp
       %x{
         let og = Opal.global;
         nano_css = (css_server) ? og.NanoCSS.create({ sh: css_server }) : og.NanoCSS.create();
-        og.NanoCSSAddOns.rule(nano_css);
-        og.NanoCSSAddOns.sheet(nano_css);
-        og.NanoCSSAddOns.nesting(nano_css);
-        og.NanoCSSAddOns.hydrate(nano_css);
-        og.NanoCSSAddOns.unitless(nano_css);
-        og.NanoCSSAddOns.global(nano_css);
-        og.NanoCSSAddOns.keyframes(nano_css);
-        og.NanoCSSAddOns.fade_in(nano_css);
-        og.NanoCSSAddOns.fade_out(nano_css);
+        og.NanoCSSAddons.rule(nano_css);
+        og.NanoCSSAddons.sheet(nano_css);
+        og.NanoCSSAddons.nesting(nano_css);
+        og.NanoCSSAddons.hydrate(nano_css);
+        og.NanoCSSAddons.unitless(nano_css);
+        og.NanoCSSAddons.global(nano_css);
+        og.NanoCSSAddons.keyframes(nano_css);
+        og.NanoCSSAddons.fadeIn(nano_css);
+        og.NanoCSSAddons.fadeOut(nano_css);
         og.NanoCSSInstance = nano_css;
       }
       Preact.create_context('LucidApplicationContext', { iso_store: Isomorfeus.store, nano_css: nano_css })
