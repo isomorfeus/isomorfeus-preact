@@ -2,11 +2,11 @@ module Isomorfeus
   module Preact
     module Imports
       def self.add
-        Isomorfeus.add_common_js_import('preact', 'Preact')
-        Isomorfeus.add_common_js_import('preact/hooks', 'PreactHooks')
+        Isomorfeus.add_common_js_import('preact', 'Preact', '*')
+        Isomorfeus.add_common_js_import('preact/hooks', 'PreactHooks', '*')
         Isomorfeus.add_common_js_import('wouter-preact', nil, ['Router', 'Link', 'Redirect', 'Route', 'Switch'])
 
-        Isomorfeus.add_common_js_import('nano-css', 'NanoCSS')
+        Isomorfeus.add_common_js_import('nano-css', 'NanoCSS', '*')
         %w[rule sheet nesting hydrate unitless global keyframes].each do |addon|
           Isomorfeus.add_common_js_import("nano-css/addon/#{addon}", 'NanoCSSAddons', 'addon', addon)
         end
