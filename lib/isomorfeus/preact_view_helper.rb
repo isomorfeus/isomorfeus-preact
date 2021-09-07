@@ -47,6 +47,14 @@ module Isomorfeus
             Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
           end
         end
+
+        # if location_host and scheme are given and if Transport is loaded, connect and then render,
+        # otherwise do not render because only one pass is required
+        ws_scheme = props[:location_scheme] == 'https:' ? 'wss:' : 'ws:'
+        location_host = props[:location_host] ? props[:location_host] : 'localhost'
+        api_ws_path = Isomorfeus.respond_to?(:api_websocket_path) ? Isomorfeus.api_websocket_path : ''
+        transport_ws_url = ws_scheme + location_host + api_ws_path
+
         # build javascript for rendering first pass
         # it will initialize buffers to guard against leaks, maybe caused by previous exceptions
         javascript = <<~JAVASCRIPT
@@ -63,14 +71,6 @@ module Isomorfeus
           global.Opal.Isomorfeus['$force_init!']();
           global.Opal.Isomorfeus['$ssr_response_status='](200);
           global.Opal.Isomorfeus.TopLevel['$ssr_route_path=']('#{props[:location]}');
-        JAVASCRIPT
-        # if location_host and scheme are given and if Transport is loaded, connect and then render,
-        # otherwise do not render because only one pass is required
-        ws_scheme = props[:location_scheme] == 'https:' ? 'wss:' : 'ws:'
-        location_host = props[:location_host] ? props[:location_host] : 'localhost'
-        api_ws_path = Isomorfeus.respond_to?(:api_websocket_path) ? Isomorfeus.api_websocket_path : ''
-        transport_ws_url = ws_scheme + location_host + api_ws_path
-        javascript << <<~JAVASCRIPT
           let api_ws_path = '#{api_ws_path}';
           let exception;
           if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && api_ws_path !== '') {
