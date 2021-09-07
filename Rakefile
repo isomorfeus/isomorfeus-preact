@@ -52,7 +52,7 @@ task :push_packages_to_github do
   system("gem push --key github --host https://rubygems.pkg.github.com/isomorfeus isomorfeus-preact-#{Preact::VERSION}.gem")
 end
 
-task :push_to_repos do
+task :push do
   system("git push github")
   system("git push gitlab")
   system("git push bitbucket")
