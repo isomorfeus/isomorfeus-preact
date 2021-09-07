@@ -142,14 +142,12 @@ module Isomorfeus
 
   class << self
     def raise_error(error: nil, error_class: nil, message: nil, stack: nil)
-      error_class = error.class unless error == nil
+      error_class = error.class if error
         
       error_class = RuntimeError unless error_class
       execution_environment = if on_browser? then 'on Browser'
                               elsif on_ssr? then 'in Server Side Rendering'
                               elsif on_server? then 'on Server'
-                              elsif on_mobile? then 'on Mobile'
-                              elsif on_database? then 'on Database'
                               else
                                 'on Client'
                               end
