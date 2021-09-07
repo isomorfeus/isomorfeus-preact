@@ -5,8 +5,6 @@ require 'fileutils'
 
 require_relative 'lib/preact/version'
 
-task :default => :specs
-
 task :node_modules do
   system("npm install")
 end
@@ -59,3 +57,5 @@ task :push_to_repos do
   system("git push gitlab")
   system("git push bitbucket")
 end
+
+task :default => :specs
