@@ -54,16 +54,4 @@ RSpec.describe 'Server Side Rendering' do
     @doc = visit('/whatever')
     expect(@doc.response.status).to eq(404)
   end
-
-  it 'allows skipping of ssr' do
-    skip unless Isomorfeus.server_side_rendering
-    fix = <<~JAVASCRIPT
-    <script type='application/javascript'>
-    ServerSideRenderingStateJSON = null
-    </script>
-    <div data-iso-env="test" data-iso-root="TestAppApp" data-iso-props='{"location_host":"localhost","location":"/"}' data-iso-nloc=''></div>
-    JAVASCRIPT
-    result = mount_component('TestAppApp', { location_host: 'localhost', location: '/' }, 'ssr.js', skip_ssr: true)
-    expect(result).to eq(fix.chop)
-  end
 end
