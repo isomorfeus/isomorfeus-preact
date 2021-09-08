@@ -1,7 +1,5 @@
 require_relative 'app_loader'
 
-Isomorfeus.server_side_rendering = true
-
 class TestAppApp < Roda
   include Isomorfeus::PreactViewHelper
   extend Isomorfeus::Transport::Middlewares
@@ -10,7 +8,9 @@ class TestAppApp < Roda
   plugin :public, root: 'public'
 
   def page_content(host, location)
-    rendered_tree = mount_component('TestAppApp', { location_host: host, location: location })
+    req = Rack::Request.new(env)
+    skip_ssr = req.params.has_key?("skip_ssr") ? true : false
+    rendered_tree = mount_component('TestAppApp', { location_host: host, location: location }, 'ssr.js', skip_ssr: skip_ssr)
     <<~HTML
       <html>
         <head>

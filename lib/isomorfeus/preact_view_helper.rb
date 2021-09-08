@@ -16,12 +16,12 @@ module Isomorfeus
       render_result
     end
 
-    def mount_component(component_name, props = {}, asset_key = 'ssr.js')
+    def mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false)
       @ssr_response_status = nil
       @ssr_styles = nil
       thread_id_asset = "#{Thread.current.object_id}#{asset_key}"
       render_result = "<div data-iso-env=\"#{Isomorfeus.env}\" data-iso-root=\"#{component_name}\" data-iso-props='#{Oj.dump(props, mode: :strict)}'"
-      if Isomorfeus.server_side_rendering
+      if !skip_ssr && Isomorfeus.server_side_rendering
         if Isomorfeus.development?
           # always create a new context, effectively reloading code
           # delete the existing context first, saves memory
