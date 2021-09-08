@@ -5,6 +5,32 @@ RSpec.describe 'Props declaration and validation' do
     @doc = visit('/')
   end
 
+  it 'sets default value' do
+    result = on_server do
+      class PropWhatever
+        extend LucidPropDeclaration::Mixin
+
+        prop :test_a, type: String, default: 'a value'
+        prop :test_b, type: String
+      end
+
+      PropWhatever.validated_props(test_b: 'bill@gates.com')
+    end
+    expect(result).to eq({test_a: 'a value', test_b: 'bill@gates.com'})
+
+    result = @doc.evaluate_ruby do
+      class PropWhatever
+        extend LucidPropDeclaration::Mixin
+
+        prop :test_a, type: String, default: 'a value'
+        prop :test_b, type: String
+      end
+
+      PropWhatever.validated_props(test_b: 'bill@gates.com').to_n
+    end
+    expect(result).to eq({'test_a' => 'a value', 'test_b' => 'bill@gates.com'})
+  end
+
   it 'works even though a ensure_block did not return anything' do
     result = on_server do
       class PropWhatever
