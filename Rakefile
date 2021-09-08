@@ -9,7 +9,7 @@ task :node_modules do
   system("npm install")
 end
 
-task :specs => :node_modules do
+task :specs do
   puts <<~'ASCII'
   _____                     _   
  |  __ \                   | |  
