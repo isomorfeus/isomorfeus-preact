@@ -5,15 +5,13 @@ For full functionality the following are required:
 
 Ruby Gems:
 
-- [Opal with ES6 modules](https://github.com/opal/opal/pull/1976)
-- [Opal Webpack Loader](https://github.com/isomorfeus/opal-webpack-loader)
+- [Opal with ES6 modules](https://github.com/opal/opal/pull/2266)
 - [Opal-Zeitwerk Autoloader](https://github.com/isomorfeus/opal-zeitwerk)
 
 For the Gemfile:
 ```ruby
-gem 'opal', github: 'janbiedermann/opal', branch: 'es6_modules_1_1'
-gem 'opal-webpack-loader', '~> 0.12.0'
-gem 'isomorfeus-preact', '>= 10.5.0'
+gem 'opal', github: 'janbiedermann/opal', branch: 'es6_modules_1_2'
+gem 'isomorfeus-preact', '~> 10.5.5'
 ```
 
 Required Javascript Npms:
@@ -29,7 +27,6 @@ Required Javascript Npms:
 
 For package.json:
 ```json
-    "opal-webpack-loader": "^0.11.4",
     "preact": "^10.5.14",
     "preact-deep-force-update": "^0.1.0",
     "preact-render-to-string": "^5.1.19",
