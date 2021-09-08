@@ -19,7 +19,7 @@ Some Javascript components accept another Javascript component as property, like
 instead the Javascript Preact component of the Ruby class must be passed.
 It can be accessed by using Opals JS syntax to get the Preact Component of the Ruby class:
 ```ruby
-Route(path: '/', strict: true, component: MyComponent.JS[:react_component])
+Route(path: '/', strict: true, component: MyComponent.JS[:preact_component])
 ```
 
 Native Javascript components can be passed using the Javascript inlining of Opal, this also works for function components.
