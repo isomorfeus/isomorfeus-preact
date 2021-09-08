@@ -22,17 +22,11 @@ task :specs do
   pwd = Dir.pwd
   Dir.chdir('test_app_preact')
   FileUtils.rm_f('Gemfile.lock')
-  FileUtils.rm_rf('spec')
-  FileUtils.cp_r('../common_spec', 'spec')
-  FileUtils.rm_rf('public/assets')
-  if Gem.win_platform?
-    Bundler.with_original_env do
-      system('bundle install')
+  Bundler.with_clean_env do
+    system('bundle install')
+    if Gem.win_platform?  
       system('bundle exec rspec')
-    end
-  else  
-    Bundler.with_original_env do
-      system('bundle install')
+    else
       system('THREADS=4 WORKERS=1 bundle exec rspec')
     end
   end
