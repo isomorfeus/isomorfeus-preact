@@ -65,7 +65,7 @@ module Isomorfeus
       def type!
         return if @o[:allow_nil] && @v.nil?
         if @o.key?(:class)
-          Isomorfeus.raise_error(message: "#{@c}: #{@p} class not #{@o[:class]}") unless @v.class == @o[:class]
+          Isomorfeus.raise_error(message: "#{@c}: #{@p} class is not #{@o[:class]}") unless @v.class == @o[:class]
         elsif @o.key?(:is_a)
           Isomorfeus.raise_error(message: "#{@c}: #{@p} is not a #{@o[:is_a]}") unless @v.is_a?(@o[:is_a])
         elsif @o.key?(:type)
