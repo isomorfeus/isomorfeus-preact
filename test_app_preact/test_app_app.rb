@@ -9,7 +9,7 @@ class TestAppApp < Roda
 
   def page_content(host, location)
     req = Rack::Request.new(env)
-    skip_ssr = req.params.has_key?("skip_ssr") ? true : false
+    skip_ssr = req.params.key?("skip_ssr") ? true : false
     rendered_tree = mount_component('TestAppApp', { location_host: host, location: location }, 'ssr.js', skip_ssr: skip_ssr)
     <<~HTML
       <html>
