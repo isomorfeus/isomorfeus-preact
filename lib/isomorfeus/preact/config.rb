@@ -87,22 +87,11 @@ module Isomorfeus
       end
 
       def force_render
-        begin
-          if Isomorfeus.top_component
-            Preact.find_dom_node(Isomorfeus.top_component) if on_browser? || on_desktop? # if not mounted will raise
-            if `typeof Opal.global.deepForceUpdate === 'undefined'`
-              Isomorfeus.top_component.JS.forceUpdate()
-            else
-              `Opal.global.deepForceUpdate(#{Isomorfeus.top_component})`
-            end
-          end
-        rescue Exception => e
-          # TODO try mount first
-          # if it fails
-          `console.error("force_render failed'! Error: " + #{e.message} + "! Reloading page.")`
-          `location.reload()` if on_browser?
-        end
+        `Opal.Preact.deep_force_update(#{Isomorfeus.top_component})`
         nil
+      rescue Exception => e
+        `console.error("force_render failed'! Error: " + #{e.message} + "! Reloading page.")`
+        `location.reload()` if on_browser?
       end
     end
 
