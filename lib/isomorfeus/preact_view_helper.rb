@@ -31,20 +31,13 @@ module Isomorfeus
             runtime.vm.delete_context(uuid)
           end
           begin
-            asset = Isomorfeus.assets[asset_key]
-            raise "#{self.class.name}: Asset not found: #{asset_key}" unless asset
-            asset_manager.transition(asset_key, asset)
-            Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
+            init_speednode_context(asset_key, thread_id_asset)
           rescue Exception => e
             Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
           end
         else
-          # initialize speednode context
           unless Isomorfeus.ssr_contexts.key?(thread_id_asset)
-            asset = Isomorfeus.assets[asset_key]
-            raise "#{self.class.name}: Asset not found: #{asset_key}" unless asset
-            asset_manager.transition(asset_key, asset)
-            Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
+            init_speednode_context(asset_key, thread_id_asset)
           end
         end
 
@@ -175,6 +168,13 @@ module Isomorfeus
 
     def component_cache
       @_component_cache ||= Isomorfeus.component_cache_init_block.call
+    end
+
+    def init_speednode_context(asset_key, thread_id_asset)
+      asset = Isomorfeus.assets[asset_key]
+      raise "#{self.class.name}: Asset not found: #{asset_key}" unless asset
+      asset_manager.transition(asset_key, asset)
+      Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
     end
   end
 end
