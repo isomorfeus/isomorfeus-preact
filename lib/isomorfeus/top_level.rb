@@ -89,12 +89,9 @@ module Isomorfeus
           element = element_or_query
         end
 
-        top = if hydrated
-                Preact.hydrate(Preact.create_element(component, props), element)
-              else
-                Preact.render(Preact.create_element(component, props), element)
-              end
-        Isomorfeus.top_component = top if top
+        top = Preact.create_element(component, props)
+        hydrated ? Preact.hydrate(top, element) : Preact.render(top, element)
+        Isomorfeus.top_component = top
       end
     end
   end
