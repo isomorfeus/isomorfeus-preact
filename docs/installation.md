@@ -11,7 +11,7 @@ Ruby Gems:
 For the Gemfile:
 ```ruby
 gem 'opal', github: 'janbiedermann/opal', branch: 'es6_modules_1_2'
-gem 'isomorfeus-preact', '~> 10.5.5'
+gem 'isomorfeus-preact', '~> 10.5.6'
 ```
 
 Required Javascript Npms:
@@ -28,7 +28,6 @@ Required Javascript Npms:
 For package.json:
 ```json
     "preact": "^10.5.14",
-    "preact-deep-force-update": "^0.1.0",
     "preact-render-to-string": "^5.1.19",
     "nano-css": "^5.3.4",
     "wouter-preact": "^2.7.4",
@@ -82,8 +81,6 @@ global.NanoCSSAddOns = {
 
 Imports for the browser:
 ```javascript
-import deepForceUpdate from 'preact-deep-force-update';
-global.deepForceUpdate = deepForceUpdate;
 import locationHook from 'wouter-preact/use-location';
 global.locationHook = locationHook;
 ```
