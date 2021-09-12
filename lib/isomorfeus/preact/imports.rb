@@ -17,9 +17,6 @@ module Isomorfeus
         Isomorfeus.add_ssr_js_import('wouter-preact/static-location', 'staticLocationHook')
 
         Isomorfeus.add_web_js_import('wouter-preact/use-location', 'locationHook')
-        if Isomorfeus.development?
-          Isomorfeus.add_web_js_import('preact-deep-force-update', 'deepForceUpdate')
-        end
 
         if Dir.exist?(Isomorfeus.app_root)
           Isomorfeus.add_common_ruby_import('isomorfeus_loader') if File.exist?(File.join(Isomorfeus.app_root, 'isomorfeus_loader.rb'))
