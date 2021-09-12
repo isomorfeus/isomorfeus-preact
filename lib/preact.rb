@@ -213,6 +213,21 @@ module Preact
         operabu[operabu.length - 1].push(Opal.global.Preact.createElement(component, native_props));
       }
     };
+
+    self.deep_force_update = function(component) {
+      if (component.forceUpdate) { component.forceUpdate(); }
+      if (component.__c) { self.deep_force_update(component.__c); }
+      else if (component.base) { self.update_components_from_dom(component.base); }
+    };
+    
+    self.update_components_from_dom = function(node, fn) {
+      let children = node.childNodes;
+      for (let i=children && children.length; i--;) {
+        let child = children[i];
+        if (child.__c) { self.deep_force_update(child.__c); }
+        else { self.update_components_from_dom(child, fn); }
+      }
+    };
   }
 
 
@@ -264,13 +279,8 @@ module Preact
     Preact::Ref.new(`Opal.global.Preact.createRef()`)
   end
 
-  def self.hydrate(native_preact_element, container_node, replace_node, &block)
-    # container is a native DOM element
-    if block_given?
-      `Opal.global.Preact.hydrate(native_preact_element, container_node, function() { block.$call() })`
-    else
-      `Opal.global.Preact.hydrate(native_preact_element, container_node)`
-    end
+  def self.hydrate(native_preact_element, container_node, replace_node)
+    `Opal.global.Preact.hydrate(native_preact_element, container_node)`
   end
 
   def self.location_hook(location)
