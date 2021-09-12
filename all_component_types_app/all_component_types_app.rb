@@ -8,11 +8,11 @@ class AllComponentTypesApp < Roda
   plugin :public, root: 'public'
 
   def page_content(env, location)
-
     begin
       <<~HTML
         <html>
           <head>
+            <meta charset="UTF-8">
             <title>Welcome to AllComponentTypesApp</title>
             #{script_tag 'web.js'}
             <style id="css-server-side" type="text/css">#{ssr_styles}</style>
