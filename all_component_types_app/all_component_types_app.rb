@@ -1,23 +1,24 @@
 require_relative 'app_loader'
-require_relative 'owl_init'
-require_relative 'iodine_config'
 
 class AllComponentTypesApp < Roda
-  include OpalWebpackLoader::ViewHelper
   include Isomorfeus::PreactViewHelper
+  extend Isomorfeus::Transport::Middlewares
+  use_isomorfeus_middlewares
 
   plugin :public, root: 'public'
 
   def page_content(env, location)
+
     begin
       <<~HTML
         <html>
           <head>
             <title>Welcome to AllComponentTypesApp</title>
-            #{owl_script_tag 'application.js'}
+            #{script_tag 'web.js'}
+            <style id="css-server-side" type="text/css">#{ssr_styles}</style>
           </head>
           <body>
-            #{mount_component('AllComponentTypesApp', { location_host: env['HTTP_HOST'], location: location }, 'application_ssr.js')}
+            #{mount_component('AllComponentTypesApp', { location_host: env['HTTP_HOST'], location: location })}
           </body>
         </html>
       HTML
@@ -29,7 +30,9 @@ class AllComponentTypesApp < Roda
 
   route do |r|
     r.root do
-      page_content(env, '/')
+      content = page_content(env, '/')
+      response.status = ssr_response_status
+      content
     end
 
     r.public
