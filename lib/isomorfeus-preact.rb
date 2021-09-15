@@ -59,7 +59,7 @@ if RUBY_ENGINE == 'opal'
   Isomorfeus.zeitwerk = Zeitwerk::Loader.new
 
   Isomorfeus.zeitwerk.push_dir('isomorfeus_preact')
-  require_tree 'isomorfeus_preact', :autoload
+  require_tree 'isomorfeus_preact', autoload: true
 
   Isomorfeus.zeitwerk.push_dir('components')
 else
