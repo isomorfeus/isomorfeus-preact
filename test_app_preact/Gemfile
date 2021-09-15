@@ -5,7 +5,7 @@ gem 'wdm', '>= 0.1.0' if Gem.win_platform?
 gem 'iodine', '~> 0.7.44'
 gem 'roda', '~> 3.47.0'
 
-gem 'opal', github: 'janbiedermann/opal', branch: 'es6_modules_1_2'
+gem 'opal', github: 'janbiedermann/opal', branch: 'iso_for_master'
 gem 'isomorfeus-policy', path: '../../isomorfeus-project/isomorfeus-policy'
 gem 'isomorfeus-transport', path: '../../isomorfeus-project/isomorfeus-transport'
 gem 'isomorfeus-preact', path: '..'
