@@ -39,7 +39,7 @@ IP_REQUIRE_TIME = (Time.now - i_start) * 1000
   Opal.global.NestedNative.AnotherComponent = AnotherComponent;
 }
 
-require_tree 'components', :autoload
+require_tree 'components', autoload: true
 i_start = Time.now
 Isomorfeus.start_app!
 IP_LOAD_TIME = (Time.now - i_start) * 1000
