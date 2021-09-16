@@ -11,7 +11,7 @@ Ruby Gems:
 For the Gemfile:
 ```ruby
 gem 'opal', github: 'janbiedermann/opal', branch: 'iso_for_master'
-gem 'isomorfeus-preact', '~> 10.5.6'
+gem 'isomorfeus-preact', '~> 10.5.7'
 ```
 
 Required Javascript Npms:
