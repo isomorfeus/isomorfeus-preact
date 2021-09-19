@@ -144,7 +144,7 @@ module NanoCSS
                   if (typeof block !== 'string') {
                       throw new TypeError(
                           'nano-css block name must be a string. ' +
-                          'For example, use nano.rule({color: "red", "RedText"}).'
+                          'For example, use nano.rule({color: "red"}, "RedText").'
                       );
                   }
   
