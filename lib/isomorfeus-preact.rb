@@ -19,6 +19,9 @@ if RUBY_ENGINE == 'opal'
     require 'isomorfeus/top_level_ssr'
   end
 
+  # nanocss
+  require 'nano_css'
+  
   # preact
   require 'preact/version'
   require 'preact'
