@@ -1,7 +1,6 @@
 {
   "name": "isomorfeus-preact",
   "dependencies": {
-    "nano-css": "^5.3.4",
     "preact": "10.5.14",
     "preact-render-to-string": "5.1.19",
     "wouter-preact": "^2.7.4"
