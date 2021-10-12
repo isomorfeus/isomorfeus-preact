@@ -25,11 +25,11 @@ Gem::Specification.new do |s|
   # TEXT
 
   s.add_dependency 'concurrent-ruby', '~> 1.1.9'
-  s.add_dependency 'oj', '~> 3.13.7'
+  s.add_dependency 'oj', '~> 3.13.9'
   s.add_dependency 'opal', '>= 1.2.0'
   s.add_dependency 'opal-activesupport', '~> 0.3.3'
   s.add_dependency 'opal-zeitwerk', '~> 0.2.1'
-  s.add_dependency 'isomorfeus-asset-manager', '~> 0.12.8'
+  s.add_dependency 'isomorfeus-asset-manager', '>= 0.12.0'
   s.add_dependency 'isomorfeus-redux', '~> 4.1.6'
   s.add_dependency 'isomorfeus-speednode', '~> 0.4.2'
   s.add_dependency 'dalli', '>= 2.7.11'
