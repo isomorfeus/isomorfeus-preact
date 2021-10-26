@@ -11,20 +11,20 @@ end
 
 task :specs do
   puts <<~'ASCII'
-  _____                     _   
- |  __ \                   | |  
- | |__) | __ ___  __ _  ___| |_ 
+  _____                     _
+ |  __ \                   | |
+ | |__) | __ ___  __ _  ___| |_
  |  ___/ '__/ _ \/ _` |/ __| __|
- | |   | | |  __/ (_| | (__| |_ 
+ | |   | | |  __/ (_| | (__| |_
  |_|   |_|  \___|\__,_|\___|\__|
 
   ASCII
   pwd = Dir.pwd
   Dir.chdir('test_app_preact')
   FileUtils.rm_f('Gemfile.lock')
-  Bundler.with_clean_env do
+  Bundler.with_unbundled_env do
     system('bundle install')
-    if Gem.win_platform?  
+    if Gem.win_platform?
       system('bundle exec rspec')
     else
       system('THREADS=4 WORKERS=1 bundle exec rspec')
