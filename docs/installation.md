@@ -10,7 +10,7 @@ Ruby Gems:
 
 For the Gemfile:
 ```ruby
-gem 'opal', github: 'janbiedermann/opal', branch: 'iso_for_master'
+gem 'opal', '~> 1.3.0'
 gem 'isomorfeus-preact', '~> 10.5.7'
 ```
 
