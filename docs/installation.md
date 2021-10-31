@@ -11,7 +11,7 @@ Ruby Gems:
 For the Gemfile:
 ```ruby
 gem 'opal', '~> 1.3.0'
-gem 'isomorfeus-preact', '~> 10.5.7'
+gem 'isomorfeus-preact', '~> 10.5.10'
 ```
 
 Required Javascript Npms:
