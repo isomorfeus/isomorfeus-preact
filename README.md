@@ -13,8 +13,6 @@ Isomorfeus-preact 10.5.x implements features and the API of Preact 10.5.y and sh
 
 ## Documentation
 
-- [Installation](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/installation.md)
-
 Because isomorfeus-preact follows closely the Preact principles/implementation/API and Documentation, most things of the official Preact documentation
 apply, but in the Ruby way, see:
 - [https://preactjs.com/guide/v10/getting-started](https://preactjs.com/guide/v10/getting-started)
@@ -27,8 +25,7 @@ Component Types:
 - [React Javascript Components and React Elements](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/javascript_component.md)
 
 Which component to use?
-- Usually LucidApp and LucidComponent along with some imported javascript components.
-- For MaterialUI LucidMaterial::App and LucidMaterial::Component along with some imported javascript components.
+- Usually LucidApp and LucidComponent.
 
 Specific to Class, Lucid and LucidMaterial Components:
 - [Events](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/events.md)
@@ -47,7 +44,7 @@ Special React Features:
 - [Refs](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/refs.md)
 
 Other Features:
-- [Hot Module Reloading](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/hot_module_relaoding.md)
+- [Hot Module Reloading](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/hot_module_reloading.md)
 - [Server Side Rendering](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/server_side_rendering.md)
 - [Using Wouter as Router](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/wouter.md)
 - [Isomorfeus Helpers](https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/isomorfeus_helpers.md)
