@@ -135,13 +135,13 @@ module Isomorfeus
         Isomorfeus.raise_error(message: exception['message'], stack: exception['stack']) if exception
         render_result << " data-iso-hydrated='true'" if rendered_tree
         if Isomorfeus.respond_to?(:current_user) && Isomorfeus.current_user && !Isomorfeus.current_user.anonymous?
-          render_result << " data-iso-usid=#{Oj.dump(Isomorfeus.current_user.to_sid, mode: :strict)}"
+          render_result << " data-iso-usid=#{Oj.dump(Isomorfeus.current_user.sid, mode: :strict)}"
         end
         render_result << " data-iso-nloc='#{props[:locale]}'>"
         render_result << (rendered_tree ? rendered_tree : "SSR didn't work")
       else
         if Isomorfeus.respond_to?(:current_user) && Isomorfeus.current_user && !Isomorfeus.current_user.anonymous?
-          render_result << " data-iso-usid=#{Oj.dump(Isomorfeus.current_user.to_sid, mode: :strict)}"
+          render_result << " data-iso-usid=#{Oj.dump(Isomorfeus.current_user.sid, mode: :strict)}"
         end
         render_result << " data-iso-nloc='#{props[:locale]}'>"
       end
