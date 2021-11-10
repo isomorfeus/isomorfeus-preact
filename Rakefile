@@ -25,9 +25,9 @@ task :specs do
   Bundler.with_unbundled_env do
     system('bundle install')
     if Gem.win_platform?
-      system('bundle exec rspec')
+      raise unless system('bundle exec rspec')
     else
-      system('THREADS=4 WORKERS=1 bundle exec rspec')
+      raise unless system('THREADS=4 WORKERS=1 bundle exec rspec')
     end
   end
   Dir.chdir(pwd)
