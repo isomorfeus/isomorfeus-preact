@@ -6,8 +6,8 @@ gem 'isomorfeus-iodine', '~> 0.7.45'
 gem 'roda', '~> 3.49.0'
 
 gem 'opal', '~> 1.3.0'
-gem 'isomorfeus-policy', '>= 2.0.0.rc1'
-gem 'isomorfeus-transport', '>= 2.0.0.rc1'
+gem 'isomorfeus-policy', '>= 2.0.0.rc2'
+gem 'isomorfeus-transport', '>= 2.0.0.rc2'
 gem 'isomorfeus-preact', path: '..'
 
 group :test do
