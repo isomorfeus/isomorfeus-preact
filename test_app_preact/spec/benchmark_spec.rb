@@ -34,7 +34,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 Native DIV Elements took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'DIV Element (String param)' do
@@ -55,7 +55,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 DIV Elements (String param) took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'DIV Element (String block)' do
@@ -76,7 +76,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 DIV Elements (String block) took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'Native Component' do
@@ -97,7 +97,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 Native Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'Function Component' do
@@ -123,7 +123,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 Function Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'Preact Component' do
@@ -149,7 +149,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 Preact Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'Lucid Func' do
@@ -175,7 +175,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 Lucid Funcs took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'Lucid Component' do
@@ -201,7 +201,7 @@ RSpec.describe 'Component benchmarks' do
       (Time.now - start) * 1000
     end
     puts "10000 Lucid Components took: #{time}ms"
-    expect(time > 0 && time < 1000).to be_truthy
+    expect(time > 0 && time < 10000).to be_truthy
   end
 
   it 'Styled Lucid Component' do
