@@ -1,7 +1,7 @@
 <h1 align="center">
   <img src="https://github.com/isomorfeus/isomorfeus-preact/blob/master/Logo.png?raw=true" align="center" width="234" height="125" />
   <br/>
-  Isomorfeus Preact<br/>
+Isomorfeus Preact<br/>
 </h1>
 
 Develop Preact components for Opal Ruby along with very easy to use and advanced Preact-Redux Components.
