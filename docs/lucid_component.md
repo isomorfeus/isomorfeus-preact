@@ -15,7 +15,7 @@ LucidApp sets up a Preact::Context Provider, LucidComponent works as a Preact::C
 class MyComponent < LucidComponent::Base # is a Preact::Context Consumer
 
   render do
-    # in a LucidComponent state can be used for local state managed by react:
+    # in a LucidComponent state can be used for local state managed by preact:
     state.some_var
     # in addition to that, store can be used for local state managed by redux:
     store.a_var

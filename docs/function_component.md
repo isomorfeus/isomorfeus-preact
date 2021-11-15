@@ -1,8 +1,8 @@
 ### Function Components
-Function Components are created using a Ruby DSL that is used within the creator class. 
+Function Components are created using a Ruby DSL that is used within the creator class.
 ```ruby
 class MyFunctionComponent < Preact::FunctionComponent::Base
-  render do 
+  render do
     SPAN { props.text }
   end
 end
@@ -29,7 +29,7 @@ class MyFunctionComponent < Preact::MemoComponent::Base
   props_are_equal? do |prev_props, next_props|
     prev_props != next_props
   end
-  
+
   render do |props|
     SPAN { props.text }
   end
@@ -43,7 +43,7 @@ Preact.memo(`MyComponent`) do |prev_props, next_props|
 end
 ```
 #### Events
-The event_handler DSL can be used within the Preact::FunctionComponent::Creator. However, function component dont react by themselves to events,
+The event_handler DSL can be used within the Preact::FunctionComponent::Creator. However, function components dont react by themselves to events,
 the event handler must be applied to a element.
 ```ruby
 class MyFunctionComponent < Preact::FunctionComponent::Base
@@ -67,7 +67,7 @@ end
 ```ruby
 class MyFunctionComponent
   include Preact::FunctionComponent::Base
-  
+
   render do
     value, set_value = use_state('nothinghere')
     handler = proc { |event| set_value.call('somethinghere') }
@@ -85,7 +85,7 @@ class MyFunctionComponent
     use_effect do
       # show effect
     end
-   
+
     SPAN { props.text }
   end
 end
@@ -98,8 +98,8 @@ Preact.create_context('MyContext', 10)
 class MyFunctionComponent
   include Preact::FunctionComponent::Base
   render do
-    value = use_context(MyContext) 
-   
+    value = use_context(MyContext)
+
     SPAN { props.text }
   end
 end

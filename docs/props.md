@@ -32,7 +32,7 @@ class MyComponent < Preact::Component::Base
   prop :super # a required prop of any type
   prop :email_address, type: :email # special email type, email must be a string
   prop :website, type: :uri # special uri type, must contain uri scheme. uri must be a string
-  
+
   render do
     DIV { props.text }
   end
@@ -47,7 +47,7 @@ class MyComponent < Preact::Component::Base
   prop :cool, validate.default('yet some more text') # a optional prop with a default value
   prop :even_cooler, validate.String.optional # a optional prop, which when given, must be of class String
   prop :super # a required prop of any type
-  
+
   render do
     DIV { props.text }
   end
@@ -58,7 +58,7 @@ More complex variations are possible and can be expressed in a concise way:
 class MyComponent < Preact::Component::Base
   prop :float, validate.Float.cast.default(1.0).min(0.5).and.max(1.5)
   prop :text, validate.String.matches(/(a|b|c).*/).length(5)
-  
+
   render do
     DIV { props.float.to_s }
   end
@@ -121,7 +121,7 @@ prop :carpet, validate.exact_class(Carpet)
     - `is`
     - `has`
     - `with`
-    
+
 These methods are helper methods to express more clearly in language.
 Example: `prop :wine, validate.String.with.length(5).and.matches(/(a|b}.*/)`
 
@@ -133,7 +133,7 @@ Example:
 class MyComponent < Preact::Component::Base
   prop :float_a, ensure_block: proc { |v| v = 1 if v < 1; v }
   prop :float_b, validate.ensure { |v| v = 2 if v > 2; v }
-  
+
   render do
     DIV { props.float_a.to_s }
     DIV { props.float_b.to_s }
@@ -149,7 +149,7 @@ Example:
 class MyComponent < Preact::Component::Base
   prop :float_a, validate_block: proc { |v| raise 'error' unless v.is_a?(Float) }
   prop :float_b, validate.validate_block { |v| raise 'error' unless v.is_a?(Float) }
-  
+
   render do
     DIV { props.float_a.to_s }
     DIV { props.float_b.to_s }
@@ -174,7 +174,7 @@ MyClass.validated_prop(prop_name, prop_value) # returns the validated and ensure
 
 ### Passing methods in props of Components
 To prevent constant rerenders when using procs during render it is recommended to define methods instead and pass them by reference.
-Isomorfeus react provides the helper `method_ref(:method_name)` for doing so. Example:
+Isomorfeus Preact provides the helper `method_ref(:method_name)` for doing so. Example:
 
 ```ruby
 class MyComponent < LucidComponent::Base
@@ -192,7 +192,7 @@ class MyComponent < LucidComponent::Base
 
 end
 ```
- 
+
 ### Props Outside Components
 
 The props as above are used within the isomorfeus framework for isomorfeus-data classes and isomorfeus-operation.
@@ -206,7 +206,7 @@ This makes all of the above available.
 
 ### Props in Forms
 Especially when using LucidNodes from isomorfeus-data, but also for any other class with props, its helpful to have the form
-validate the input. The LucidPropsDeclaration::Mixin provides helper functions, that can be used with various react
+validate the input. The LucidPropsDeclaration::Mixin provides helper functions, that can be used with various preact
 form components to automatically do the validation. For validating all declared props, for example for a complete form:
 ```ruby
 MyClass.validate_function

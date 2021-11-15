@@ -2,7 +2,7 @@
 Event names are underscored in ruby: `onClick` becomes `on_click`. The conversion for Preact is done automatically.
 
 Events can be simple methods, but must be referenced when passed as prop by `method_ref`. This is to make sure,
-that they are passed by reference during render to react to prevent unnecessary renders. Example:
+that they are passed by reference during render to preact to prevent unnecessary renders. Example:
 ```ruby
 class MyComponent < Preact::Component::Base
   def handle_click(event, info)

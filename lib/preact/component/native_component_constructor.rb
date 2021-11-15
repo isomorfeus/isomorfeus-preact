@@ -35,11 +35,11 @@ module Preact
             render(props, state) {
               const oper = Opal.Preact;
               oper.render_buffer.push([]);
-              // console.log("react component pushed", oper.render_buffer, oper.render_buffer.toString());
+              // console.log("preact component pushed", oper.render_buffer, oper.render_buffer.toString());
               oper.active_components.push(this);
               let block_result = #{`this.__ruby_instance`.instance_exec(&`base.render_block`)};
               if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
-              // console.log("react component popping", oper.render_buffer, oper.render_buffer.toString());
+              // console.log("preact component popping", oper.render_buffer, oper.render_buffer.toString());
               oper.active_components.pop();
               let result = oper.render_buffer.pop();
               return (result.length === 1) ? result[0] : result;

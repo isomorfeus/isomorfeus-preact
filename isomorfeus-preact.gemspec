@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
 
   # s.post_install_message = <<~TEXT
   #
-  # isomorfeus-react #{React::VERSION}:
+  # isomorfeus-preact #{Preact::VERSION}:
   #  Breaking change:
   #    The event_handler DSL is gone. Instead use normal methods and method_ref, see:
-  #    https://github.com/isomorfeus/isomorfeus-react/blob/master/ruby/docs/events.md
+  #    https://github.com/isomorfeus/isomorfeus-preact/blob/master/ruby/docs/events.md
   #
   # TEXT
 
