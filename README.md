@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://github.com/isomorfeus/isomorfeus-preact/blob/master/Logo.png?raw=true" align="center" width="234" height="143" />
+  <img src="https://github.com/isomorfeus/isomorfeus-preact/blob/master/Logo.png?raw=true" align="center" width="234" height="125" />
   <br/>
   Isomorfeus Preact<br/>
 </h1>
