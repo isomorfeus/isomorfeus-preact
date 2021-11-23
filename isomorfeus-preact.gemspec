@@ -37,5 +37,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'zeitwerk', '~> 2.4.2'
   s.add_development_dependency 'isomorfeus-puppetmaster', '~> 0.5.4'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec', '~> 3.8'
+  s.add_development_dependency 'rspec', '~> 3.10'
 end
