@@ -31,11 +31,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'opal-zeitwerk', '~> 0.2.4'
   s.add_dependency 'isomorfeus-asset-manager', '~> 0.13.8'
   s.add_dependency 'isomorfeus-redux', '~> 4.1.9'
-  s.add_dependency 'isomorfeus-speednode', '~> 0.4.5'
+  s.add_dependency 'isomorfeus-speednode', '~> 0.4.7'
   s.add_dependency 'dalli', '~> 2.7.11'
   s.add_dependency 'redis', '~> 4.4.0'
   s.add_dependency 'zeitwerk', '~> 2.4.2'
-  s.add_development_dependency 'isomorfeus-puppetmaster', '~> 0.5.4'
+  s.add_development_dependency 'isomorfeus-puppetmaster', '~> 0.5.5'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.10'
 end
