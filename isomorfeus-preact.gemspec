@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'opal', '~> 1.4.0'
   s.add_dependency 'opal-activesupport', '~> 0.3.3'
   s.add_dependency 'opal-zeitwerk', '~> 0.3.0'
-  s.add_dependency 'isomorfeus-asset-manager', '~> 0.14.2'
+  s.add_dependency 'isomorfeus-asset-manager', '~> 0.14.3'
   s.add_dependency 'isomorfeus-redux', '~> 4.1.11'
   s.add_dependency 'isomorfeus-speednode', '~> 0.4.8'
   s.add_dependency 'dalli', '~> 2.7.11'
