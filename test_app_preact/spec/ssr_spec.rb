@@ -2,16 +2,17 @@ require 'spec_helper'
 
 RSpec.describe 'Server Side Rendering' do
   before do
-    @doc = visit('/ssr')
+    @page = visit('/ssr')
   end
+
   it 'renders on the server' do
     skip unless Isomorfeus.server_side_rendering
-    expect(@doc.html).to include('Rendered!')
+    expect(@page.inner_text).to include('Rendered!')
   end
 
   it 'save the application state for the client' do
     skip unless Isomorfeus.server_side_rendering
-    state_json = @doc.evaluate_script('JSON.stringify(ServerSideRenderingStateJSON)')
+    state_json = @page.eval('JSON.stringify(ServerSideRenderingStateJSON)')
     state = Oj.load(state_json, mode: :strict)
     expect(state).to have_key('application_state')
     expect(state).to have_key('instance_state')
@@ -31,7 +32,7 @@ RSpec.describe 'Server Side Rendering' do
   it 'save the application state for the client, also on subsequent renders' do
     skip unless Isomorfeus.server_side_rendering
     # just the same as above, just a second time, just to see if the store is initialized correctly
-    state_json = @doc.evaluate_script('JSON.stringify(ServerSideRenderingStateJSON)')
+    state_json = @page.eval('JSON.stringify(ServerSideRenderingStateJSON)')
     state = Oj.load(state_json, mode: :strict)
     expect(state).to have_key('application_state')
     expect(state).to have_key('instance_state')
@@ -51,8 +52,8 @@ RSpec.describe 'Server Side Rendering' do
   it 'it returns 404 if page not found' do
     skip unless Isomorfeus.server_side_rendering
     # just the same as above, just a second time, just to see if the store is initialized correctly
-    @doc = visit('/whatever')
-    expect(@doc.response.status).to eq(404)
+    @page = visit('/whatever')
+    expect(session.response.status).to eq(404)
   end
 
   it 'allows skipping of ssr' do

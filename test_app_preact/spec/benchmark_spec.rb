@@ -2,9 +2,9 @@ require 'spec_helper'
 
 RSpec.describe 'Component benchmarks' do
   it 'Load Time' do
-    doc = visit('/')
-    doc.wait_for('#test_anchor')
-    preact_lt, preact_rt, redux_rt, app_lt = doc.evaluate_ruby do
+    page = visit('/')
+    page.wait_for_selector('#test_anchor')
+    preact_lt, preact_rt, redux_rt, app_lt = page.eval_ruby do
       [IP_LOAD_TIME, IP_REQUIRE_TIME, IX_REQUIRE_TIME, APP_LOAD_TIME]
     end
     puts "isomorfeus-redux require time: #{redux_rt}ms"
@@ -15,8 +15,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Native DIV Element' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
@@ -38,8 +38,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'DIV Element (String param)' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
@@ -59,8 +59,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'DIV Element (String block)' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
@@ -80,8 +80,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Native Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class BenchmarkComponent < Preact::Component::Base
         render do
           Fragment do
@@ -101,8 +101,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Function Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class Fun < Preact::FunctionComponent::Base
         render do
           DIV 'A'
@@ -127,8 +127,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Preact Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class Pure < Preact::Component::Base
         render do
           DIV 'A'
@@ -153,8 +153,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Lucid Func' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class Fun < LucidFunc::Base
         render do
           DIV 'A'
@@ -179,8 +179,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Lucid Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class Lucy < LucidComponent::Base
         render do
           DIV 'A'
@@ -205,8 +205,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Styled Lucid Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class Lucy < LucidComponent::Base
         styles do
           {root: { color: 'black' }}
@@ -234,8 +234,8 @@ RSpec.describe 'Component benchmarks' do
   end
 
   it 'Themed and Styled Lucid Component' do
-    doc = visit('/')
-    time = doc.evaluate_ruby do
+    page = visit('/')
+    time = page.eval_ruby do
       class Lucy < LucidComponent::Base
         styles do
           {root: { fontSize: 12 }}

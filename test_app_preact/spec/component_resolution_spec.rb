@@ -2,13 +2,13 @@ require 'spec_helper'
 
 RSpec.describe 'Component Resolution' do
   before do
-    @doc = visit('/')
+    @page = visit('/')
     # create several kinds components, nested
     # resolution for Preact::Component, LucidComponent is the same
     # but we need to check in addition to one of the above Preact::FunctionComponent, which has the same resolution as the Preact::MemoComponent
     # and we need to check Native Components (see test_app, isomorfeus_loader.rb)
     # and we need to check resolution from element blocks
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       class TopPure < Preact::Component::Base
         render do
           DIV 'TopPure'
@@ -40,13 +40,15 @@ RSpec.describe 'Component Resolution' do
           end
         end
       end
+
+      nil
     end
 
-    @test_anchor = @doc.find('#test_anchor')
+    @test_anchor = @page.find('#test_anchor')
   end
 
   it 'can resolve components from a top level Preact::Component' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       class TestComponent < Preact::Component::Base
         render do
           TopPure()
@@ -60,8 +62,9 @@ RSpec.describe 'Component Resolution' do
       end
 
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      nil
     end
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('TopPure')
     expect(html).to include('Deeply::Nested::Pure')
     expect(html).to include('TopFunction')
@@ -71,7 +74,7 @@ RSpec.describe 'Component Resolution' do
   end
 
   it 'can resolve components from a nested Preact::Component' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       module Super
         module SuperDeeply
           module SuperNested
@@ -90,9 +93,10 @@ RSpec.describe 'Component Resolution' do
         end
       end
       Isomorfeus::TopLevel.mount_component(Super::SuperDeeply::SuperNested::TestComponent, {}, '#test_anchor')
+      nil
     end
 
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('TopPure')
     expect(html).to include('Deeply::Nested::Pure')
     expect(html).to include('TopFunction')
@@ -102,7 +106,7 @@ RSpec.describe 'Component Resolution' do
   end
 
   it 'can resolve components from a top level Preact::Component DIV element' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       class TestComponent < Preact::Component::Base
         render do
           DIV do
@@ -118,8 +122,9 @@ RSpec.describe 'Component Resolution' do
       end
 
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      nil
     end
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('TopPure')
     expect(html).to include('Deeply::Nested::Pure')
     expect(html).to include('TopFunction')
@@ -129,7 +134,7 @@ RSpec.describe 'Component Resolution' do
   end
 
   it 'can resolve components from a nested Preact::Component DIV Element' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       module Super
         module SuperDeeply
           module SuperNested
@@ -150,9 +155,10 @@ RSpec.describe 'Component Resolution' do
         end
       end
       Isomorfeus::TopLevel.mount_component(Super::SuperDeeply::SuperNested::TestComponent, {}, '#test_anchor')
+      nil
     end
 
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('TopPure')
     expect(html).to include('Deeply::Nested::Pure')
     expect(html).to include('TopFunction')
@@ -162,7 +168,7 @@ RSpec.describe 'Component Resolution' do
   end
 
   it 'can resolve components from a top level Preact::FunctionComponent' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       class TestComponent < Preact::FunctionComponent::Base
         render do
           TopPure()
@@ -176,8 +182,9 @@ RSpec.describe 'Component Resolution' do
       end
 
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      nil
     end
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('TopPure')
     expect(html).to include('Deeply::Nested::Pure')
     expect(html).to include('TopFunction')
@@ -187,7 +194,7 @@ RSpec.describe 'Component Resolution' do
   end
 
   it 'can resolve components from a nested Preact::FunctionComponent' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       module Super
         module SuperDeeply
           module SuperNested
@@ -206,9 +213,10 @@ RSpec.describe 'Component Resolution' do
         end
       end
       Isomorfeus::TopLevel.mount_component(Super::SuperDeeply::SuperNested::TestComponent, {}, '#test_anchor')
+      nil
     end
 
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('TopPure')
     expect(html).to include('Deeply::Nested::Pure')
     expect(html).to include('TopFunction')
@@ -218,7 +226,7 @@ RSpec.describe 'Component Resolution' do
   end
 
   it 'can resolve function components from within the same module' do
-    @doc.evaluate_ruby do
+    @page.eval_ruby do
       module ExampleFunction
         class AComponent < Preact::FunctionComponent::Base
           render do
@@ -236,14 +244,15 @@ RSpec.describe 'Component Resolution' do
         end
       end
       Isomorfeus::TopLevel.mount_component(ExampleFunction::AnotherComponent, {}, '#test_anchor')
+      nil
     end
 
-    html = @test_anchor.html
+    html = @test_anchor.inner_text
     expect(html).to include('AnotherComponent')
     expect(html).to include('AComponent')
   end
 
   it "can resolve a ruby component in favor of a native component even when they have have the same name" do
-    expect(@doc.html).to include('YetAnother::Switch rendered')
+    expect(@page.inner_text).to include('YetAnother::Switch rendered')
   end
 end

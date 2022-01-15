@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe 'Props declaration and validation' do
   before do
-    @doc = visit('/')
+    @page = visit('/')
   end
 
   it 'sets default value' do
@@ -18,7 +18,7 @@ RSpec.describe 'Props declaration and validation' do
     end
     expect(result).to eq({test_a: 'a value', test_b: 'bill@gates.com'})
 
-    result = @doc.evaluate_ruby do
+    result = @page.eval_ruby do
       class PropWhatever
         extend LucidPropDeclaration::Mixin
 
@@ -44,7 +44,7 @@ RSpec.describe 'Props declaration and validation' do
     end
     expect(result).to eq({test_a: nil, test_b: nil})
 
-    result = @doc.evaluate_ruby do
+    result = @page.eval_ruby do
       class PropWhatever
         extend LucidPropDeclaration::Mixin
 
@@ -71,7 +71,7 @@ RSpec.describe 'Props declaration and validation' do
     end
     expect(result).to eq([{test_a: 'bill@gates.com'}, false])
 
-    result = @doc.evaluate_ruby do
+    result = @page.eval_ruby do
       class PropWhateverEmail
         extend LucidPropDeclaration::Mixin
 
@@ -99,7 +99,7 @@ RSpec.describe 'Props declaration and validation' do
     end
     expect(result).to eq([{test_a: 'http://www.test.com'}, false])
 
-    result = @doc.evaluate_ruby do
+    result = @page.eval_ruby do
       class PropWhateverUri
         extend LucidPropDeclaration::Mixin
 

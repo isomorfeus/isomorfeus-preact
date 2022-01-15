@@ -2,22 +2,23 @@ require 'spec_helper'
 
 RSpec.describe 'LucidFunc' do
   it 'can render a component that is using inheritance' do
-    doc = visit('/')
-    doc.evaluate_ruby do
+    page = visit('/')
+    page.eval_ruby do
       class TestComponent < LucidFunc::Base
         render do
           DIV(id: :test_component) { 'TestComponent rendered' }
         end
       end
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      nil
     end
-    node = doc.wait_for('#test_component')
-    expect(node.all_text).to include('TestComponent rendered')
+    element =page.wait_for_selector('#test_component')
+    expect(element.inner_text).to include('TestComponent rendered')
   end
 
   it 'can render a component that is using the mixin' do
-    doc = visit('/')
-    doc.evaluate_ruby do
+    page = visit('/')
+    page.eval_ruby do
       class TestComponent
         include LucidFunc::Mixin
         render do
@@ -25,18 +26,19 @@ RSpec.describe 'LucidFunc' do
         end
       end
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
+      nil
     end
-    node = doc.wait_for('#test_component')
-    expect(node.all_text).to include('TestComponent rendered')
+    element =page.wait_for_selector('#test_component')
+    expect(element.inner_text).to include('TestComponent rendered')
   end
 
   context 'it accepts props and can' do
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'access them' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           render do
             DIV(id: :test_component) do
@@ -46,34 +48,36 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(TestComponent, { text: 'Prop passed!', other_text: 'Passed other prop!' }, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      all_text = node.all_text
+      element = @page.wait_for_selector('#test_component')
+      all_text = element.inner_text
       expect(all_text).to include('Prop passed!')
       expect(all_text).to include('Passed other prop!')
     end
 
     it 'accept a missing prop' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           render do
             DIV(id: :test_component) { "nothing#{props.a_prop}here" }
           end
         end
         Isomorfeus::TopLevel.mount_component(TestComponent, { }, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('nothinghere')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('nothinghere')
     end
   end
 
   context 'it can handle events like' do
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'on_click' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         IT = { clicked: false }
         class TestComponent < LucidFunc::Base
           def change_hash(event)
@@ -84,10 +88,11 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(TestComponent, { }, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      node.click
-      result = @doc.evaluate_ruby do
+      element = @page.wait_for_selector('#test_component')
+      element.click
+      result = @page.eval_ruby do
         IT[:clicked]
       end
       expect(result).to be true
@@ -96,11 +101,11 @@ RSpec.describe 'LucidFunc' do
 
   context 'it has hooks like' do
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'use_state' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           render do
             value, set_value = use_state('nothinghere')
@@ -109,10 +114,11 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(TestComponent, { }, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      node.click
-      expect(node.all_text).to include('somethinghere')
+      element = @page.wait_for_selector('#test_component')
+      element.click
+      expect(element.inner_text).to include('somethinghere')
     end
   end
 
@@ -120,11 +126,11 @@ RSpec.describe 'LucidFunc' do
     # LucidComponent MUST be used within a LucidApp for things to work
 
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'use a uninitialized store value and can change it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           def change_state(event)
             store.something = true
@@ -143,12 +149,13 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('nothinghere')
-      node.click
-      node = @doc.wait_for('#changed_component')
-      expect(node.all_text).to include('true')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('nothinghere')
+      element.click
+      element = @page.wait_for_selector('#changed_component')
+      expect(element.inner_text).to include('true')
     end
   end
 
@@ -156,11 +163,11 @@ RSpec.describe 'LucidFunc' do
     # LucidComponent MUST be used within a LucidApp for things to work
 
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'define a default class_store value and access it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           render do
             DIV(id: :test_component) { class_store.something }
@@ -173,13 +180,14 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('Something state intialized!')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('Something state intialized!')
     end
 
     it 'define a default class_store value and change it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           def change_state(event)
             class_store.something = false
@@ -199,16 +207,17 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('true')
-      node.click
-      node = @doc.wait_for('#changed_component')
-      expect(node.all_text).to include('false')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('true')
+      element.click
+      element = @page.wait_for_selector('#changed_component')
+      expect(element.inner_text).to include('false')
     end
 
     it 'use a uninitialized store value and change it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           def change_state(event)
             class_store.something = true
@@ -227,12 +236,13 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('nothinghere')
-      node.click
-      node = @doc.wait_for('#changed_component')
-      expect(node.all_text).to include('true')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('nothinghere')
+      element.click
+      element = @page.wait_for_selector('#changed_component')
+      expect(element.inner_text).to include('true')
     end
   end
 
@@ -240,14 +250,14 @@ RSpec.describe 'LucidFunc' do
     # LucidComponent MUST be used within a LucidApp for things to work
 
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'define a default app_store value and access it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         AppStore.something = 'Something state intialized!'
       end
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           render do
             DIV(id: :test_component) { app_store.something }
@@ -259,16 +269,17 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('Something state intialized!')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('Something state intialized!')
     end
 
     it 'define a default app_store value and change it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         AppStore.something = true
       end
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           def change_state(event)
             app_store.something = false
@@ -287,16 +298,17 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('true')
-      node.click
-      node = @doc.wait_for('#changed_component')
-      expect(node.all_text).to include('false')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('true')
+      element.click
+      element = @page.wait_for_selector('#changed_component')
+      expect(element.inner_text).to include('false')
     end
 
     it 'use a uninitialized store value and change it' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           def change_state(event)
             app_store.something = true
@@ -315,22 +327,23 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      expect(node.all_text).to include('nothinghere')
-      node.click
-      node = @doc.wait_for('#changed_component')
-      expect(node.all_text).to include('true')
+      element = @page.wait_for_selector('#test_component')
+      expect(element.inner_text).to include('nothinghere')
+      element.click
+      element = @page.wait_for_selector('#changed_component')
+      expect(element.inner_text).to include('true')
     end
   end
 
   context 'it has styles and renders them' do
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'with the styles block DSL' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           styles do
             { master: { width: 100 }}
@@ -345,18 +358,18 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      # the following should be replaced by node.styles once its working correctly
-      style = @doc.execute_script <<~JAVASCRIPT
-        var styles = window.getComputedStyle(document.querySelector('#test_component'))
-        return styles.width
+      element = @page.wait_for_selector('#test_component')
+      # the following should be replaced by element.styles once its working correctly
+      style = @page.eval <<~JAVASCRIPT
+        window.getComputedStyle(document.querySelector('#test_component')).width
       JAVASCRIPT
       expect(style).to eq('100px')
     end
 
     it 'with the styles() DSL' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           styles(master: { width: 100 })
           render do
@@ -369,18 +382,18 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      # the following should be replaced by node.styles once its working correctly
-      style = @doc.execute_script <<~JAVASCRIPT
-        var styles = window.getComputedStyle(document.querySelector('#test_component'))
-        return styles.width
+      element = @page.wait_for_selector('#test_component')
+      # the following should be replaced by element.styles once its working correctly
+      style = @page.eval <<~JAVASCRIPT
+        window.getComputedStyle(document.querySelector('#test_component')).width
       JAVASCRIPT
       expect(style).to eq('100px')
     end
 
     it 'when they are shared' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class SuperComponent < LucidFunc::Base
           styles(master: { width: 100 })
           render do
@@ -403,12 +416,12 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      # the following should be replaced by node.styles once its working correctly
-      style = @doc.execute_script <<~JAVASCRIPT
-        var styles = window.getComputedStyle(document.querySelector('#test_component'))
-        return styles.width
+      element = @page.wait_for_selector('#test_component')
+      # the following should be replaced by element.styles once its working correctly
+      style = @page.eval <<~JAVASCRIPT
+        window.getComputedStyle(document.querySelector('#test_component')).width
       JAVASCRIPT
       expect(style).to eq('100px')
     end
@@ -416,11 +429,11 @@ RSpec.describe 'LucidFunc' do
 
   context 'it has a theme and styles and renders them' do
     before do
-      @doc = visit('/')
+      @page = visit('/')
     end
 
     it 'with the styles block DSL' do
-      @doc.evaluate_ruby do
+      @page.eval_ruby do
         class TestComponent < LucidFunc::Base
           styles do
             { master: { fontSize: 12 }}
@@ -438,12 +451,12 @@ RSpec.describe 'LucidFunc' do
           end
         end
         Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
+        nil
       end
-      node = @doc.wait_for('#test_component')
-      # the following should be replaced by node.styles once its working correctly
-      style = @doc.execute_script <<~JAVASCRIPT
-        var styles = window.getComputedStyle(document.querySelector('#test_component'))
-        return styles.width
+      element = @page.wait_for_selector('#test_component')
+      # the following should be replaced by element.styles once its working correctly
+      style = @page.eval <<~JAVASCRIPT
+        window.getComputedStyle(document.querySelector('#test_component')).width
       JAVASCRIPT
       expect(style).to eq('100px')
     end
