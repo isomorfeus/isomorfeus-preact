@@ -1,4 +1,5 @@
 ### Using Wouter as Router
+Wouter comes integratedwith isomorfeus-preact. The wouter documentation applies, see [https://github.com/molefrog/wouter](https://github.com/molefrog/wouter)
 ```ruby
 class RouterComponent < Preact::Component::Base
   render do
