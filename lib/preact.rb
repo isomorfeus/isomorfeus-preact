@@ -63,7 +63,7 @@ module Preact
     };
 
     self.native_to_ruby_event = function(event) {
-       if (event.hasOwnProperty('target')) { return #{::Browser::Event.new(`event`)}; }
+       if ('target' in event) { return #{::Browser::Event.new(`event`)}; }
        else if (Array.isArray(event)) { return event; }
        else { return Opal.Hash.$new(event); }
     };
@@ -219,7 +219,7 @@ module Preact
       if (component.__c) { self.deep_force_update(component.__c); }
       else if (component.base) { self.update_components_from_dom(component.base); }
     };
-    
+
     self.update_components_from_dom = function(node, fn) {
       let children = node.childNodes;
       for (let i=children && children.length; i--;) {
