@@ -1,14 +1,4 @@
 ### Using Wouter as Router
-First the Components of Wouter must be imported and made available in the global context:
-```javascript
-import { Router, Link, Redirect, Route, Switch } from 'wouter-preact';
-global.Router = Router;
-global.Link = Link;
-global.Redirect = Redirect;
-global.Route = Route;
-global.Switch = Switch;
-```
-Then the Router components can be used:
 ```ruby
 class RouterComponent < Preact::Component::Base
   render do
