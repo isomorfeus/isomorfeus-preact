@@ -2,6 +2,7 @@ module Isomorfeus
   module Preact
     module Imports
       def self.add
+        Isomorfeus.add_web_js_import('preact/debug') if Isomorfeus.development?
         Isomorfeus.add_common_js_import('preact', 'Preact', '*')
         Isomorfeus.add_common_js_import('preact/hooks', 'PreactHooks', '*')
         Isomorfeus.add_common_js_import('wouter-preact', nil, ['Router', 'Link', 'Redirect', 'Route', 'Switch'])
