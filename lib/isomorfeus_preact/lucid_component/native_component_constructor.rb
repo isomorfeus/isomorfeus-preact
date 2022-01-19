@@ -16,7 +16,6 @@ module LucidComponent
           return Opal.global.Preact.createElement(base.lucid_preact_component, Object.assign({}, props, value));
         };
         base.preact_component.displayName = #{wrapper_name};
-        
         base.lucid_preact_component = class extends Opal.global.Preact.Component {
           constructor(props) {
             super(props);
@@ -65,7 +64,7 @@ module LucidComponent
             return (result.length === 1) ? result[0] : result;
           }
           data_access() {
-            return this.props.iso_store;
+            this.state.isomorfeus_store_state;
           }
           shouldComponentUpdate(next_props, next_state) {
             if (!Opal.Preact.props_are_equal(this.props, next_props)) { return true; }
