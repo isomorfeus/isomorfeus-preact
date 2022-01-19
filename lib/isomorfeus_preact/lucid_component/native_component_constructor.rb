@@ -64,7 +64,7 @@ module LucidComponent
             return (result.length === 1) ? result[0] : result;
           }
           data_access() {
-            this.state.isomorfeus_store_state;
+            return this.state.isomorfeus_store_state;
           }
           shouldComponentUpdate(next_props, next_state) {
             if (!Opal.Preact.props_are_equal(this.props, next_props)) { return true; }

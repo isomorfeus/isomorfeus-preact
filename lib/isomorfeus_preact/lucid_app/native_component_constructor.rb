@@ -70,7 +70,7 @@ module LucidApp
             return Opal.global.Preact.createElement(Opal.global.LucidApplicationContext.Provider, { value: { iso_store: this.state.isomorfeus_store_state, iso_theme: base.css_theme }}, children);
           }
           data_access() {
-            this.state.isomorfeus_store_state;
+            return this.state.isomorfeus_store_state;
           }
           listener() {
             let next_state = Opal.Isomorfeus.store.native.getState();
