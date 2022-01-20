@@ -14,6 +14,7 @@ module Browser
       `#@native.preventDefault()`
       self
     end
+    alias_method :prevent_default, :prevent
 
     # Prevent the runtime from bubbling this event up the hierarchy. This is
     # typically used to keep an event local to the element on which it was
@@ -31,6 +32,7 @@ module Browser
     def prevented?
       `#@native.defaultPrevented`
     end
+    alias_method :default_prevented?, :prevented?
 
     # @return [Boolean] true if the Meta/Command/Windows key was pressed when
     #   this event fired, false otherwise
