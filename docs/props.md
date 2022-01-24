@@ -126,12 +126,12 @@ These methods are helper methods to express more clearly in language.
 Example: `prop :wine, validate.String.with.length(5).and.matches(/(a|b}.*/)`
 
 #### Ensuring a custom value or range
-A ensure_block can be passed. That block gets a value and is expected to return a value or raise if desired.
-If a ensure_block is given, setting a default value, the cast and type checks are skipped.
+A ensure proc can be passed. That proc gets a value and is expected to return a value or raise if desired.
+If a ensure proc is given, setting a default value, the cast and type checks are skipped.
 Example:
 ```ruby
 class MyComponent < Preact::Component::Base
-  prop :float_a, ensure_block: proc { |v| v = 1 if v < 1; v }
+  prop :float_a, ensure: proc { |v| v = 1 if v < 1; v }
   prop :float_b, validate.ensure { |v| v = 2 if v > 2; v }
 
   render do

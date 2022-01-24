@@ -31,13 +31,13 @@ RSpec.describe 'Props declaration and validation' do
     expect(result).to eq({'test_a' => 'a value', 'test_b' => 'bill@gates.com'})
   end
 
-  it 'works even though a ensure_block did not return anything' do
+  it 'works even though a ensure with a proc did not return anything' do
     result = on_server do
       class PropWhatever
         extend LucidPropDeclaration::Mixin
 
-        prop :test_a, ensure_block: proc { |v| nil }
-        prop :test_b, ensure_block: ->(v) { nil }
+        prop :test_a, ensure: proc { |v| nil }
+        prop :test_b, ensure: ->(v) { nil }
       end
 
       PropWhatever.validated_props(test_a: 23, test_b: 24)
@@ -48,8 +48,8 @@ RSpec.describe 'Props declaration and validation' do
       class PropWhatever
         extend LucidPropDeclaration::Mixin
 
-        prop :test_a, ensure_block: proc { |v| nil if v == 0 }
-        prop :test_b, ensure_block: ->(v) { nil if v == 0 }
+        prop :test_a, ensure: proc { |v| nil if v == 0 }
+        prop :test_b, ensure: ->(v) { nil if v == 0 }
       end
 
       PropWhatever.validated_props(test_a: 23, test_b: 24).to_n

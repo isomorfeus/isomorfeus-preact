@@ -30,7 +30,7 @@ module Isomorfeus
 
       def ensure(v = nil, &block)
         if block_given?
-          @validation_hash[:ensure_block] = block
+          @validation_hash[:ensure] = block
         else
           @validation_hash[:ensure] = v
         end

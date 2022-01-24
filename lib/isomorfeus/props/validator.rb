@@ -52,10 +52,12 @@ module Isomorfeus
 
       def ensure!
         if @o.key?(:ensure)
-          @v = @o[:ensure] unless @v
-          true
-        elsif @o.key?(:ensure_block)
-          @v = @o[:ensure_block].call(@v)
+          proc_or_val = @o[:ensure]
+          if proc_or_val.class == Proc
+            @v = proc_or_val.call(@v)
+          else
+            @v = proc_or_val
+          end
           true
         else
           false
