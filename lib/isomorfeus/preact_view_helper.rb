@@ -68,7 +68,7 @@ module Isomorfeus
           let exception;
           if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && api_ws_path !== '') {
             global.Opal.Isomorfeus.TopLevel["$transport_ws_url="]("#{transport_ws_url}");
-            global.Opal.send(global.Opal.Isomorfeus.Transport.$promise_connect(), 'then', [], ($$1 = function(){
+            global.Opal.send(global.Opal.Isomorfeus.Transport.$promise_connect(global.IsomorfeusSessionId), 'then', [], ($$1 = function(){
               try {
                 global.Opal.Isomorfeus.TopLevel.$render_component_to_string('#{component_name}', #{Oj.dump(props, mode: :strict)});
                 global.FirstPassFinished = 'transport';
@@ -77,7 +77,8 @@ module Isomorfeus
                 global.FirstPassFinished = 'transport';
               }
             }, $$1.$$s = this, $$1.$$arity = 0, $$1))
-          } else { return global.FirstPassFinished = true; };
+            return false;
+          } else { global.FirstPassFinished = true; return true; };
         JAVASCRIPT
         # execute first render pass
         begin
