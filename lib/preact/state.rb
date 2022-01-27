@@ -13,6 +13,26 @@ module Preact
       }
     end
 
+    def [](key)
+      %x{
+        if (typeof #@native.state[key] === 'undefined') { return nil; }
+        return #@native.state[key];
+      }
+    end
+
+    def []=(key)
+      new_state = `{}`
+      new_state.JS[(`key.endsWith('=')` ? key.chop : key)] = args[0]
+      @native.JS.setState(new_state, `null`)
+    end
+
+    def key?(k)
+      %x{
+        if (typeof #@native.state[k] !== 'undefined') { return true; }
+        return false;
+      }
+    end
+
     def method_missing(key, *args, &block)
       if `args.length > 0`
         new_state = `{}`

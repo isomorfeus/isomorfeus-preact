@@ -11,6 +11,24 @@ module Preact
       }
     end
 
+    def [](prop)
+      %x{
+        const p = #@native.props;
+        if (typeof p[prop] === 'undefined') {
+          prop = Opal.Preact.lower_camelize(prop);
+          if (typeof p[prop] === 'undefined') { return nil; }
+        }
+        return p[prop];
+      }
+    end
+
+    def key?(k)
+      %x{
+        if (typeof #@native.props[k] !== 'undefined') { return true; }
+        return false;
+      }
+    end
+
     def method_missing(prop, *args, &block)
       %x{
         const p = #@native.props;

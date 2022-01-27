@@ -116,6 +116,24 @@ RSpec.describe 'Preact::Component' do
       end
       expect(result).to eq([true, false])
     end
+
+    it 'can ask for key?' do
+      result = @page.eval_ruby do
+        p1 = Preact::State.new(`{state: {test: 1}}`)
+        p2 = Preact::State.new(`{state: {toast: 1}}`)
+        [p1.key?(:test), p2.key?(:test)]
+      end
+      expect(result).to eq([true, false])
+    end
+
+    it 'can access prop by []' do
+      result = @page.eval_ruby do
+        p1 = Preact::State.new(`{state: {test: true}}`)
+        p2 = Preact::State.new(`{state: {toast: true}}`)
+        [p1[:test], p2[:test].nil?]
+      end
+      expect(result).to eq([true, true])
+    end
   end
 
   context 'it accepts props and can' do
