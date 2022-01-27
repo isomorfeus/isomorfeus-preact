@@ -21,7 +21,7 @@ if RUBY_ENGINE == 'opal'
 
   # nanocss
   require 'nano_css'
-  
+
   # preact
   require 'preact/version'
   require 'preact'
@@ -31,7 +31,7 @@ if RUBY_ENGINE == 'opal'
   require 'isomorfeus/props/validate_hash_proxy'
   require 'isomorfeus/props/validator'
   require 'lucid_prop_declaration/mixin'
-  require 'preact/component/props'
+  require 'preact/props'
 
   # HTML Elements and Fragment support
   require 'preact/component/elements'
@@ -45,7 +45,7 @@ if RUBY_ENGINE == 'opal'
   require 'preact/component/callbacks'
   require 'preact/component/initializer'
   require 'preact/component/native_component_constructor'
-  require 'preact/component/state'
+  require 'preact/state'
   require 'preact/component/params'
   require 'preact/component/resolution'
   require 'preact/component/mixin'
