@@ -256,14 +256,14 @@ module Preact
     `Opal.global.Preact.toChildArray(children)`
   end
 
-  def self.clone_element(ruby_preact_element, props = nil, children = nil, &block)
+  def self.clone_element(native_preact_element, props = nil, children = nil, &block)
     block_result = `null`
     if block_given?
       block_result = block.call
       block_result = `null` unless block_result
     end
     native_props = props ? `Opal.Preact.to_native_preact_props(props)` : `null`
-    `Opal.global.Preact.cloneElement(ruby_preact_element.$to_n(), native_props, block_result)`
+    `Opal.global.Preact.cloneElement(native_preact_element, native_props, block_result)`
   end
 
   def self.create_context(const_name, default_value)
