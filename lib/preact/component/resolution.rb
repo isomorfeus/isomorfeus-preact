@@ -10,9 +10,9 @@ module Preact
           def const_missing(const_name)
             %x{
               if (typeof Opal.global[const_name] !== "undefined" && (const_name[0] === const_name[0].toUpperCase())) {
-                var new_const = #{Preact::NativeConstantWrapper.new(`Opal.global[const_name]`, const_name)};
+                var new_const = Opal.Preact.NativeConstantWrapper.$new(Opal.global[const_name], const_name);
                 new_const.preact_component = Opal.global[const_name];
-                #{Object.const_set(const_name, `new_const`)};
+                Opal.Object.$const_set(const_name, new_const);
                 return new_const;
               } else {
                 return #{_preact_component_class_resolution_original_const_missing(const_name)};
