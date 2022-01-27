@@ -2,7 +2,7 @@ module LucidComponent
   module Api
     def self.included(base)
       base.instance_exec do
-        # store
+        # stores
         attr_accessor :app_store
         attr_accessor :class_store
         attr_accessor :store
