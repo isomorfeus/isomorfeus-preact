@@ -29,7 +29,7 @@ module Preact
     def params
       return @params if @params
       return nil if `typeof #@native.props.params === 'undefined'`
-      @params = ::Preact::Component::Params.new(`#@native.props.params`)
+      @params = `Opal.Preact.Params.$new(#@native.props.params)`
     end
 
     def to_h
