@@ -106,6 +106,16 @@ RSpec.describe 'Preact::Component' do
       element = @page.wait_for_selector('#changed_component')
       expect(element.inner_text).to include('true')
     end
+
+    it 'can compare state' do
+      result = @page.eval_ruby do
+        s1 = Preact::State.new(`{state: {test: 1}}`)
+        s2 = Preact::State.new(`{state: {test: 1}}`)
+        s3 = Preact::State.new(`{state: {test: 2}}`)
+        [s1 == s1, s1 == s3]
+      end
+      expect(result).to eq([true, false])
+    end
   end
 
   context 'it accepts props and can' do

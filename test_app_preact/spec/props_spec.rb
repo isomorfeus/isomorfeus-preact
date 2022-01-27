@@ -112,4 +112,14 @@ RSpec.describe 'Props declaration and validation' do
     end
     expect(result).to eq([{'test_a' => 'http://www.test.com'}, false])
   end
+
+  it 'can compare props' do
+    result = @page.eval_ruby do
+      p1 = Preact::Props.new(`{props: {test: 1}}`)
+      p2 = Preact::Props.new(`{props: {test: 1}}`)
+      p3 = Preact::Props.new(`{props: {test: 2}}`)
+      [p1 == p1, p1 == p3]
+    end
+    expect(result).to eq([true, false])
+  end
 end
