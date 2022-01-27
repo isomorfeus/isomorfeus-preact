@@ -5,6 +5,13 @@ module Preact
         @native = native
       end
 
+      def ==(other_props)
+        %x{
+          if (Opal.Preact.props_are_equal(#@native.props, #{other_props.to_n})) { return true; }
+          return false;
+        }
+      end
+
       def method_missing(prop, *args, &block)
         %x{
           const p = #@native.props;
