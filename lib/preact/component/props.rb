@@ -16,15 +16,6 @@ module Preact
         }
       end
 
-      def children
-        @native.JS[:props].JS[:children]
-      end
-
-      def isomorfeus_store
-        # TODO
-        @native.JS[:props].JS[:isomorfeus_store]
-      end
-
       def theme
         `#@native.props.iso_theme`
       end
@@ -44,7 +35,7 @@ module Preact
       end
 
       def to_n
-        @native.JS[:props]
+        `#@native.props`
       end
 
       def to_transport
