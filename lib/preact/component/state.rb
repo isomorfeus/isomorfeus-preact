@@ -6,7 +6,14 @@ module Preact
       def initialize(native)
         @native = native
       end
-      
+
+      def ==(other_state)
+        %x{
+          if (Opal.Preact.state_is_not_equal(#@native.state, #{other_state.to_raw_n})) { return false; }
+          return true;
+        }
+      end
+
       def method_missing(key, *args, &block)
         if `args.length > 0`
           new_state = `{}`
@@ -52,6 +59,10 @@ module Preact
           }
           return new_native;
         }
+      end
+
+      def to_raw_n
+        `#@native.state`
       end
     end
   end
