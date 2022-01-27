@@ -113,7 +113,7 @@ module Preact
 
       def ruby_ref(name)
         return `#@native[name]` if `(typeof #@native[name] === 'function')`
-        Preact::Ref::new(`#@native[name]`)
+        `Opal.Preact.Ref.$new(#@native[name])`
       end
 
       def set_state(updater, &callback)
