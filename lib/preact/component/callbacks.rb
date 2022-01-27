@@ -41,8 +41,8 @@ module Preact
             %x{
               var fun = function(prev_props, prev_state, snapshot) {
                 Opal.Preact.active_redux_components.push(this);
-                #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Component.Props.$new({props: prev_props})`,
-                                                       `Opal.Preact.Component.State.$new({state: prev_state})`,
+                #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: prev_props})`,
+                                                       `Opal.Preact.State.$new({state: prev_state})`,
                                                        `snapshot`, &block)};
                 Opal.Preact.active_redux_components.pop();
               }
@@ -69,8 +69,8 @@ module Preact
             %x{
               var fun = function(props, state) {
                 Opal.Preact.active_redux_components.push(this);
-                var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Component.Props.$new({props: props})`,
-                                                                     `Opal.Preact.Component.State.$new({state: state})`, &block)};
+                var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: props})`,
+                                                                     `Opal.Preact.State.$new({state: state})`, &block)};
                 Opal.Preact.active_redux_components.pop();
                 if (typeof result.$to_n === 'function') { result = result.$to_n() }
                 if (result === Opal.nil) { return null; }
@@ -85,8 +85,8 @@ module Preact
             %x{
               var fun = function(prev_props, prev_state) {
                 Opal.Preact.active_redux_components.push(this);
-                var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Component.Props.$new({props: prev_props})`,
-                                                                    `Opal.Preact.Component.State.$new({state: prev_state})`, &block)};
+                var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: prev_props})`,
+                                                                    `Opal.Preact.State.$new({state: prev_state})`, &block)};
                 Opal.Preact.active_redux_components.pop();
                 if (result === Opal.nil) { return null; }
                 return result;

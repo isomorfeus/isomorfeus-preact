@@ -3,7 +3,7 @@ module Preact
     module Initializer
       def initialize
         self.JS[:native_props] = `{ props: null }`
-        @native_props = ::Preact::Component::Props.new(self)
+        @native_props = `Opal.Preact.Props.$new(self)`
       end
     end
   end

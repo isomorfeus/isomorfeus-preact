@@ -41,7 +41,7 @@ module Preact
                 if (callback) { callback.call(); }
               }
             }
-            @default_state = Preact::Component::State.new(`native_state`)
+            @default_state = `Opal.Preact.State.$new(native_state)`
           end
 
           def render(&block)

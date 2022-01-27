@@ -46,7 +46,7 @@ module Preact
             }
             shouldComponentUpdate(next_props, next_state) {
               if (base.should_component_update_block) {
-                return #{!!`this.__ruby_instance`.instance_exec(Preact::Component::Props.new(`{props: next_props}`), Preact::Component::State.new(`{state: next_state }`), &`base.should_component_update_block`)};
+                return #{!!`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: next_props})`, `Opal.Preact.State.$new({state: next_state })`, &`base.should_component_update_block`)};
               }
               if (!Opal.Preact.props_are_equal(this.props, next_props)) { return true; }
               if (Opal.Preact.state_is_not_equal(this.state, next_state)) { return true; }

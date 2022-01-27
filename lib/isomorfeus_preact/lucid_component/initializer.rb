@@ -7,8 +7,8 @@ module LucidComponent
       # @iso_store = Isomorfeus::IsomorphicStoreProxy.new(self)
       # @local_store = Isomorfeus::LocalStoreProxy.new(self)
       @store = LucidComponent::InstanceStoreProxy.new(self)
-      @props = `Opal.Preact.Component.Props.$new(#@native)`
-      @state = `Opal.Preact.Component.State.$new(#@native)`
+      @props = `Opal.Preact.Props.$new(#@native)`
+      @state = `Opal.Preact.State.$new(#@native)`
     end
   end
 end
