@@ -15,7 +15,7 @@ State can be intialized like so:
 ```ruby
 class MyComponent < Preact::Component::Base
   state.toggled = false
-  
+
   render do
     if state.toggled
       DIV { 'toggled' }
@@ -25,16 +25,16 @@ class MyComponent < Preact::Component::Base
   end
 end
 ```
-State can be changed like so, the component setState() will be called:
+State can be changed, the component setState() will be called:
 ```ruby
 class MyComponent < Preact::Component::Base
   render do
     if some_condition_is_met
-      
+
       state.toggled = true # calls components setState to cause a render
-      
+
       # or if a callback is needed:
-      
+
       set_state({toggled: true}) do
         # some callback code here
       end
@@ -56,7 +56,7 @@ class MyComponent < Preact::Component::Base
                                       # state may be updated after the next render cycle
     next_state_value == state.variable # very probably false here until next render
     previous_state_value == state.variable # probably true here until next render
-    
+
     # to work with next_state_value, wait for the next render cycle, or just keep using the next_state_value variable here instead of state.value
   end
 end
@@ -70,8 +70,24 @@ class MyComponent < Preact::Component::Base
                                      # state may be updated after the next render cycle
     next_state_value == state.variable # very probably false here until next render
     previous_state_value == state.variable # probably true here until next render
-    
+
     # to work with next_state_value, wait for the next render cycle, or just keep using the next_state_value variable here instead of state.value
+  end
+end
+```
+Some other useful methods are available:
+```ruby
+class MyComponent < Preact::Component::Base
+  render do
+    if state.key?(:text) # the key? method can be used, to check if a certain key is included in state
+      DIV { state.text }
+    else
+      UL do
+        %i[one two three].each do |key|
+          LI { state[key] } # the [] accessor can be used, if a key is dynamically determined
+        end
+      end
+    end
   end
 end
 ```

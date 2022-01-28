@@ -38,6 +38,22 @@ class MyComponent < Preact::Component::Base
   end
 end
 ```
+#### Useful methods
+```ruby
+class MyComponent < Preact::Component::Base
+  render do
+    if props.key?(:text) # the key? method can be used, to check if a certain property is included in props
+      DIV { props.text }
+    else
+      UL do
+        %i[one two three].each do |prop|
+          LI { props[prop] } # the [] accessor can be used, if a prop is dynamically determined
+        end
+      end
+    end
+  end
+end
+```
 #### Using validate method style
 Props can be declared and type checked and a default value can be given using a validate method chain::
 ```ruby
