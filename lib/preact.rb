@@ -169,6 +169,8 @@ module Preact
               else { component_name = active_component.$to_s(); }
               #{Isomorfeus.raise_error(message: "Is #{`value`} a valid method of #{`component_name`}? If so then please use: #{`key`}: method_ref(:#{`value`}) within component: #{`component_name`}")}
             }
+          } else if (type === "object" && value === nil) {
+              result[self.lower_camelize(key)] = null;
           } else {
             let active_component = self.active_component();
             let component_name;
