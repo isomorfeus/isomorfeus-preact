@@ -4,8 +4,7 @@ compared by reference by shouldComponentUpdate(). Use the DSL like so:
 ```ruby
 class MyComponent < Preact::Component::Base
   ref :my_ref # a simple ref
-  ref :my_other_ref do |reference|  # a ref with block
-    element = reference.current
+  ref :my_other_ref do |element|  # a ref with block
     element.type
   end
 
