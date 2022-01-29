@@ -29,7 +29,7 @@ module LucidComponent
             var defined_refs = base.$defined_refs();
             for (var ref in defined_refs) {
               if (defined_refs[ref] != null) {
-                let r = ref;
+                let r = ref; // to ensure cloure for function below gets correct ref name
                 this[ref] = function(element) {
                   element = oper.native_element_or_component_to_ruby(element);
                   #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
