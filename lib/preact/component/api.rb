@@ -22,7 +22,7 @@ module Preact
           end
 
           def defined_refs
-            @defined_ref ||= `{}`
+            @defined_refs ||= `{}`
           end
 
           def default_state_defined
