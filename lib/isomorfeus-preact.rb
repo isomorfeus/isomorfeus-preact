@@ -7,7 +7,7 @@ if RUBY_ENGINE == 'opal'
     require 'browser/event'
     require 'browser/event_target'
     require 'browser/delegate_native'
-    require 'browser/element'
+    require 'browser/element' # depends on 'preact'
   end
 
   require 'isomorfeus/preact/config'

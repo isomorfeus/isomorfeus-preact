@@ -16,55 +16,47 @@ module Browser
     # function, that function is invoked with `args`. Otherwise, the property
     # is returned as is.
     def method_missing message, *args, &block
-      property_name = property_for_message(message)
-      property = `#@native[#{property_name}]`
-
-      # translate setting a property
       if message.end_with? '='
+        message = message.chop
+        property_name = property_for_message(message)
         return `#@native[#{property_name}] = args[0]`
-      end
-
-      # If the native element doesn't have this property, bubble it up
-      super unless `#{property_name} in #@native`
-
-      if `property === false`
-        return false
-      elsif `typeof(property) === 'number' && isNaN(property)`
-        return nil
       else
-        property = `property == null ? nil : property`
-      end
+        property_name = property_for_message(message)
 
-      # If it's a method, call it. Otherwise, return it.
-      if `typeof(property) === 'function'`
-        `property.apply(#@native, args)`
-      else
-        property
+        %x{
+          let value = #@native[#{property_name}];
+          let type = typeof(value);
+          if (type === 'function') {
+            return value.apply(#@native, args);
+          } else if (value === null || type === 'undefined' || (type === 'number' && isNaN(value))) {
+            return nil;
+          }
+          return value;
+        }
       end
     end
 
     def respond_to_missing? message, include_all
-      return true if message.end_with? '='
-      return true if property_for_message(message)
-
+      message = message.chop if message.end_with? '='
+      property_name = property_for_message(message)
+      return true unless `#{property_name} in #@native`
       false
     end
 
-    def property_for_message message
-      camel_cased_message = message
-        .gsub(/_\w/) { |match| `match[1]`.upcase }
-        .sub(/=$/, '')
+    def property_for_message(message)
+      %x{
+        let camel_cased_message;
+        if (typeof(#@native[message]) !== 'undefined') { camel_cased_message = message; }
+        else { camel_cased_message = Opal.Preact.lower_camelize(message) }
 
-      # translate `supported?` to `supported` or `isSupported`
-      if message.end_with? '?'
-        camel_cased_message = camel_cased_message.chop
-        property_type = `typeof(#@native[camel_cased_message])`
-        if property_type == 'undefined'
-          camel_cased_message = "is#{camel_cased_message[0].upcase}#{camel_cased_message[1..-1]}"
-        end
-      end
-
-      camel_cased_message
+        if (camel_cased_message.endsWith('?')) {
+          camel_cased_message = camel_cased_message.substring(0, camel_cased_message.length - 2);
+          if (typeof(#@native[camel_cased_message]) === 'undefined') {
+            camel_cased_message = 'is' + camel_cased_message[0].toUpperCase() + camel_cased_message.substring(0, camel_cased_message.length - 1);
+          }
+        }
+        return camel_cased_message
+      }
     end
   end
 end
