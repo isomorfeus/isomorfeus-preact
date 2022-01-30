@@ -44,9 +44,9 @@ module LucidApp
               }
             }
             if (base.preload_block) {
-              oper.active_redux_components.push(this);
+              oper.register_active_component(this);
               this.state.preloaded = this.__ruby_instance.$execute_preload_block();
-              oper.active_redux_components.pop();
+              oper.unregister_active_component(this);
             }
             this.listener = this.listener.bind(this);
             this.unsubscriber = Opal.Isomorfeus.store.native.subscribe(this.listener);
