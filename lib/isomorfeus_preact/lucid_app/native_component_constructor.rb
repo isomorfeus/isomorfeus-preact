@@ -33,7 +33,7 @@ module LucidApp
             var defined_refs = #{base.defined_refs};
             for (var ref in defined_refs) {
               if (defined_refs[ref] != null) {
-                let r = ref; // to ensure cloure for function below gets correct ref name
+                let r = ref; // to ensure closure for function below gets correct ref name
                 this[ref] = function(element) {
                   element = oper.native_element_or_component_to_ruby(element);
                   #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
@@ -57,17 +57,13 @@ module LucidApp
           render(props, state) {
             const oper = Opal.Preact;
             oper.render_buffer.push([]);
-            // console.log("lucid app pushed", oper.render_buffer, oper.render_buffer.toString());
-            oper.active_components.push(this);
-            oper.active_redux_components.push(this);
+            oper.register_active_component(this);
             let block_result;
             if (base.while_loading_block && !state.preloaded) { block_result = #{`this.__ruby_instance`.instance_exec(&`base.while_loading_block`)}; }
             else { block_result = #{`this.__ruby_instance`.instance_exec(&`base.render_block`)}; }
             if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
-            oper.active_redux_components.pop();
-            oper.active_components.pop();
+            oper.unregister_active_component(this);
             let children = oper.render_buffer.pop();
-            // console.log("lucid app popping", oper.render_buffer, oper.render_buffer.toString());
             return Opal.global.Preact.createElement(Opal.global.LucidApplicationContext.Provider, { value: { iso_store: this.state.isomorfeus_store_state, iso_theme: base.css_theme }}, children);
           }
           data_access() {

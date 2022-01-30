@@ -13,15 +13,13 @@ module Preact
           base.preact_component = function(props) {
             const oper = Opal.Preact;
             oper.render_buffer.push([]);
-            // console.log("function pushed", oper.render_buffer, oper.render_buffer.toString());
             const [__ruby_state, __ruby_dispatch] = Opal.global.PreactHooks.useReducer(base.instance_reducer, null, base.instance_init);
             const __ruby_instance = __ruby_state.instance;
             __ruby_instance.props = props;
-            oper.active_components.push(__ruby_instance);
+            oper.register_active_component(__ruby_instance);
             let block_result = #{`__ruby_instance`.instance_exec(&`base.render_block`)};
             if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
-            oper.active_components.pop();
-            // console.log("function popping", oper.render_buffer, oper.render_buffer.toString());
+            oper.unregister_active_component(__ruby_instance);
             let result = oper.render_buffer.pop();
             return (result.length === 1) ? result[0] : result;
           }

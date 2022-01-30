@@ -23,12 +23,10 @@ module LucidFunc
           const [__ruby_state, __ruby_dispatch] = og.PreactHooks.useReducer(base.instance_reducer, null, base.instance_init);
           const __ruby_instance = __ruby_state.instance;
           __ruby_instance.props = Object.assign({}, props, context);
-          oper.active_components.push(__ruby_instance);
-          oper.active_redux_components.push(__ruby_instance);
+          oper.register_active_component(__ruby_instance);
           let block_result = #{`__ruby_instance`.instance_exec(&`base.render_block`)};
           if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
-          oper.active_redux_components.pop();
-          oper.active_components.pop();
+          oper.unregister_active_component(__ruby_instance);
           // console.log("function popping", oper.render_buffer, oper.render_buffer.toString());
           let result = oper.render_buffer.pop();
           return (result.length === 1) ? result[0] : result;

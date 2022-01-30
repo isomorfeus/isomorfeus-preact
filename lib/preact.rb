@@ -96,6 +96,20 @@ module Preact
       return self.active_redux_components[length-1];
     };
 
+    self.register_active_component = function(component) {
+      self.active_components.push(component);
+      if (typeof(component.data_access) === 'function') {
+        self.active_redux_components.push(component);
+      }
+    };
+
+    self.unregister_active_component = function(component) {
+      if (typeof(component.data_access) === 'function') {
+        self.active_redux_components.pop();
+      }
+      self.active_components.pop();
+    };
+
     function isObject(obj) { return (obj && typeof obj === 'object'); }
 
     self.merge_deep = function(one, two) {

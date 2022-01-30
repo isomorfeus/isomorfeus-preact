@@ -7,9 +7,9 @@ module Preact
             # TODO convert error
             %x{
               var fun = function(error) {
-                Opal.Preact.active_redux_components.push(this);
+                Opal.Preact.register_active_component(this);
                 #{`this.__ruby_instance`.instance_exec(`error`, &block)};
-                Opal.Preact.active_redux_components.pop();
+                Opal.Preact.unregister_active_component(this);
               }
               if (self.lucid_preact_component) { self.lucid_preact_component.prototype.componentDidCatch = fun; }
               else { self.preact_component.prototype.componentDidCatch = fun; }
@@ -19,9 +19,9 @@ module Preact
           def component_did_mount(&block)
             %x{
               let fun = function() {
-                Opal.Preact.active_redux_components.push(this);
+                Opal.Preact.register_active_component(this);
                 #{`this.__ruby_instance`.instance_exec(&block)};
-                Opal.Preact.active_redux_components.pop();
+                Opal.Preact.unregister_active_component(this);
               }
               if (self.lucid_preact_component) {
                 if (self.lucid_preact_component.prototype.componentDidMount) {
@@ -40,11 +40,11 @@ module Preact
           def component_did_update(&block)
             %x{
               var fun = function(prev_props, prev_state, snapshot) {
-                Opal.Preact.active_redux_components.push(this);
+                Opal.Preact.register_active_component(this);
                 #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: prev_props})`,
                                                        `Opal.Preact.State.$new({state: prev_state})`,
                                                        `snapshot`, &block)};
-                Opal.Preact.active_redux_components.pop();
+                Opal.Preact.unregister_active_component(this);
               }
               if (self.lucid_preact_component) { self.lucid_preact_component.prototype.componentDidUpdate = fun; }
               else { self.preact_component.prototype.componentDidUpdate = fun; }
@@ -55,9 +55,9 @@ module Preact
             %x{
               var fun = function() {
                 if (typeof this.unsubscriber === "function") { this.unsubscriber(); };
-                Opal.Preact.active_redux_components.push(this);
+                Opal.Preact.register_active_component(this);
                 #{`this.__ruby_instance`.instance_exec(&block)};
-                Opal.Preact.active_redux_components.pop();
+                Opal.Preact.unregister_active_component(this);
               }
               if (self.lucid_preact_component) { self.lucid_preact_component.prototype.componentWillUnmount = fun; }
               else { self.preact_component.prototype.componentWillUnmount = fun; }
@@ -68,12 +68,12 @@ module Preact
           def get_derived_state_from_props(&block)
             %x{
               var fun = function(props, state) {
-                Opal.Preact.active_redux_components.push(this);
+                Opal.Preact.register_active_component(this);
                 var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: props})`,
                                                                      `Opal.Preact.State.$new({state: state})`, &block)};
-                Opal.Preact.active_redux_components.pop();
+                Opal.Preact.unregister_active_component(this);
                 if (typeof result.$to_n === 'function') { result = result.$to_n() }
-                if (result === Opal.nil) { return null; }
+                if (result === nil) { return null; }
                 return result;
               }
               if (self.lucid_preact_component) { self.lucid_preact_component.prototype.getDerivedStateFromProps = fun; }
@@ -84,11 +84,11 @@ module Preact
           def get_snapshot_before_update(&block)
             %x{
               var fun = function(prev_props, prev_state) {
-                Opal.Preact.active_redux_components.push(this);
+                Opal.Preact.register_active_component(this);
                 var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: prev_props})`,
                                                                     `Opal.Preact.State.$new({state: prev_state})`, &block)};
-                Opal.Preact.active_redux_components.pop();
-                if (result === Opal.nil) { return null; }
+                Opal.Preact.unregister_active_component(this);
+                if (result === nil) { return null; }
                 return result;
               }
               if (self.lucid_preact_component) { self.lucid_preact_component.prototype.getSnapshotBeforeUpdate = fun; }
