@@ -22,7 +22,9 @@ module Preact
                   let r = ref; // to ensure closure for function below gets correct ref name
                   this[ref] = function(element) {
                     element = Opal.Preact.native_element_or_component_to_ruby(element);
+                    oper.register_active_component(this);
                     #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
+                    oper.unregister_active_component(this);
                   }
                   this[ref] = this[ref].bind(this);
                 } else {
@@ -45,7 +47,9 @@ module Preact
             }
             shouldComponentUpdate(next_props, next_state) {
               if (base.should_component_update_block) {
+                oper.register_active_component(this);
                 return #{!!`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: next_props})`, `Opal.Preact.State.$new({state: next_state })`, &`base.should_component_update_block`)};
+                oper.unregister_active_component(this);
               }
               if (!Opal.Preact.props_are_equal(this.props, next_props)) { return true; }
               if (Opal.Preact.state_is_not_equal(this.state, next_state)) { return true; }

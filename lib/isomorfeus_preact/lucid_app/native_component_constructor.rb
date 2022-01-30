@@ -36,7 +36,9 @@ module LucidApp
                 let r = ref; // to ensure closure for function below gets correct ref name
                 this[ref] = function(element) {
                   element = oper.native_element_or_component_to_ruby(element);
+                  oper.register_active_component(this);
                   #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
+                  oper.unregister_active_component(this);
                 }
                 this[ref] = this[ref].bind(this);
               } else {
