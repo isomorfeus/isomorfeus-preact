@@ -21,7 +21,8 @@ module Preact
                 if (defined_refs[ref] != null) {
                   let r = ref; // to ensure closure for function below gets correct ref name
                   this[ref] = function(element) {
-                    element = Opal.Preact.native_element_or_component_to_ruby(element);
+                    const oper = Opal.Preact;
+                    element = oper.native_element_or_component_to_ruby(element);
                     oper.register_active_component(this);
                     #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
                     oper.unregister_active_component(this);
@@ -46,13 +47,14 @@ module Preact
               return (result.length === 1) ? result[0] : result;
             }
             shouldComponentUpdate(next_props, next_state) {
+              const oper = Opal.Preact;
               if (base.should_component_update_block) {
                 oper.register_active_component(this);
-                return #{!!`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: next_props})`, `Opal.Preact.State.$new({state: next_state })`, &`base.should_component_update_block`)};
+                return #{!!`this.__ruby_instance`.instance_exec(`oper.Props.$new({props: next_props})`, `oper.State.$new({state: next_state })`, &`base.should_component_update_block`)};
                 oper.unregister_active_component(this);
               }
-              if (!Opal.Preact.props_are_equal(this.props, next_props)) { return true; }
-              if (Opal.Preact.state_is_not_equal(this.state, next_state)) { return true; }
+              if (!oper.props_are_equal(this.props, next_props)) { return true; }
+              if (oper.state_is_not_equal(this.state, next_state)) { return true; }
               return false;
             }
             validateProp(props, propName, componentName) {
