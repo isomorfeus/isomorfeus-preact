@@ -41,6 +41,8 @@ module Isomorfeus
           end
         end
 
+        start_time = Time.now if Isomorfeus.development?
+        pass = 1
         # if location_host and scheme are given and if Transport is loaded, connect and then render,
         # otherwise do not render because only one pass is required
         ws_scheme = props[:location_scheme] == 'https:' ? 'wss:' : 'ws:'
@@ -88,6 +90,7 @@ module Isomorfeus
         end
         # wait for first pass to finish
         unless first_pass_skipped
+          pass += 1
           first_pass_finished, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec('return [global.FirstPassFinished, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
           unless first_pass_finished
@@ -104,7 +107,7 @@ module Isomorfeus
             if transport_busy
               start_time = Time.now
               while transport_busy
-                break if (Time.now - start_time) > 10
+                break if (Time.now - start_time) > 5
                 sleep 0.01
                 transport_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.Opal.Isomorfeus.Transport["$busy?"]()')
               end
@@ -127,12 +130,31 @@ module Isomorfeus
               global.Exception = e;
             }
           let application_state = global.Opal.Isomorfeus.store.native.getState();
-          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined') { global.Opal.Isomorfeus.Transport.$disconnect(); }
+          let transport_busy = false;
+          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && global.Opal.Isomorfeus.Transport["$busy?"]()) { transport_busy = true; }
           if (typeof global.NanoCSSInstance !== 'undefined') { ssr_styles = global.NanoCSSInstance.raw }
-          return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
+          return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), transport_busy, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
         JAVASCRIPT
-        # execute second render pass
-        rendered_tree, application_state, @ssr_styles, @ssr_response_status, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+        # execute further render passes
+        rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+        break_while = false
+        start_time = Time.now
+        while transport_busy
+          break if (Time.now - start_time) > 5
+          while transport_busy
+            break if (Time.now - start_time) > 4
+            sleep 0.01
+            transport_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.Opal.Isomorfeus.Transport["$busy?"]()')
+          end
+          # execute third render pass
+          pass += 1
+          rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+          break if break_while || pass > 5
+        end
+        javascript = <<~JAVASCRIPT
+          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined') { global.Opal.Isomorfeus.Transport.$disconnect(); }
+        JAVASCRIPT
+        Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
         Isomorfeus.raise_error(message: exception['message'], stack: exception['stack']) if exception
         render_result << " data-iso-hydrated='true'" if rendered_tree
         if Isomorfeus.respond_to?(:current_user) && Isomorfeus.current_user && !Isomorfeus.current_user.anonymous?
@@ -150,6 +172,7 @@ module Isomorfeus
       if Isomorfeus.server_side_rendering
         render_result = "<script type='application/javascript'>\nServerSideRenderingStateJSON = #{Oj.dump(application_state, mode: :strict)}\n</script>\n" << render_result
       end
+      STDERR.puts "PreactViewHelper Server Side Rendering rendered #{pass} passes and took ~#{Time.now - start_time}s" if Isomorfeus.development?
       render_result
     end
 
