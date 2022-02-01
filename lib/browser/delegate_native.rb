@@ -26,12 +26,22 @@ module Browser
         %x{
           let value = #@native[#{property_name}];
           let type = typeof(value);
-          if (type === 'function') {
-            return value.apply(#@native, args);
-          } else if (value === null || type === 'undefined' || (type === 'number' && isNaN(value))) {
-            return nil;
-          }
-          return value;
+          try {
+            if (type === 'function') {
+              return value.apply(#@native, args);
+            } else if (type === 'object' && (value instanceof HTMLCollection)) {
+              let a = [];
+              for(let i=0; i<value.length; i++) {
+                a[i] = #{Browser::Element.new(`value.item(i)`)};
+              }
+              value = a;
+            } else if (type === 'object' && (value instanceof HTMLElement)) {
+              value = #{Browser::Element.new(value)};
+            } else if (value === null || type === 'undefined' || (type === 'number' && isNaN(value))) {
+              return nil;
+            }
+            return value;
+          } catch { return value; }
         }
       end
     end
