@@ -4,19 +4,19 @@ module Isomorfeus
       base.include Isomorfeus::AssetManager::ViewHelper
     end
 
-    def cached_mount_component(component_name, props = {}, asset_key = 'ssr.js')
+    def cached_mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false, use_ssr: false, max_passes: 4)
       key = "#{component_name}#{props}#{asset}"
       if Isomorfeus.production?
         render_result, @ssr_response_status, @ssr_styles = component_cache.fetch(key)
         return render_result if render_result
       end
-      render_result = mount_component(component_name, props, asset_key)
+      render_result = mount_component(component_name, props, asset_key, skip_ssr: skip_ssr, use_ssr: use_ssr, max_passes: max_passes)
       status = ssr_response_status
       component_cache.store(key, render_result, status, ssr_styles) if status >= 200 && status < 300
       render_result
     end
 
-    def mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false, use_ssr: false)
+    def mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false, use_ssr: false, max_passes: 4)
       @ssr_response_status = nil
       @ssr_styles = nil
       thread_id_asset = "#{Thread.current.object_id}#{asset_key}"
@@ -137,7 +137,6 @@ module Isomorfeus
         JAVASCRIPT
         # execute further render passes
         rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
-        break_while = false
         start_time = Time.now
         while transport_busy
           break if (Time.now - start_time) > 5
@@ -149,7 +148,7 @@ module Isomorfeus
           # execute third render pass
           pass += 1
           rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
-          break if break_while || pass > 5
+          break if pass > max_passes
         end
         javascript = <<~JAVASCRIPT
           if (typeof global.Opal.Isomorfeus.Transport !== 'undefined') { global.Opal.Isomorfeus.Transport.$disconnect(); }
