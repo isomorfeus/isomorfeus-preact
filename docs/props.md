@@ -245,7 +245,7 @@ class PropTest # just to show props, could be any LucidNode or LucidOperation or
   prop :name, validate.String.matches(/T.+/).max_length(12)
 end
 
-class HelloComponent < LucidMaterial::Component::Base
+class HelloComponent < LucidComponent::Base
   render do
     Formik.Formik(initial_values: { email: 'test@test', name: 'Test Test' }.to_n) do
       Formik.Form do

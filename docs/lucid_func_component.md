@@ -1,10 +1,10 @@
-### LucidFunc and LucidMaterial::Func
+### LucidFunc
 
 #### Hooks
-With these classes and mixins its possible to create function components which support almost all features of Lucid and LucidMaterial Class
-Components. LucidFunc and LucidMaterial::Func are especially suited for use with Preact Hooks which can be used in the render block.
+With these classes and mixins its possible to create function components which support almost all features of Lucid Class
+Components. LucidFunc and are especially suited for use with Preact Hooks which can be used in the render block.
 ```ruby
-class MyFunctionComponent < LucidMaterial::Func::Base
+class MyFunctionComponent < LucidFunc::Base
   render do
     theme = SomeImportedLibrary.useSomeSuperHook
     # or more ruby style
