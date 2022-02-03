@@ -110,25 +110,6 @@ module Preact
       self.active_components.pop();
     };
 
-    function isObject(obj) { return (obj && typeof obj === 'object'); }
-
-    self.merge_deep = function(one, two) {
-      return [one, two].reduce(function(pre, obj) {
-        Object.keys(obj).forEach(function(key){
-          let pVal = pre[key];
-          let oVal = obj[key];
-          if (Array.isArray(pVal) && Array.isArray(oVal)) {
-            pre[key] = pVal.concat.apply(this, oVal);
-          } else if (isObject(pVal) && isObject(oVal)) {
-            pre[key] = self.merge_deep(pVal, oVal);
-          } else {
-            pre[key] = oVal;
-          }
-        });
-        return pre;
-      }, {});
-    };
-
     self.prop_dictionary = {};
 
     self.to_native_preact_props = function(ruby_style_props) {
@@ -246,7 +227,6 @@ module Preact
       }
     };
   }
-
 
   def self.create_element(type, props = nil, children = nil, &block)
     %x{
