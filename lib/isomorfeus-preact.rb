@@ -13,11 +13,7 @@ if RUBY_ENGINE == 'opal'
   require 'isomorfeus/preact/config'
 
   # allow mounting of components
-  if on_browser?
-    require 'isomorfeus/top_level'
-  else
-    require 'isomorfeus/top_level_ssr'
-  end
+  require 'isomorfeus/top_level'
 
   # nanocss
   require 'nano_css'
@@ -35,7 +31,7 @@ if RUBY_ENGINE == 'opal'
   require 'preact/props'
 
   # HTML Elements and Fragment support
-  require 'preact/component/elements'
+  require 'preact/elements'
 
   # Preact Wrappers
   require 'preact/context_wrapper'
@@ -47,20 +43,21 @@ if RUBY_ENGINE == 'opal'
   require 'preact/component/initializer'
   require 'preact/component/native_component_constructor'
   require 'preact/state'
-  require 'preact/component/resolution'
   require 'preact/component/mixin'
   require 'preact/component/base'
+
+  # component resolution
+  require 'preact/component_resolution'
+  class Object
+    include Preact::ComponentResolution
+  end
 
   # init LucidApplicationContext (Store Provider and Consumer)
   require 'lucid_app/context'
   LucidApp::Context.create_application_context
 
-  class Object
-    include Preact::Component::Resolution
-  end
-
+  # init auto loader
   Isomorfeus.zeitwerk = Zeitwerk::Loader.new
-
   Isomorfeus.zeitwerk.push_dir('isomorfeus_preact')
   require_tree 'isomorfeus_preact', autoload: true
 
