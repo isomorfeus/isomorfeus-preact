@@ -34,6 +34,40 @@ module LucidComponent
           end
           `base.while_loading_block = wl_block`
         end
+
+        # styles
+        def styles(styles_hash = nil, &block)
+          styles_hash = block.call if block_given?
+          if styles_hash
+            component_name = self.to_s
+            %x{
+              let rule_name = component_name.replace(/:/g, '_');
+              let ogni = Opal.global.NanoCSSInstance;
+              if (base.css_styles && #{Isomorfeus.production?}) { return base.css_styles; }
+              else if(#{Isomorfeus.development?}) {
+                if (#{on_browser?}) {
+                  ogni.delete_from_sheet(rule_name);
+                  ogni.delete_from_rule_blocks(rule_name);
+                  ogni.hydrate_force_put = true;
+                }
+              }
+              if (typeof styles_hash.$is_wrapped_style !== 'undefined') {
+                base.css_styles = styles_hash;
+              } else {
+                let css;
+                if (typeof styles_hash.$to_n === 'function') { css = styles_hash.$to_n(); }
+                else { css = styles_hash; }
+                let nano_styles = ogni.sheet(css, rule_name);
+                base.css_styles = #{::LucidComponent::StylesWrapper.new(`nano_styles`)};
+              }
+            }
+          end
+          %x{
+            if (!base.css_styles) { return nil; }
+            return base.css_styles;
+          }
+        end
+        alias_method :styles=, :styles
       end
 
       # stores
@@ -57,6 +91,15 @@ module LucidComponent
 
       def preloaded?
         !!state.preloaded
+      end
+
+      # styles
+      def styles
+        %x{
+          let c = self.$class()
+          if (typeof(c.css_styles) === 'undefined') { return nil; }
+          return c.css_styles;
+        }
       end
 
       # requires transport
