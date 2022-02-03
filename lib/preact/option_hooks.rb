@@ -1,5 +1,5 @@
 module Preact
-  class Options
+  class OptionHooks
     class << self
       def debounce_rendering(&block)
         %x{
@@ -79,7 +79,7 @@ module Preact
         }
         nil
       end
-      
+
       def vnode(&block)
         %x{
           const old_hook = Opal.global.Preact.options.unmount;
