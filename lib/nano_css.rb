@@ -70,7 +70,9 @@ module NanoCSS
             // Test if .insertRule() works in dev mode. Unknown pseudo-selectors will throw when
             // .insertRule() is used, but .appendChild() will not throw.
             try {
-              renderer.shTest.sheet.insertRule(rawCssRule, renderer.shTest.sheet.cssRules.length);
+              var testSheet = renderer.shTest.sheet;
+              testSheet.insertRule(rawCssRule, testSheet.cssRules.length);
+              testSheet.deleteRule(testSheet.cssRules.length - 1);
             } catch (error) {
               if (config.verbose) {
                 console.error(error);
