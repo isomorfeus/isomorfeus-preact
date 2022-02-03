@@ -3,7 +3,7 @@ module LucidApp
     def self.included(base)
       base.include(::Native::Wrapper)
       base.extend(::LucidApp::NativeComponentConstructor)
-      base.include(::Preact::Component::Elements)
+      base.include(::Preact::Elements)
       base.extend(::LucidPropDeclaration::Mixin)
       base.include(::Preact::Component::Api)
       base.include(::Preact::Component::Callbacks)

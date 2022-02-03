@@ -4,7 +4,7 @@ module LucidFunc
       base.include(::LucidFunc::Initializer)
       base.include(::Preact::FunctionComponent::Api)
       base.extend(::LucidFunc::NativeComponentConstructor)
-      base.include(::Preact::Component::Elements)
+      base.include(::Preact::Elements)
       base.include(::LucidComponent::Api)
       base.include(::LucidComponent::StylesApi)
     end
