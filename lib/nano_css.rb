@@ -58,17 +58,14 @@ module NanoCSS
 
         renderer.putRaw = function (rawCssRule) {
           // .insertRule() is faster than .appendChild(), that's why we use it in PROD.
-          // But CSS injected using .insertRule() is not displayed in Chrome Devtools,
-          // that's why we use .appendChild in DEV.
+          // But CSS injected using .insertRule() is not displayed in Chrome Devtools
+          var sheet = renderer.sh.sheet;
           if (process.env.NODE_ENV === 'production') {
-            var sheet = renderer.sh.sheet;
-
             // Unknown pseudo-selectors will throw, this try/catch swallows all errors.
             try { sheet.insertRule(rawCssRule, sheet.cssRules.length); }
             catch (error) {}
           } else {
             // Test if .insertRule() works in dev mode. Unknown pseudo-selectors will throw when
-            // .insertRule() is used, but .appendChild() will not throw.
             try {
               var testSheet = renderer.shTest.sheet;
               testSheet.insertRule(rawCssRule, testSheet.cssRules.length);
@@ -78,9 +75,7 @@ module NanoCSS
                 console.error(error);
               }
             }
-
-            // Insert pretty-printed CSS for dev mode.
-            renderer.sh.appendChild(document.createTextNode(rawCssRule));
+            sheet.insertRule(rawCssRule, sheet.cssRules.length);
           }
         };
       }
@@ -134,9 +129,15 @@ module NanoCSS
 
   %x{
     self.rule = function (renderer) {
-      var blocks;
       if (process.env.NODE_ENV !== 'production') {
-          blocks = {};
+        renderer.rule_blocks = {};
+      }
+
+      renderer.delete_from_rule_blocks = function (rule_name) {
+        rule_name = rule_name + '-';
+        for(const rule in renderer.rule_blocks) {
+          if (rule.startsWith(rule_name)) { delete renderer.rule_blocks[rule]; }
+        }
       }
 
       renderer.rule = function (css, block) {
@@ -150,11 +151,11 @@ module NanoCSS
                       );
                   }
 
-                  if (blocks[block]) {
+                  if (renderer.rule_blocks[block]) {
                       console.error('nano-css block name "' + block + '" used more than once.');
                   }
 
-                  blocks[block] = 1;
+                  renderer.rule_blocks[block] = 1;
               }
           }
 
@@ -169,6 +170,20 @@ module NanoCSS
 
   %x{
     self.sheet = function (renderer) {
+      renderer.delete_from_sheet = function(rule_name) {
+        let selector_rule_name = "._" + rule_name + "-";
+        if (renderer.sh && renderer.sh.sheet) {
+          let sheet = renderer.sh.sheet;
+          let rules = sheet.cssRules;
+          for (let i=rules.length-1;i>=0;i--) {
+            let rule = rules.item(i);
+            if (rule.cssText.includes(selector_rule_name)) {
+              sheet.deleteRule(i);
+            }
+          }
+        }
+      }
+
       renderer.sheet = function (map, block) {
         var result = {};
 
@@ -250,7 +265,7 @@ module NanoCSS
   %x{
     self.hydrate = function (renderer) {
       var hydrated = {};
-
+      renderer.hydrate_force_put = false;
       renderer.hydrate = function (sh) {
         var cssRules = sh.cssRules || sh.sheet.cssRules;
 
@@ -264,7 +279,7 @@ module NanoCSS
         var put = renderer.put;
 
         renderer.put = function (selector, css) {
-          if (selector in hydrated) return;
+          if (!renderer.hydrate_force_put && selector in hydrated) return;
 
           put(selector, css);
         };
