@@ -171,7 +171,7 @@ module Isomorfeus
       if Isomorfeus.server_side_rendering
         render_result = "<script type='application/javascript'>\nServerSideRenderingStateJSON = #{Oj.dump(application_state, mode: :strict)}\n</script>\n" << render_result
       end
-      STDERR.puts "PreactViewHelper Server Side Rendering rendered #{pass} passes and took ~#{Time.now - start_time}s" if Isomorfeus.development?
+      STDERR.puts "PreactViewHelper Server Side Rendering rendered #{pass} passes and took ~#{Time.now - start_time}s" if Isomorfeus.development? && !skip_ssr
       render_result
     end
 
