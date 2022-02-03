@@ -42,7 +42,7 @@ module Isomorfeus
         end
 
         start_time = Time.now if Isomorfeus.development?
-        pass = 1
+        pass = 0
         # if location_host and scheme are given and if Transport is loaded, connect and then render,
         # otherwise do not render because only one pass is required
         ws_scheme = props[:location_scheme] == 'https:' ? 'wss:' : 'ws:'
@@ -84,13 +84,13 @@ module Isomorfeus
         JAVASCRIPT
         # execute first render pass
         begin
+          pass += 1
           first_pass_skipped = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
         rescue Exception => e
           Isomorfeus.raise_error(error: e)
         end
         # wait for first pass to finish
         unless first_pass_skipped
-          pass += 1
           first_pass_finished, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec('return [global.FirstPassFinished, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
           unless first_pass_finished
@@ -114,7 +114,7 @@ module Isomorfeus
             end
           end
         end
-        # build javascript for second render pass
+        # build javascript for additional render passes
         # guard against leaks from first pass, maybe because of a exception
         javascript = <<~JAVASCRIPT
           global.Opal.Preact.render_buffer = [];
@@ -136,6 +136,7 @@ module Isomorfeus
           return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), transport_busy, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
         JAVASCRIPT
         # execute further render passes
+        pass += 1
         rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
         start_time = Time.now
         while transport_busy
@@ -145,10 +146,9 @@ module Isomorfeus
             sleep 0.01
             transport_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.Opal.Isomorfeus.Transport["$busy?"]()')
           end
-          # execute third render pass
           pass += 1
           rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
-          break if pass > max_passes
+          break if pass >= max_passes
         end
         javascript = <<~JAVASCRIPT
           if (typeof global.Opal.Isomorfeus.Transport !== 'undefined') { global.Opal.Isomorfeus.Transport.$disconnect(); }
