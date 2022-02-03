@@ -6,7 +6,6 @@ module LucidFunc
       base.extend(::LucidFunc::NativeComponentConstructor)
       base.include(::Preact::Elements)
       base.include(::LucidComponent::Api)
-      base.include(::LucidComponent::StylesApi)
     end
   end
 end

@@ -8,7 +8,6 @@ module LucidComponent
       base.include(::Preact::Component::Api)
       base.include(::Preact::Component::Callbacks)
       base.include(::LucidComponent::Api)
-      base.include(::LucidComponent::StylesApi)
       base.include(::LucidComponent::Initializer)
     end
   end
