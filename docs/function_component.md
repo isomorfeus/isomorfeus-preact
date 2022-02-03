@@ -21,27 +21,6 @@ end
 **Data flow of a Preact::FunctionComponent:**
 ![Preact::FunctionComponent Data Flow](https://raw.githubusercontent.com/isomorfeus/isomorfeus-preact/master/images/data_flow_function_component.png)
 
-#### Memo Components
-To create a function component that renders only when props change, use the memo_component, which uses Preact.memo:
-```ruby
-class MyFunctionComponent < Preact::MemoComponent::Base
-  # A custom function can be utilized to check if a render should happen
-  props_are_equal? do |prev_props, next_props|
-    prev_props != next_props
-  end
-
-  render do |props|
-    SPAN { props.text }
-  end
-end
-```
-
-A custom memo props function can also be utilized when using Preact.memo directly with a function component and a block for checking the props:
-```ruby
-Preact.memo(`MyComponent`) do |prev_props, next_props|
-  prev_props.var != next_props.var
-end
-```
 #### Events
 The event_handler DSL can be used within the Preact::FunctionComponent::Creator. However, function components dont react by themselves to events,
 the event handler must be applied to a element.
