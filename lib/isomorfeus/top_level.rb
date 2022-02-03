@@ -1,98 +1,122 @@
 module Isomorfeus
   class TopLevel
     class << self
-      def mount!
-        Isomorfeus.init
-        Isomorfeus::TopLevel.on_ready do
-          root_element = `document.querySelector('div[data-iso-root]')`
-          Isomorfeus.raise_error(message: "Isomorfeus root element not found!") unless root_element
-          component_name = root_element.JS.getAttribute('data-iso-root')
-          Isomorfeus.env = root_element.JS.getAttribute('data-iso-env')
-          user_sid = root_element.JS.getAttribute('data-iso-usid')
-          Isomorfeus.current_user_sid =`JSON.parse(user_sid)` if user_sid
-          component = nil
-          begin
-            component = component_name.constantize
-          rescue Exception => e
-            `console.warn("Deferring mount: " + #{e.message})`
-            @timeout_start = Time.now unless @timeout_start
-            if (Time.now - @timeout_start) < 10
-              `setTimeout(Opal.Isomorfeus.TopLevel['$mount!'], 100)`
-            else
-              `console.error("Unable to mount '" + #{component_name} + "'!")`
+      if on_browser? # execution environment
+        def mount!
+          Isomorfeus.init
+          Isomorfeus::TopLevel.on_ready do
+            root_element = `document.querySelector('div[data-iso-root]')`
+            Isomorfeus.raise_error(message: "Isomorfeus root element not found!") unless root_element
+            component_name = root_element.JS.getAttribute('data-iso-root')
+            Isomorfeus.env = root_element.JS.getAttribute('data-iso-env')
+            user_sid = root_element.JS.getAttribute('data-iso-usid')
+            Isomorfeus.current_user_sid =`JSON.parse(user_sid)` if user_sid
+            component = nil
+            begin
+              component = component_name.constantize
+            rescue Exception => e
+              `console.warn("Deferring mount: " + #{e.message})`
+              @timeout_start = Time.now unless @timeout_start
+              if (Time.now - @timeout_start) < 10
+                `setTimeout(Opal.Isomorfeus.TopLevel['$mount!'], 100)`
+              else
+                `console.error("Unable to mount '" + #{component_name} + "'!")`
+              end
             end
-          end
-          if component
-            props_json = root_element.JS.getAttribute('data-iso-props')
-            props = `Opal.Hash.$new(JSON.parse(props_json))`
-            raw_hydrated = root_element.JS.getAttribute('data-iso-hydrated')
-            hydrated = (raw_hydrated && raw_hydrated == "true")
-            %x{
-              if (global.ServerSideRenderingStateJSON) {
-              var state = global.ServerSideRenderingStateJSON;
-                var keys = Object.keys(state);
-                for(var i=0; i < keys.length; i++) {
-                  if (Object.keys(state[keys[i]]).length > 0) {
-                    global.Opal.Isomorfeus.store.native.dispatch({ type: keys[i].toUpperCase(), set_state: state[keys[i]] });
+            if component
+              props_json = root_element.JS.getAttribute('data-iso-props')
+              props = `Opal.Hash.$new(JSON.parse(props_json))`
+              raw_hydrated = root_element.JS.getAttribute('data-iso-hydrated')
+              hydrated = (raw_hydrated && raw_hydrated == "true")
+              %x{
+                if (global.ServerSideRenderingStateJSON) {
+                var state = global.ServerSideRenderingStateJSON;
+                  var keys = Object.keys(state);
+                  for(var i=0; i < keys.length; i++) {
+                    if (Object.keys(state[keys[i]]).length > 0) {
+                      global.Opal.Isomorfeus.store.native.dispatch({ type: keys[i].toUpperCase(), set_state: state[keys[i]] });
+                    }
                   }
                 }
               }
-            }
-            Isomorfeus.execute_init_after_store_classes
-            begin
-              result = Isomorfeus::TopLevel.mount_component(component, props, root_element, hydrated)
-              @tried_another_time = false
-              result
-            rescue Exception => e
-              if  !@tried_another_time
-                @tried_another_time = true
-                `console.warn("Deferring mount: " + #{e.message})`
-                `console.error(#{e.backtrace.join("\n")})`
-                `setTimeout(Opal.Isomorfeus.TopLevel['$mount!'], 250)`
-              else
-                `console.error("Unable to mount '" + #{component_name} + "'! Error: " + #{e.message} + "!")`
-                `console.error(#{e.backtrace.join("\n")})`
-             end
+              Isomorfeus.execute_init_after_store_classes
+              begin
+                result = Isomorfeus::TopLevel.mount_component(component, props, root_element, hydrated)
+                @tried_another_time = false
+                result
+              rescue Exception => e
+                if  !@tried_another_time
+                  @tried_another_time = true
+                  `console.warn("Deferring mount: " + #{e.message})`
+                  `console.error(#{e.backtrace.join("\n")})`
+                  `setTimeout(Opal.Isomorfeus.TopLevel['$mount!'], 250)`
+                else
+                  `console.error("Unable to mount '" + #{component_name} + "'! Error: " + #{e.message} + "!")`
+                  `console.error(#{e.backtrace.join("\n")})`
+                end
+              end
             end
           end
         end
-      end
 
-      def on_ready(&block)
-        %x{
-          function run() { block.$call() };
-          function ready_fun(fn) {
-            if (document.readyState === "complete" || document.readyState === "interactive") {
-              setTimeout(fn, 1);
+        def on_ready(&block)
+          %x{
+            function run() { block.$call() };
+            function ready_fun(fn) {
+              if (document.readyState === "complete" || document.readyState === "interactive") {
+                setTimeout(fn, 1);
+              } else {
+                document.addEventListener("DOMContentLoaded", fn);
+              }
+            }
+            ready_fun(run);
+          }
+        end
+
+        def on_ready_mount(component, props = nil, element_query = nil)
+          # init in case it hasn't been run yet
+          Isomorfeus.init
+          on_ready do
+            Isomorfeus::TopLevel.mount_component(component, props, element_query)
+          end
+        end
+
+        def mount_component(component, props, element_or_query, hydrated = false)
+          if `(typeof element_or_query === 'string')` || (`(typeof element_or_query.$class === 'function')` && element_or_query.class == String)
+            element = `document.body.querySelector(element_or_query)`
+          elsif `(typeof element_or_query.$is_a === 'function')` && element_or_query.is_a?(Browser::Element)
+            element = element_or_query.to_n
+          else
+            element = element_or_query
+          end
+
+          top = Preact.create_element(component, props)
+          hydrated ? Preact.hydrate(top, element) : Preact.render(top, element)
+          Isomorfeus.top_component = top
+        end
+      else # execution environment
+        attr_accessor :ssr_route_path
+        attr_accessor :transport_ws_url
+
+        def mount!
+          # nothing, but keep it for compatibility with browser
+        end
+
+        def render_component_to_string(component_name, props)
+          component = nil
+          %x{
+            if (typeof component_name === 'string' || component_name instanceof String) {
+              component = component_name.split(".").reduce(function(o, x) {
+                return (o !== null && typeof o[x] !== "undefined" && o[x] !== null) ? o[x] : null;
+              }, Opal.global)
             } else {
-              document.addEventListener("DOMContentLoaded", fn);
+              component = component_name;
             }
           }
-          ready_fun(run);
-        }
-      end
-
-      def on_ready_mount(component, props = nil, element_query = nil)
-        # init in case it hasn't been run yet
-        Isomorfeus.init
-        on_ready do
-          Isomorfeus::TopLevel.mount_component(component, props, element_query)
+          component = Isomorfeus.cached_component_class(component_name) unless component
+          Preact.render_to_string(Preact.create_element(component, `Opal.Hash.$new(props)`))
         end
-      end
-
-      def mount_component(component, props, element_or_query, hydrated = false)
-        if `(typeof element_or_query === 'string')` || (`(typeof element_or_query.$class === 'function')` && element_or_query.class == String)
-          element = `document.body.querySelector(element_or_query)`
-        elsif `(typeof element_or_query.$is_a === 'function')` && element_or_query.is_a?(Browser::Element)
-          element = element_or_query.to_n
-        else
-          element = element_or_query
-        end
-
-        top = Preact.create_element(component, props)
-        hydrated ? Preact.hydrate(top, element) : Preact.render(top, element)
-        Isomorfeus.top_component = top
-      end
+      end # execution environment
     end
   end
 end
