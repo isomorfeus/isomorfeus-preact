@@ -212,18 +212,12 @@ module Preact
       }
     };
 
-    self.deep_force_update = function(component) {
-      if (component.forceUpdate) { component.forceUpdate(); }
-      if (component.__c) { self.deep_force_update(component.__c); }
-      else if (component.base) { self.update_components_from_dom(component.base); }
-    };
-
-    self.update_components_from_dom = function(node, fn) {
-      let children = node.childNodes;
-      for (let i=children && children.length; i--;) {
-        let child = children[i];
-        if (child.__c) { self.deep_force_update(child.__c); }
-        else { self.update_components_from_dom(child, fn); }
+    self.deep_force_update = function(vnode) {
+      if (vnode.__c && vnode.__c.forceUpdate) { vnode.__c.forceUpdate(); }
+      if (vnode.__k) {
+        for (let i=vnode.__k.length-1; i>=0; i--) {
+          self.deep_force_update(vnode.__k[i]);
+        }
       }
     };
   }
