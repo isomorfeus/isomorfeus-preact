@@ -29,19 +29,19 @@ module Preact
           # check for ruby component and render it
           # otherwise pass on method missing
           %x{
-            var constant;
+            var constant = null;
             if (typeof self.iso_preact_const_cache === 'undefined') { self.iso_preact_const_cache = {}; }
-            try {
-              if (typeof self.iso_preact_const_cache[component_name] !== 'undefined') {
-                constant = self.iso_preact_const_cache[component_name]
-              } else {
+            if (typeof self.iso_preact_const_cache[component_name] !== 'undefined') {
+              constant = self.iso_preact_const_cache[component_name]
+            } else {
+              try {
                 constant = self.$const_get(component_name);
                 self.iso_preact_const_cache[component_name] = constant;
-              }
-              if (typeof constant.preact_component !== 'undefined') {
-                return Opal.Preact.internal_prepare_args_and_render(constant.preact_component, args, block);
-              }
-            } catch(err) { }
+              } catch(err) { }
+            }
+            if (constant && typeof constant.preact_component !== 'undefined') {
+              return Opal.Preact.internal_prepare_args_and_render(constant.preact_component, args, block);
+            }
             return #{_preact_component_class_resolution_original_method_missing(component_name, *args, block)};
           }
         end
@@ -59,7 +59,6 @@ module Preact
       %x{
         var constant;
         if (typeof self.iso_preact_const_cache === 'undefined') { self.iso_preact_const_cache = {}; }
-
         if (typeof self.iso_preact_const_cache[component_name] !== 'undefined') {
           constant = self.iso_preact_const_cache[component_name]
         } else if (typeof self.$$is_a_module !== 'undefined') {
