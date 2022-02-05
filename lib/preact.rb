@@ -216,7 +216,7 @@ module Preact
       if(vnode) {
         if (vnode.__c && vnode.__c.forceUpdate) { vnode.__c.forceUpdate(); }
         if (vnode.__k) {
-          for (let i=vnode.__k.length-1; i>=0; i--) {
+          for (let i=0; i<vnode.__k.length; i++) {
             self.deep_force_update(vnode.__k[i]);
           }
         }
