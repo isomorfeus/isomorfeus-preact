@@ -213,10 +213,12 @@ module Preact
     };
 
     self.deep_force_update = function(vnode) {
-      if (vnode.__c && vnode.__c.forceUpdate) { vnode.__c.forceUpdate(); }
-      if (vnode.__k) {
-        for (let i=vnode.__k.length-1; i>=0; i--) {
-          self.deep_force_update(vnode.__k[i]);
+      if(vnode) {
+        if (vnode.__c && vnode.__c.forceUpdate) { vnode.__c.forceUpdate(); }
+        if (vnode.__k) {
+          for (let i=vnode.__k.length-1; i>=0; i--) {
+            self.deep_force_update(vnode.__k[i]);
+          }
         }
       }
     };
