@@ -16,17 +16,14 @@ module LucidComponent
           `base.preload_block = block`
           component_did_mount do
             unless self.state.preloaded
-              @_preload_promise.then { self.state.preloaded = true }.fail do |result|
-                err_text = "#{self.class.name}: preloading failed, last result: #{result.nil? ? 'nil' : result}!"
-                `console.error(err_text)`
-              end
+              @_preload_promise.then { self.state.preloaded = true } if @_preload_promise
             end
           end
         end
 
         def while_loading(option = nil, &block)
           wl_block = proc do
-            if @_preload_promise.resolved?
+            if @_preload_promise && @_preload_promise.resolved?
               instance_exec(&`base.render_block`)
             else
               instance_exec(&block)
@@ -85,8 +82,23 @@ module LucidComponent
 
       # preloading
       def execute_preload_block
-        @_preload_promise = instance_exec(&self.class.JS[:preload_block])
-        @_preload_promise.resolved?
+        begin
+          @_preload_promise = instance_exec(&self.class.JS[:preload_block])
+        rescue => e
+          %x{
+            console.error(e.message);
+            console.error(e.stack);
+          }
+        end
+        if @_preload_promise
+          @_preload_promise.fail do |result|
+            err_text = "#{self.class.name}: preloading failed, last result: #{result.nil? ? 'nil' : result}!"
+            `console.error(err_text)`
+          end
+          @_preload_promise.resolved?
+        else
+          false
+        end
       end
 
       def preloaded?
