@@ -24,8 +24,13 @@ module LucidFunc
           const __ruby_instance = __ruby_state.instance;
           __ruby_instance.props = Object.assign({}, props, context);
           oper.register_active_component(__ruby_instance);
-          let block_result = #{`__ruby_instance`.instance_exec(&`base.render_block`)};
-          if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
+          try {
+            let block_result = #{`__ruby_instance`.instance_exec(&`base.render_block`)};
+            if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
+          } catch (e) {
+            if (oper.using_did_catch) { throw e; }
+            else { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
+          }
           oper.unregister_active_component(__ruby_instance);
           // console.log("function popping", oper.render_buffer, oper.render_buffer.toString());
           let result = oper.render_buffer.pop();

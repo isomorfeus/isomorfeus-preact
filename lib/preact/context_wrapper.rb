@@ -5,7 +5,7 @@ module Preact
     def initialize(native)
       @native = native
     end
-    
+
     def is_wrapped_context
       true
     end
@@ -22,8 +22,10 @@ module Preact
           if (block !== nil) {
             operabu.push([]);
             // console.log("consumer pushed", operabu, operabu.toString());
-            let block_result = block.$call(value);
-            if (block_result && block_result !== nil) { Opal.Preact.render_block_result(block_result); }
+            try {
+              let block_result = block.$call(value);
+              if (block_result && block_result !== nil) { Opal.Preact.render_block_result(block_result); }
+            } catch (e) { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
             // console.log("consumer popping", operabu, operabu.toString());
             children = operabu.pop();
             if (children.length === 1) { children = children[0]; }

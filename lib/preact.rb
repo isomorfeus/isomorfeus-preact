@@ -80,6 +80,8 @@ module Preact
       } else { operain(component, null, null, block); }
     };
 
+    self.using_did_catch = false;
+
     self.active_components = [];
 
     self.active_component = function() {

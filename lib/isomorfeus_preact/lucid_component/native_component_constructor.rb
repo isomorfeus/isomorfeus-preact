@@ -33,7 +33,9 @@ module LucidComponent
                 this[ref] = function(element) {
                   element = oper.native_element_or_component_to_ruby(element);
                   oper.register_active_component(this);
-                  #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
+                  try {
+                    #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
+                  } catch (e) { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
                   oper.unregister_active_component(this);
                 }
                 this[ref] = this[ref].bind(this);
@@ -43,7 +45,7 @@ module LucidComponent
             }
             if (base.preload_block) {
               oper.register_active_component(this);
-              this.state.preloaded = this.__ruby_instance.$execute_preload_block();
+              this.state.preloaded = this.__ruby_instance.$execute_preload_block(); // caught in execute_preload_block itself
               oper.unregister_active_component(this);
             }
           }
@@ -55,9 +57,14 @@ module LucidComponent
             oper.render_buffer.push([]);
             oper.register_active_component(this);
             let block_result;
-            if (base.while_loading_block && !state.preloaded) { block_result = #{`this.__ruby_instance`.instance_exec(&`base.while_loading_block`)}; }
-            else { block_result = #{`this.__ruby_instance`.instance_exec(&`base.render_block`)}; }
-            if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
+            try {
+              if (base.while_loading_block && !state.preloaded) { block_result = #{`this.__ruby_instance`.instance_exec(&`base.while_loading_block`)}; }
+              else { block_result = #{`this.__ruby_instance`.instance_exec(&`base.render_block`)}; }
+              if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
+            } catch (e) {
+              if (oper.using_did_catch) { throw e; }
+              else { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
+            }
             oper.unregister_active_component(this);
             let result = oper.render_buffer.pop();
             return (result.length === 1) ? result[0] : result;

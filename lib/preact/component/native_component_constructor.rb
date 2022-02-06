@@ -24,7 +24,9 @@ module Preact
                     const oper = Opal.Preact;
                     element = oper.native_element_or_component_to_ruby(element);
                     oper.register_active_component(this);
-                    #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
+                    try {
+                      #{`this.__ruby_instance`.instance_exec(`element`, &`defined_refs[r]`)}
+                    } catch (e) { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
                     oper.unregister_active_component(this);
                   }
                   this[ref] = this[ref].bind(this);
@@ -40,8 +42,13 @@ module Preact
               const oper = Opal.Preact;
               oper.render_buffer.push([]);
               oper.register_active_component(this);
-              let block_result = #{`this.__ruby_instance`.instance_exec(&`base.render_block`)};
-              if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
+              try {
+                let block_result = #{`this.__ruby_instance`.instance_exec(&`base.render_block`)};
+                if (block_result && block_result !== nil) { oper.render_block_result(block_result); }
+              } catch (e) {
+                if (oper.using_did_catch) { throw e; }
+                else { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
+              }
               oper.unregister_active_component(this);
               let result = oper.render_buffer.pop();
               return (result.length === 1) ? result[0] : result;
@@ -50,8 +57,12 @@ module Preact
               const oper = Opal.Preact;
               if (base.should_component_update_block) {
                 oper.register_active_component(this);
-                return #{!!`this.__ruby_instance`.instance_exec(`oper.Props.$new({props: next_props})`, `oper.State.$new({state: next_state })`, &`base.should_component_update_block`)};
+                let result;
+                try {
+                  result = #{!!`this.__ruby_instance`.instance_exec(`oper.Props.$new({props: next_props})`, `oper.State.$new({state: next_state })`, &`base.should_component_update_block`)};
+                } catch (e) { console.error(e.message === nil ? 'error at' : e.message, e.stack); }
                 oper.unregister_active_component(this);
+                return result;
               }
               if (!oper.props_are_equal(this.props, next_props)) { return true; }
               if (oper.state_is_not_equal(this.state, next_state)) { return true; }
