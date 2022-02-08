@@ -13,7 +13,7 @@ image: ruby:3.1.0
 before_script:
   - ruby -v  # Print out ruby version for debugging
   # Uncomment next line if your rails app needs a JS runtime:
-  - apt-get update -q && apt-get install nodejs -yqq && apt install chromium -yqq
+  - apt-get update -q && apt-get install -yqq nodejs && apt-get install -yqq chromium
   - bundle install -j $(nproc)
 
 specs:
