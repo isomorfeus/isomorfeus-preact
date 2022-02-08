@@ -7,7 +7,7 @@ Isomorfeus Preact<br/>
 Develop Preact components for Opal Ruby along with very easy to use and advanced Preact-Redux Components.
 
 ## Community and Support
-At the [Isomorfeus Framework Project](http://isomorfeus.com)
+At the [Isomorfeus Framework Project](https://isomorfeus.com)
 
 ## Versioning and Compatibility
 isomorfeus-preact version follows the Preact version which features and API it implements.
