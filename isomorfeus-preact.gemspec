@@ -8,10 +8,13 @@ Gem::Specification.new do |s|
   s.authors       = ['Jan Biedermann']
   s.email         = ['jan@kursator.com']
   s.homepage      = 'http://isomorfeus.com'
-  s.summary       = 'Preact for the Isomorfeus Framework Project.'
+  s.summary       = 'Preact Components for Isomorfeus.'
   s.license       = 'MIT'
-  s.description   = 'Write Preact Components in Ruby.'
-  s.metadata      = { "github_repo" => "ssh://github.com/isomorfeus/gems" }
+  s.description   = 'Write Preact Components in Ruby, including styles and reactive data access.'
+  s.metadata      = {
+                      "github_repo" => "ssh://github.com/isomorfeus/gems",
+                      "source_code_uri" => "https://github.com/isomorfeus/isomorfeus-preact"
+                    }
   s.files         = `git ls-files -- lib LICENSE README.md node_modules package.json`.split("\n")
   s.require_paths = ['lib']
 
