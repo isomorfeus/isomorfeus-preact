@@ -1,7 +1,0 @@
-dist: bionic
-lanugage: ruby
-rvm: 2.6.5
-script: rake
-before_install: nvm install 12.13.1
-notifications:
-  slack: isomorfeus:fkfbTBlQTpTgXaF7e0YOjWCG
