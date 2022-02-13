@@ -60,7 +60,9 @@ module Isomorfeus
           global.Exception = false;
           global.IsomorfeusSessionId = '#{Thread.current[:isomorfeus_session_id]}';
           global.Opal.Isomorfeus['$env=']('#{Isomorfeus.env}');
-          if (typeof global.Opal.Isomorfeus.$negotiated_locale === 'function') {
+          if (typeof global.Opal.Isomorfeus["$current_locale="] === 'function') {
+            global.Opal.Isomorfeus["$current_locale="]('#{props[:locale]}');
+          } else if (typeof global.Opal.Isomorfeus["$negotiated_locale="] === 'function') { // remove later on
             global.Opal.Isomorfeus["$negotiated_locale="]('#{props[:locale]}');
           }
           global.Opal.Isomorfeus['$force_init!']();
@@ -124,11 +126,11 @@ module Isomorfeus
           let rendered_tree;
           let ssr_styles;
           let component;
-            try {
-              rendered_tree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string('#{component_name}', #{Oj.dump(props, mode: :strict)});
-            } catch (e) {
-              global.Exception = e;
-            }
+          try {
+            rendered_tree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string('#{component_name}', #{Oj.dump(props, mode: :strict)});
+          } catch (e) {
+            global.Exception = e;
+          }
           let application_state = global.Opal.Isomorfeus.store.native.getState();
           let transport_busy = false;
           if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && global.Opal.Isomorfeus.Transport["$busy?"]()) { transport_busy = true; }
