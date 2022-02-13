@@ -38,6 +38,14 @@ if RUBY_ENGINE == 'opal'
   require 'preact/native_constant_wrapper'
 
   # Preact::Component
+  # make modules available
+  module Preact
+    module Component
+    end
+    module FunctionComponent
+    end
+  end
+
   require 'preact/component/api'
   require 'preact/component/callbacks'
   require 'preact/component/initializer'
@@ -52,6 +60,13 @@ if RUBY_ENGINE == 'opal'
     include Preact::ComponentResolution
   end
 
+  # make modules available
+  module LucidApp
+  end
+  module LucidComponent
+  end
+  module LucidFunc
+  end
   # init LucidApplicationContext (Store Provider and Consumer)
   require 'lucid_app/context'
   LucidApp::Context.create_application_context
