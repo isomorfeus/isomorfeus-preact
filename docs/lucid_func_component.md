@@ -13,3 +13,6 @@ class MyFunctionComponent < LucidFunc::Base
 
 #### Restrictions
 Automatic prop validation is not applied to these component types. Props can be manually validated if desired.
+
+#### I18n
+The LucidI18n::Mixin is automatically included if available.

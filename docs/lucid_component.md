@@ -29,6 +29,9 @@ class MyComponent < LucidComponent::Base # is a Preact::Context Consumer
 end
 ```
 
+#### I18n
+The LucidI18n::Mixin is automatically included into LucidComponent and LucidApp if available.
+
 #### Theming and Styles
 LucidApp also sets up theming. LucidApp and LucidComponents support styling:
 
