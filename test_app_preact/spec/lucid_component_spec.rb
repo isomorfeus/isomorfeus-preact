@@ -12,7 +12,7 @@ RSpec.describe 'LucidComponent' do
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
       nil
     end
-    element =page.wait_for_selector('#test_component')
+    element = page.wait_for_selector('#test_component')
     expect(element.inner_text).to include('TestComponent rendered')
   end
 
@@ -28,7 +28,7 @@ RSpec.describe 'LucidComponent' do
       Isomorfeus::TopLevel.mount_component(TestComponent, {}, '#test_anchor')
       nil
     end
-    element =page.wait_for_selector('#test_component')
+    element = page.wait_for_selector('#test_component')
     expect(element.inner_text).to include('TestComponent rendered')
   end
 
