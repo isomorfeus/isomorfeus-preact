@@ -10,6 +10,7 @@ module LucidApp
       base.include(::LucidComponent::Api)
       base.include(::LucidApp::Api)
       base.include(::LucidComponent::Initializer)
+      base.include(::LucidI18n::Mixin) if `("lucid_i18n/mixin" in Opal.modules)`
     end
   end
 end

@@ -9,6 +9,7 @@ module LucidComponent
       base.include(::Preact::Component::Callbacks)
       base.include(::LucidComponent::Api)
       base.include(::LucidComponent::Initializer)
+      base.include(::LucidI18n::Mixin) if `("lucid_i18n/mixin" in Opal.modules)`
     end
   end
 end

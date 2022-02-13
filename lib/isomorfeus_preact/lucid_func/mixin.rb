@@ -6,6 +6,7 @@ module LucidFunc
       base.extend(::LucidFunc::NativeComponentConstructor)
       base.include(::Preact::Elements)
       base.include(::LucidComponent::Api)
+      base.include(::LucidI18n::Mixin) if `("lucid_i18n/mixin" in Opal.modules)`
     end
   end
 end
