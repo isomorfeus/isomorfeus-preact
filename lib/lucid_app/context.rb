@@ -5,7 +5,7 @@ module LucidApp
       css_server = `null`
       css_server = `document.getElementById('css-server-side')` unless on_ssr?
       %x{
-        n = Opal.NanoCSS;
+        let n = Opal.NanoCSS;
         nano_css = (css_server) ? n.create({ sh: css_server }) : n.create();
         n.rule(nano_css);
         n.sheet(nano_css);
