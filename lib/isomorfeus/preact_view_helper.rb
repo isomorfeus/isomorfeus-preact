@@ -86,13 +86,13 @@ module Isomorfeus
         JAVASCRIPT
         # execute first render pass
         begin
-          pass += 1
           first_pass_skipped = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
         rescue Exception => e
           Isomorfeus.raise_error(error: e)
         end
         # wait for first pass to finish
         unless first_pass_skipped
+          pass += 1
           first_pass_finished, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec('return [global.FirstPassFinished, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
           unless first_pass_finished
@@ -132,24 +132,24 @@ module Isomorfeus
             global.Exception = e;
           }
           let application_state = global.Opal.Isomorfeus.store.native.getState();
-          let transport_busy = false;
-          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && global.Opal.Isomorfeus.Transport["$busy?"]()) { transport_busy = true; }
+          let still_busy = (#{pass}<2) ? global.Opal.Isomorfeus.store['$recently_dispatched?']() : false;
+          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && global.Opal.Isomorfeus.Transport["$busy?"]()) { still_busy = true; }
           if (typeof global.NanoCSSInstance !== 'undefined') { ssr_styles = global.NanoCSSInstance.raw }
-          return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), transport_busy, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
+          return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), still_busy, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
         JAVASCRIPT
         # execute further render passes
         pass += 1
-        rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+        rendered_tree, application_state, @ssr_styles, @ssr_response_status, still_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
         start_time = Time.now
-        while transport_busy
+        while still_busy
           break if (Time.now - start_time) > 5
-          while transport_busy
+          while still_busy
             break if (Time.now - start_time) > 4
             sleep 0.01
-            transport_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.Opal.Isomorfeus.Transport["$busy?"]()')
+            still_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return (typeof global.Opal.Isomorfeus.Transport !== "undefined") ? global.Opal.Isomorfeus.Transport["$busy?"]() : false')
           end
           pass += 1
-          rendered_tree, application_state, @ssr_styles, @ssr_response_status, transport_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+          rendered_tree, application_state, @ssr_styles, @ssr_response_status, still_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
           break if pass >= max_passes
         end
         javascript = <<~JAVASCRIPT
