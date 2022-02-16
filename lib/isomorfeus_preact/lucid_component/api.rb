@@ -4,7 +4,6 @@ module LucidComponent::Api
       # stores
       attr_accessor :app_store
       attr_accessor :class_store
-      attr_accessor :store
 
       def class_store
         @class_store ||= ::LucidComponent::ClassStoreProxy.new(self.to_s)

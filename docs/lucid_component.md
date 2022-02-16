@@ -2,7 +2,6 @@
 
 #### Store
 This component is like a Preact::Component and in addition to it, allows do manage its state conveniently over redux using a simple DSL:
-- `store` - works similar like the components state, but manages the components state with redux
 - `class_store` - allows to have a class state, when changing this state, all instances of the components class render
 - `app_store` - allows to access application state, when changing this state, all instances that have requested the same variables, will render.
 
@@ -11,14 +10,11 @@ Therefore a LucidComponent needs a LucidApp as outer component.
 LucidApp sets up a Preact::Context Provider, LucidComponent works as a Preact::Context Consumer.
 
 ```ruby
-
 class MyComponent < LucidComponent::Base # is a Preact::Context Consumer
 
   render do
     # in a LucidComponent state can be used for local state managed by preact:
     state.some_var
-    # in addition to that, store can be used for local state managed by redux:
-    store.a_var
     # and for managing class state:
     class_store.another_var
     # and for managing application wide state:

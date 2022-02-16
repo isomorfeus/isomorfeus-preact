@@ -122,43 +122,6 @@ RSpec.describe 'LucidFunc' do
     end
   end
 
-  context 'it has a component store and can' do
-    # LucidComponent MUST be used within a LucidApp for things to work
-
-    before do
-      @page = visit('/')
-    end
-
-    it 'use a uninitialized store value and can change it' do
-      @page.eval_ruby do
-        class TestComponent < LucidFunc::Base
-          def change_state(event)
-            store.something = true
-          end
-          render do
-            if store.something
-              DIV(id: :changed_component, on_click: :change_state) { "#{store.something}" }
-            else
-              DIV(id: :test_component, on_click: :change_state) { "nothing#{store.something}here" }
-            end
-          end
-        end
-        class OuterApp < LucidApp::Base
-          render do
-            TestComponent()
-          end
-        end
-        Isomorfeus::TopLevel.mount_component(OuterApp, {}, '#test_anchor')
-        nil
-      end
-      element = @page.wait_for_selector('#test_component')
-      expect(element.inner_text).to include('nothinghere')
-      element.click
-      element = @page.wait_for_selector('#changed_component')
-      expect(element.inner_text).to include('true')
-    end
-  end
-
   context 'it has a component class_store and can' do
     # LucidComponent MUST be used within a LucidApp for things to work
 
