@@ -1,22 +1,22 @@
 module NanoCSS
   %x{
     var KEBAB_REGEX = /[A-Z]/g;
+    var on_browser = #{on_browser?};
+    var in_dev = #{Isomorfeus.development?};
 
     function hash(str) {
       var h = 5381, i = str.length;
       while (i) h = (h * 33) ^ str.charCodeAt(--i);
       return '_' + (h >>> 0).toString(36);
     };
-  }
 
-  %x{
     self.create = function (config) {
       config = config || {};
       var assign = config.assign || Object.assign;
       var client = typeof window === 'object';
 
       // Check if we are really in browser environment.
-      if (process.env.NODE_ENV !== 'production') {
+      if (on_browser && in_dev) {
         if (client) {
           if ((typeof document !== 'object') || !document.getElementsByTagName('HTML')) {
             console.error('nano-css detected browser environment because of "window" global, but "document" global seems to be defective.');
@@ -47,7 +47,7 @@ module NanoCSS
       if (renderer.client) {
         if (!renderer.sh) { document.head.appendChild(renderer.sh = document.createElement('style')); }
 
-        if (process.env.NODE_ENV !== 'production') {
+        if (in_dev) {
           renderer.sh.setAttribute('data-nano-css-dev', '');
 
           // Test style sheet used in DEV mode to test if .insetRule() would throw.
@@ -60,7 +60,7 @@ module NanoCSS
           // .insertRule() is faster than .appendChild(), that's why we use it in PROD.
           // But CSS injected using .insertRule() is not displayed in Chrome Devtools
           var sheet = renderer.sh.sheet;
-          if (process.env.NODE_ENV === 'production') {
+          if (!in_dev) {
             // Unknown pseudo-selectors will throw, this try/catch swallows all errors.
             try { sheet.insertRule(rawCssRule, sheet.cssRules.length); }
             catch (error) {}
@@ -91,7 +91,7 @@ module NanoCSS
           if ((value instanceof Object) && !(value instanceof Array)) {
             postponed.push(prop);
           } else {
-            if ((process.env.NODE_ENV !== 'production') && !renderer.sourcemaps) {
+            if (in_dev && !renderer.sourcemaps) {
               str += '    ' + renderer.decl(prop, value, selector, atrule) + '\n';
             } else {
               str += renderer.decl(prop, value, selector, atrule);
@@ -100,7 +100,7 @@ module NanoCSS
         }
 
         if (str) {
-          if ((process.env.NODE_ENV !== 'production') && !renderer.sourcemaps) {
+          if (in_dev && !renderer.sourcemaps) {
             str = '\n' + selector + ' {\n' + str + '}\n';
           } else {
             str = selector + '{' + str + '}';
@@ -129,7 +129,7 @@ module NanoCSS
 
   %x{
     self.rule = function (renderer) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (in_dev) {
         renderer.rule_blocks = {};
       }
 
@@ -142,7 +142,7 @@ module NanoCSS
 
       renderer.rule = function (css, block) {
           // Warn user if CSS selectors clash.
-          if (process.env.NODE_ENV !== 'production') {
+          if (in_dev) {
               if (block) {
                   if (typeof block !== 'string') {
                       throw new TypeError(
@@ -194,7 +194,7 @@ module NanoCSS
         var onElementModifier = function (elementModifier) {
           var styles = map[elementModifier];
 
-          if ((process.env.NODE_ENV !== 'production') && renderer.sourcemaps) {
+          if (in_dev && renderer.sourcemaps) {
             // In dev mode emit CSS immediately to generate sourcemaps.
             result[elementModifier] = renderer.rule(styles, block + '-' + elementModifier);
           } else {
