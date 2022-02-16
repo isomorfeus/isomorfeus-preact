@@ -15,7 +15,6 @@ RSpec.describe 'Server Side Rendering' do
     state_json = @page.eval('JSON.stringify(ServerSideRenderingStateJSON)')
     state = Oj.load(state_json, mode: :strict)
     expect(state).to have_key('application_state')
-    expect(state).to have_key('instance_state')
     expect(state).to have_key('class_state')
 
     # does not work like this when autoloading
@@ -35,7 +34,6 @@ RSpec.describe 'Server Side Rendering' do
     state_json = @page.eval('JSON.stringify(ServerSideRenderingStateJSON)')
     state = Oj.load(state_json, mode: :strict)
     expect(state).to have_key('application_state')
-    expect(state).to have_key('instance_state')
     expect(state).to have_key('class_state')
 
     # does not work like this when autoloading
@@ -51,9 +49,15 @@ RSpec.describe 'Server Side Rendering' do
 
   it 'it returns 404 if page not found' do
     skip unless Isomorfeus.server_side_rendering
-    # just the same as above, just a second time, just to see if the store is initialized correctly
     @page = visit('/whatever')
     expect(session.response.status).to eq(404)
+  end
+
+  it 'it renders 2 passes to catch store updates' do
+    skip unless Isomorfeus.server_side_rendering
+    @page = visit('/ssr')
+    t = @page.inner_text
+    expect(t).to include('c_value')
   end
 
   it 'allows skipping of ssr' do

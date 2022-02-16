@@ -29,14 +29,14 @@ class HelloComponent < LucidComponent::Base
   end
 
   render do
-    a = store.a_value
+    a = app_store.a_value
     c = class_store.a_value
-    store.a_value = "a_value" unless a
+    app_store.a_value = "a_value" unless a
     class_store.a_value = "c_value" unless c
     DIV 'Rendered!!'
-    DIV "#{c}"
-    DIV "#{a}"
-    DIV(class: styles.test){ "#{a}" }
+    DIV "c: #{c}"
+    DIV "a: #{a}"
+    DIV(class: styles.test) { "a: #{a}" }
     DIV "Here was a Form"
     MemoTest()
     # keep, was a BUG: component resolution
