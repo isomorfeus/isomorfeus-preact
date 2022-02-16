@@ -10,10 +10,6 @@ module ExampleLucidSyntax
       state.some_bool = !state.some_bool
     end
 
-    def change_store(event)
-      store.a_bool = !store.a_bool
-    end
-
     def change_class_store(event)
       class_store.b_bool = !class_store.b_bool
     end
@@ -26,7 +22,6 @@ module ExampleLucidSyntax
       SPAN({ on_click: props.on_click }, 'Click for orange alert! Props: ')
       SPAN props.text
       SPAN({ on_click: :change_state }, ", state is: #{state.some_bool} (Click!)")
-      SPAN({ on_click: :change_store }, ", store is: #{store.a_bool} (Click!)")
       SPAN({ on_click: :change_class_store }, ", class_store is: #{class_store.b_bool} (Click!)")
       SPAN({ on_click: :change_app_store }, ", app_store is: #{app_store.c_bool} (Click!)")
       SPAN ', Children: '
