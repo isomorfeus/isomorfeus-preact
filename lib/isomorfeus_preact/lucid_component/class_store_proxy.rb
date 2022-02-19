@@ -1,11 +1,8 @@
 module LucidComponent
   class ClassStoreProxy
-    def initialize(component_name, component_instance = nil, native = nil)
+    def initialize(component_name, native = nil)
       @component_name = component_name
-      if component_instance
-        @native = native
-        @component_instance = component_instance
-      end
+      @native = native
     end
 
     def [](key)
