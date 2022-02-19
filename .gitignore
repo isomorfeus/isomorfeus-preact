@@ -46,4 +46,4 @@ yarn.lock
 *.gem
 
 test_app_preact/data
-Test_app_preact/store
+test_app_preact/storage
