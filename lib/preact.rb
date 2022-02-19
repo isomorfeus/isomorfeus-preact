@@ -196,11 +196,12 @@ module Preact
     };
 
     self.internal_render = function(component, props, string_child, block) {
+      const oper = Opal.global.Preact;
       const operabu = self.render_buffer;
       let native_props;
       if (props && props !== nil) { native_props = self.to_native_preact_props(props); }
       if (string_child) {
-        operabu[operabu.length - 1].push(Opal.global.Preact.createElement(component, native_props, string_child));
+        operabu[operabu.length - 1].push(oper.createElement(component, native_props, string_child));
       } else if (block && block !== nil) {
         operabu.push([]);
         // console.log("internal_render pushed", Opal.Preact.render_buffer, Opal.Preact.render_buffer.toString());
@@ -208,9 +209,9 @@ module Preact
         if (block_result && block_result !== nil) { Opal.Preact.render_block_result(block_result); }
         // console.log("internal_render popping", Opal.Preact.render_buffer, Opal.Preact.render_buffer.toString());
         let children = operabu.pop();
-        operabu[operabu.length - 1].push(Opal.global.Preact.createElement.apply(this, [component, native_props].concat(children)));
+        operabu[operabu.length - 1].push(oper.createElement.apply(this, [component, native_props].concat(children)));
       } else {
-        operabu[operabu.length - 1].push(Opal.global.Preact.createElement(component, native_props));
+        operabu[operabu.length - 1].push(oper.createElement(component, native_props));
       }
     };
 
