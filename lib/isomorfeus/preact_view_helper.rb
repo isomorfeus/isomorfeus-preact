@@ -4,9 +4,9 @@ module Isomorfeus
       base.include Isomorfeus::AssetManager::ViewHelper
     end
 
-    def cached_mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false, use_ssr: false, max_passes: 4, force: false)
+    def cached_mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false, use_ssr: false, max_passes: 4, refresh: false)
       key = "#{component_name}#{props}#{asset}"
-      if Isomorfeus.production? && !force
+      if !Isomorfeus.development? && !refresh
         render_result, @ssr_response_status, @ssr_styles = component_cache.fetch(key)
         return render_result if render_result
       end
