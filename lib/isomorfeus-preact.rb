@@ -81,6 +81,7 @@ else
   require 'uri'
   require 'oj'
   require 'opal'
+  require 'opal/compiler'
   require 'opal-activesupport'
   require 'opal-zeitwerk'
   require 'isomorfeus-speednode'
