@@ -1,10 +1,7 @@
 module LucidComponent
   class AppStoreProxy
-    def initialize(component_instance)
-      if component_instance
-        @native = component_instance.to_n
-        @component_instance = component_instance
-      end
+    def initialize(native)
+      @native = native
     end
 
     def [](key)
