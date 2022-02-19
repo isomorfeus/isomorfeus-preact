@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'opal-zeitwerk', '~> 0.3.0'
   s.add_dependency 'isomorfeus-asset-manager', '~> 0.14.12'
   s.add_dependency 'isomorfeus-redux', '~> 4.1.17'
-  s.add_dependency 'isomorfeus-speednode', '~> 0.4.9'
+  s.add_dependency 'isomorfeus-speednode', '~> 0.5.0'
   s.add_dependency 'dalli', '~> 2.7.11'
   s.add_dependency 'redis', '~> 4.4.0'
   s.add_dependency 'zeitwerk', '~> 2.4.2'
