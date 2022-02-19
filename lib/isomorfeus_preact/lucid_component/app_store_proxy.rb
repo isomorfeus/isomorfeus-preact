@@ -22,10 +22,8 @@ module LucidComponent
         Isomorfeus.store.collect_and_defer_dispatch(action)
       else
         # check if we have a component local state value
-        if @native && `#@native.props.iso_store`
-          if `#@native.props.iso_store.application_state && #@native.props.iso_store.application_state.hasOwnProperty(key)`
-            return @native.JS[:props].JS[:iso_store].JS[:application_state].JS[key]
-          end
+        if `#@native?.props?.iso_store?.application_state?.hasOwnProperty?.(key)`
+          return `#@native.props.iso_store.application_state[key]`
         else
           return AppStore[key]
         end
