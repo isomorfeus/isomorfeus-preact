@@ -83,7 +83,7 @@ module Isomorfeus
 
       def start_app!
         Isomorfeus.zeitwerk.setup
-        Isomorfeus::TopLevel.mount!
+        Isomorfeus::TopLevel.mount! unless on_ssr?
       end
 
       def force_render

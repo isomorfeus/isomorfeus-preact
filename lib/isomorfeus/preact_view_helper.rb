@@ -17,19 +17,13 @@ module Isomorfeus
     end
 
     def mount_component(component_name, props = {}, asset_key = 'ssr.js', skip_ssr: false, use_ssr: false, max_passes: 4)
+      ssr_start_time = Time.now if Isomorfeus.development?
       @ssr_response_status = nil
       @ssr_styles = nil
-      thread_id_asset = "#{Thread.current.object_id}#{asset_key}"
       render_result = "<div data-iso-env=\"#{Isomorfeus.env}\" data-iso-root=\"#{component_name}\" data-iso-props='#{Oj.dump(props, mode: :strict)}'"
       if !skip_ssr && (Isomorfeus.server_side_rendering || use_ssr)
+        thread_id_asset = "#{Thread.current.object_id}#{asset_key}"
         if Isomorfeus.development?
-          # always create a new context, effectively reloading code
-          # delete the existing context first, saves memory
-          if Isomorfeus.ssr_contexts.key?(thread_id_asset)
-            uuid = Isomorfeus.ssr_contexts[thread_id_asset].instance_variable_get(:@uuid)
-            runtime = Isomorfeus.ssr_contexts[thread_id_asset].instance_variable_get(:@runtime)
-            runtime.vm.delete_context(uuid)
-          end
           begin
             init_speednode_context(asset_key, thread_id_asset)
           rescue Exception => e
@@ -41,7 +35,7 @@ module Isomorfeus
           end
         end
 
-        start_time = Time.now if Isomorfeus.development?
+        ctx = Isomorfeus.ssr_contexts[thread_id_asset]
         pass = 0
         # if location_host and scheme are given and if Transport is loaded, connect and then render,
         # otherwise do not render because only one pass is required
@@ -53,110 +47,84 @@ module Isomorfeus
         # build javascript for rendering first pass
         # it will initialize buffers to guard against leaks, maybe caused by previous exceptions
         javascript = <<~JAVASCRIPT
-          global.Opal.Preact.render_buffer = [];
-          global.Opal.Preact.active_components = [];
-          global.Opal.Preact.active_redux_components = [];
-          global.FirstPassFinished = false;
-          global.Exception = false;
-          global.IsomorfeusSessionId = '#{Thread.current[:isomorfeus_session_id]}';
-          global.Opal.Isomorfeus['$env=']('#{Isomorfeus.env}');
-          if (typeof global.Opal.Isomorfeus["$current_locale="] === 'function') {
-            global.Opal.Isomorfeus["$current_locale="]('#{props[:locale]}');
-          } else if (typeof global.Opal.Isomorfeus["$negotiated_locale="] === 'function') { // remove later on
-            global.Opal.Isomorfeus["$negotiated_locale="]('#{props[:locale]}');
-          }
-          global.Opal.Isomorfeus['$force_init!']();
-          global.Opal.Isomorfeus['$ssr_response_status='](200);
-          global.Opal.Isomorfeus.TopLevel['$ssr_route_path=']('#{props[:location]}');
-          let api_ws_path = '#{api_ws_path}';
-          let exception;
-          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && api_ws_path !== '') {
-            global.Opal.Isomorfeus.TopLevel["$transport_ws_url="]("#{transport_ws_url}");
-            global.Opal.send(global.Opal.Isomorfeus.Transport.$promise_connect(global.IsomorfeusSessionId), 'then', [], ($$1 = function(){
-              try {
-                global.Opal.Isomorfeus.TopLevel.$render_component_to_string('#{component_name}', #{Oj.dump(props, mode: :strict)});
-                global.FirstPassFinished = 'transport';
-              } catch (e) {
-                global.Exception = e;
-                global.FirstPassFinished = 'transport';
-              }
-            }, $$1.$$s = this, $$1.$$arity = 0, $$1))
-            return false;
-          } else { global.FirstPassFinished = true; return true; };
+        return Opal.Isomorfeus.SSR.first_pass('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{props[:location]}', '#{api_ws_path}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)})
         JAVASCRIPT
+
+        finished = false
         # execute first render pass
         begin
-          first_pass_skipped = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
+          pass += 1
+          has_transport, has_store, need_further_pass, exception = ctx.exec(javascript)
+          Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
         rescue Exception => e
           Isomorfeus.raise_error(error: e)
         end
-        # wait for first pass to finish
-        unless first_pass_skipped
-          pass += 1
-          first_pass_finished, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec('return [global.FirstPassFinished, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
+
+        if has_transport
+          # wait for first pass to finish
+          first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
           unless first_pass_finished
             start_time = Time.now
             while !first_pass_finished
               break if (Time.now - start_time) > 10
-              sleep 0.01
-              first_pass_finished = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.FirstPassFinished')
+              sleep 0.005
+              first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
+              Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
             end
           end
-          # wait for transport requests to finish
-          if first_pass_finished == 'transport'
-            transport_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.Opal.Isomorfeus.Transport["$busy?"]()')
-            if transport_busy
-              start_time = Time.now
-              while transport_busy
-                break if (Time.now - start_time) > 5
+
+          # wait for transport to settle
+          transport_busy = ctx.eval_script(key: :transport_busy)
+          if transport_busy
+            start_time = Time.now
+            while transport_busy
+              break if (Time.now - start_time) > 5
+              sleep 0.005
+              transport_busy = ctx.eval_script(key: :transport_busy)
+            end
+          end
+        end
+
+        if !need_further_pass
+          rendered_tree, application_state, @ssr_styles, @ssr_response_status, exception = ctx.eval_script(key: :first_pass_result)
+          Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
+        else
+          start_time = Time.now
+          script_key = if has_transport && has_store
+                         :sill_busy
+                       elsif has_transport
+                         :transport_busy
+                       elsif has_store
+                         :store_busy
+                       else
+                         nil
+                       end
+          while need_further_pass
+            # execute further render passes
+            javascript = <<~JAVASCRIPT
+            return Opal.Isomorfeus.SSR.further_pass('#{component_name}', #{Oj.dump(props, mode: :strict)})
+            JAVASCRIPT
+            pass += 1
+            rendered_tree, application_state, @ssr_styles, @ssr_response_status, need_further_pass, exception = ctx.exec(javascript)
+            Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
+            if need_further_pass && script_key
+              break if (Time.now - start_time) > 5
+              need_further_pass = ctx.eval_script(key: script_key)
+              while need_further_pass
+                break if (Time.now - start_time) > 4
                 sleep 0.01
-                transport_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return global.Opal.Isomorfeus.Transport["$busy?"]()')
+                need_further_pass = ctx.eval_script(key: script_key)
               end
+              break if pass >= max_passes
+            else
+              break
             end
           end
         end
-        # build javascript for additional render passes
-        # guard against leaks from first pass, maybe because of a exception
-        javascript = <<~JAVASCRIPT
-          global.Opal.Preact.render_buffer = [];
-          global.Opal.Preact.active_components = [];
-          global.Opal.Preact.active_redux_components = [];
-          global.Exception = false;
-          let rendered_tree;
-          let ssr_styles;
-          let component;
-          try {
-            rendered_tree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string('#{component_name}', #{Oj.dump(props, mode: :strict)});
-          } catch (e) {
-            global.Exception = e;
-          }
-          let application_state = global.Opal.Isomorfeus.store.native.getState();
-          let still_busy = (#{pass}<2) ? global.Opal.Isomorfeus.store['$recently_dispatched?']() : false;
-          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined' && global.Opal.Isomorfeus.Transport["$busy?"]()) { still_busy = true; }
-          if (typeof global.NanoCSSInstance !== 'undefined') { ssr_styles = global.NanoCSSInstance.raw }
-          return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), still_busy, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
-        JAVASCRIPT
-        # execute further render passes
-        pass += 1
-        rendered_tree, application_state, @ssr_styles, @ssr_response_status, still_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
-        start_time = Time.now
-        while still_busy
-          break if (Time.now - start_time) > 5
-          while still_busy
-            break if (Time.now - start_time) > 4
-            sleep 0.01
-            still_busy = Isomorfeus.ssr_contexts[thread_id_asset].exec('return (typeof global.Opal.Isomorfeus.Transport !== "undefined") ? global.Opal.Isomorfeus.Transport["$busy?"]() : false')
-          end
-          pass += 1
-          rendered_tree, application_state, @ssr_styles, @ssr_response_status, still_busy, exception = Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
-          break if pass >= max_passes
-        end
-        javascript = <<~JAVASCRIPT
-          if (typeof global.Opal.Isomorfeus.Transport !== 'undefined') { global.Opal.Isomorfeus.Transport.$disconnect(); }
-        JAVASCRIPT
-        Isomorfeus.ssr_contexts[thread_id_asset].exec(javascript)
-        Isomorfeus.raise_error(message: exception['message'], stack: exception['stack']) if exception
+
+        ctx.eval_script(key: :transport_disconnect) if has_transport
+
         render_result << " data-iso-hydrated='true'" if rendered_tree
         if Isomorfeus.respond_to?(:current_user) && Isomorfeus.current_user && !Isomorfeus.current_user.anonymous?
           render_result << " data-iso-usid=#{Oj.dump(Isomorfeus.current_user.sid, mode: :strict)}"
@@ -170,10 +138,10 @@ module Isomorfeus
         render_result << " data-iso-nloc='#{props[:locale]}'>"
       end
       render_result << '</div>'
-      if Isomorfeus.server_side_rendering
+      if Isomorfeus.server_side_rendering && !skip_ssr
         render_result = "<script type='application/javascript'>\nServerSideRenderingStateJSON = #{Oj.dump(application_state, mode: :strict)}\n</script>\n" << render_result
+        puts "PreactViewHelper Server Side Rendering rendered #{pass} passes and took ~#{((Time.now - ssr_start_time)*1000).to_i}ms" if Isomorfeus.development?
       end
-      STDERR.puts "PreactViewHelper Server Side Rendering rendered #{pass} passes and took ~#{((Time.now - start_time)*1000).to_i}ms" if Isomorfeus.development? && !skip_ssr
       render_result
     end
 
@@ -198,8 +166,32 @@ module Isomorfeus
     def init_speednode_context(asset_key, thread_id_asset)
       asset = Isomorfeus.assets[asset_key]
       raise "#{self.class.name}: Asset not found: #{asset_key}" unless asset
-      asset_manager.transition(asset_key, asset)
-      Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
+      if !Isomorfeus.ssr_contexts.key?(thread_id_asset) || !asset.bundled?
+        if Isomorfeus.ssr_contexts.key?(thread_id_asset)
+          uuid = Isomorfeus.ssr_contexts[thread_id_asset].instance_variable_get(:@uuid)
+          runtime = Isomorfeus.ssr_contexts[thread_id_asset].instance_variable_get(:@runtime)
+          runtime.vm.delete_context(uuid)
+        end
+        asset_manager.transition(asset_key, asset)
+        Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
+        ctx = Isomorfeus.ssr_contexts[thread_id_asset]
+        ctx.exec(top_level_mod)
+        ctx.exec(ssr_mod)
+        ctx.add_script(key: :first_pass_check, source: '[global.FirstPassFinished, global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
+        ctx.add_script(key: :first_pass_result, source: 'Opal.Isomorfeus.SSR.first_pass_result()')
+        ctx.add_script(key: :still_busy, source: 'let nfp = global.Opal.Isomorfeus.Transport["$busy?"]() || global.Opal.Isomorfeus.store["$recently_dispatched?"](); (nfp == nil) ? false : nfp;')
+        ctx.add_script(key: :store_busy, source: 'let nfp = global.Opal.Isomorfeus.store["$recently_dispatched?"](); (nfp == nil) ? false : nfp;')
+        ctx.add_script(key: :transport_busy, source: 'global.Opal.Isomorfeus.Transport["$busy?"]()')
+        ctx.add_script(key: :transport_disconnect, source: 'global.Opal.Isomorfeus.Transport.$disconnect()')
+      end
+    end
+
+    def ssr_mod
+      @_ssr_mod ||= Opal.compile(File.read(File.expand_path(File.join(File.dirname(__FILE__), 'ssr.rb'))))
+    end
+
+    def top_level_mod
+      @_top_level_mod ||= Opal.compile(File.read(File.expand_path(File.join(File.dirname(__FILE__), 'top_level_ssr.rb'))))
     end
   end
 end
