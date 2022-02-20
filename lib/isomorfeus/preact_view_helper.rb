@@ -92,7 +92,7 @@ module Isomorfeus
         else
           start_time = Time.now
           script_key = if has_transport && has_store
-                         :sill_busy
+                         :still_busy
                        elsif has_transport
                          :transport_busy
                        elsif has_store
