@@ -179,8 +179,8 @@ module Isomorfeus
         ctx.exec(ssr_mod)
         ctx.add_script(key: :first_pass_check, source: '[global.FirstPassFinished, global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
         ctx.add_script(key: :first_pass_result, source: 'Opal.Isomorfeus.SSR.first_pass_result()')
-        ctx.add_script(key: :still_busy, source: 'let nfp = global.Opal.Isomorfeus.Transport["$busy?"]() || global.Opal.Isomorfeus.store["$recently_dispatched?"](); (nfp == global.Opal.nil) ? false : nfp;')
-        ctx.add_script(key: :store_busy, source: 'let nfp = global.Opal.Isomorfeus.store["$recently_dispatched?"](); (nfp == global.Opal.nil) ? false : nfp;')
+        ctx.add_script(key: :still_busy, source: 'Opal.Isomorfeus.SSR.still_busy()')
+        ctx.add_script(key: :store_busy, source: 'Opal.Isomorfeus.SSR.store_busy()')
         ctx.add_script(key: :transport_busy, source: 'global.Opal.Isomorfeus.Transport["$busy?"]()')
         ctx.add_script(key: :transport_disconnect, source: 'global.Opal.Isomorfeus.Transport.$disconnect()')
       end

@@ -70,6 +70,16 @@ module Isomorfeus
         global.NeedFurtherPass = (nfp == nil) ? false : nfp;
         return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
       }
+
+      self.still_busy = function(){
+        let nfp = global.Opal.Isomorfeus.Transport["$busy?"]() || global.Opal.Isomorfeus.store["$recently_dispatched?"]();
+        return (nfp == global.Opal.nil) ? false : nfp;
+      }
+
+      self.store_busy = function() {
+        let nfp = global.Opal.Isomorfeus.store["$recently_dispatched?"]();
+        return (nfp == global.Opal.nil) ? false : nfp;
+      }
     }
   end
 end
