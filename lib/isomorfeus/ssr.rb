@@ -24,7 +24,7 @@ module Isomorfeus
               global.RenderedTree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string(component_name, props);
               let nfp = global.Opal.Isomorfeus.Transport["$busy?"]() || global.Opal.Isomorfeus.store['$recently_dispatched?']();
               global.NeedFurtherPass = (nfp == nil) ? false : nfp;
-              global.FirstPassFinished = false;
+              global.FirstPassFinished = true;
             } catch (e) {
               global.Exception = e;
               global.NeedFurtherPass = false;
