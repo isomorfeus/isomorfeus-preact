@@ -13,7 +13,7 @@ module Isomorfeus
         global.HasTransport = (typeof global.Opal.Isomorfeus.Transport !== 'undefined') && (api_ws_path !== '');
         global.HasStore = typeof global.Opal.Isomorfeus.store !== 'undefined';
         global.Opal.Isomorfeus['$env='](env);
-        if (typeof global.Opal.Isomorfeus["$current_locale="] === 'function') { global.Opal.Isomorfeus["$current_locale="](''); }
+        if (typeof global.Opal.Isomorfeus["$current_locale="] === 'function') { global.Opal.Isomorfeus["$current_locale="](locale); }
         global.Opal.Isomorfeus['$force_init!']();
         global.Opal.Isomorfeus['$ssr_response_status='](200);
         global.Opal.Isomorfeus.TopLevel['$ssr_route_path='](location);
