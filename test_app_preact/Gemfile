@@ -6,11 +6,11 @@ gem 'isomorfeus-iodine', '~> 0.7.47'
 gem 'roda', '~> 3.52.0'
 
 gem 'opal', '~> 1.4.1'
-gem 'isomorfeus-policy', '~> 2.1.0'
-gem 'isomorfeus-transport', '~> 2.1.0'
+gem 'isomorfeus-policy', path: '../../isomorfeus-project/isomorfeus-policy' #'~> 2.1.0'
+gem 'isomorfeus-transport', path: '../../isomorfeus-project/isomorfeus-transport' #'~> 2.1.0'
 gem 'isomorfeus-preact', path: '..'
 
 group :test do
-  gem 'rspec', '~> 3.10.0'
+  gem 'rspec', '~> 3.11.0'
   gem 'isomorfeus-puppetmaster', '~> 0.6.5'
 end
