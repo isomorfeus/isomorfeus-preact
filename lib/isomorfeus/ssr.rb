@@ -72,8 +72,8 @@ module Isomorfeus
       }
 
       self.still_busy = function(){
-        let nfp = global.Opal.Isomorfeus.Transport["$busy?"]() || global.Opal.Isomorfeus.store["$recently_dispatched?"]();
-        return (nfp == global.Opal.nil) ? false : nfp;
+        if (global.Opal.Isomorfeus.Transport["$busy?"]()) { return true; }
+        return self.store_busy();
       }
 
       self.store_busy = function() {
