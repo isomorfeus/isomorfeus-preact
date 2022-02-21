@@ -81,5 +81,14 @@ module Isomorfeus
         return (nfp == global.Opal.nil) ? false : nfp;
       }
     }
+
+    def self.disconnect_transport
+      Isomorfeus::Transport::RequestAgent.agents.each do |agent_id, agent|
+        agent.promise.reject() unless agent.promise.realized?
+        Isomorfeus::Transport::RequestAgent.del!(agent_id)
+      end
+      Isomorfeus::Transport.instance_variable_set(:@requests_in_progress, { requests: {}, agent_ids: {} })
+      Isomorfeus::Transport.disconnect
+    end
   end
 end

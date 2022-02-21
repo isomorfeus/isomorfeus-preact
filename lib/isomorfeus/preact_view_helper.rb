@@ -186,7 +186,7 @@ module Isomorfeus
         ctx.add_script(key: :still_busy, source: 'Opal.Isomorfeus.SSR.still_busy()')
         ctx.add_script(key: :store_busy, source: 'Opal.Isomorfeus.SSR.store_busy()')
         ctx.add_script(key: :transport_busy, source: 'global.Opal.Isomorfeus.Transport["$busy?"]()')
-        ctx.add_script(key: :transport_disconnect, source: 'global.Opal.Isomorfeus.Transport.$disconnect()')
+        ctx.add_script(key: :transport_disconnect, source: 'global.Opal.Isomorfeus.SSR.$disconnect_transport()')
       end
     end
 
