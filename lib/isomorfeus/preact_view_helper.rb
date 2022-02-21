@@ -110,11 +110,11 @@ module Isomorfeus
             Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
             if need_further_pass && script_key
               break if (Time.now - start_time) > 5
-              need_further_pass = ctx.eval_script(key: script_key)
-              while need_further_pass
-                break if (Time.now - start_time) > 4
-                sleep 0.01
-                need_further_pass = ctx.eval_script(key: script_key)
+              still_busy = ctx.eval_script(key: script_key)
+              while still_busy
+                break if (Time.now - start_time) > 5
+                sleep 0.005
+                still_busy = ctx.eval_script(key: script_key)
               end
               break if pass >= max_passes
             else
