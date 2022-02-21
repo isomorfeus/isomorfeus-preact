@@ -21,8 +21,17 @@ module Isomorfeus
             component = component_name;
           }
         }
-        component = Isomorfeus.cached_component_class(component_name) unless component
+        component = cached_component_class(component_name) unless component
         Preact.render_to_string(Preact.create_element(component, `Opal.Hash.$new(props)`))
+      end
+
+      def cached_component_classes
+        @cached_component_classes ||= {}
+      end
+
+      def cached_component_class(class_name)
+        return cached_component_classes[class_name] if cached_component_classes.key?(class_name)
+        cached_component_classes[class_name] = "::#{class_name}".constantize
       end
     end
   end

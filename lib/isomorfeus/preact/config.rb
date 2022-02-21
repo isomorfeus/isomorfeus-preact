@@ -17,10 +17,7 @@ module Isomorfeus
       end
 
       def force_init!
-        unless Isomorfeus.initial_state_fetched
-          Isomorfeus.initial_state_fetched = true
-          Redux::Store.preloaded_state = Isomorfeus.store.get_state
-        end
+        @initialized = true
         Isomorfeus.force_init_store!
         execute_init_classes
       end
@@ -36,17 +33,6 @@ module Isomorfeus
       def add_client_option(key, value = nil)
         self.class.attr_accessor(key)
         self.send("#{key}=", value)
-      end
-
-      # only used for SSR
-      def cached_component_classes
-        @cached_component_classes ||= {}
-      end
-
-      # only used for SSR
-      def cached_component_class(class_name)
-        return cached_component_classes[class_name] if cached_component_classes.key?(class_name)
-        cached_component_classes[class_name] = "::#{class_name}".constantize
       end
 
       def execute_init_classes
