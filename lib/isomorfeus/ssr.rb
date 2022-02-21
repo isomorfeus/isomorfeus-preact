@@ -11,7 +11,6 @@ module Isomorfeus
         global.Exception = false;
         global.IsomorfeusSessionId = session_id;
         global.HasTransport = (typeof global.Opal.Isomorfeus.Transport !== 'undefined') && (api_ws_path !== '');
-        global.HasStore = typeof global.Opal.Isomorfeus.store !== 'undefined';
         global.Opal.Isomorfeus['$env='](env);
         if (typeof global.Opal.Isomorfeus["$current_locale="] === 'function') { global.Opal.Isomorfeus["$current_locale="](locale); }
         global.Opal.Isomorfeus['$force_init!']();
@@ -22,8 +21,7 @@ module Isomorfeus
           global.Opal.send(global.Opal.Isomorfeus.Transport.$promise_connect(global.IsomorfeusSessionId), 'then', [], ($$1 = function(){
             try {
               global.RenderedTree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string(component_name, props);
-              let nfp = global.Opal.Isomorfeus.Transport["$busy?"]() || global.Opal.Isomorfeus.store['$recently_dispatched?']();
-              global.NeedFurtherPass = (nfp == nil) ? false : nfp;
+              global.NeedFurtherPass = self.still_busy();
               global.FirstPassFinished = true;
             } catch (e) {
               global.Exception = e;
@@ -33,16 +31,13 @@ module Isomorfeus
         } else {
           try {
             global.RenderedTree = global.Opal.Isomorfeus.TopLevel.$render_component_to_string(component_name, props);
-            if (global.HasStore) {
-              let nfp = global.Opal.Isomorfeus.store['$recently_dispatched?']();
-              global.NeedFurtherPass = (nfp == nil) ? false : nfp;
-            }
+            global.NeedFurtherPass = self.store_busy();
           } catch (e) {
             global.Exception = e;
             global.NeedFurtherPass = false;
           }
         };
-        return [global.HasTransport, global.HasStore, global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
+        return [global.HasTransport, global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
       }
 
       self.first_pass_result = function() {
@@ -66,8 +61,7 @@ module Isomorfeus
         }
         let application_state = global.Opal.Isomorfeus.store.native.getState();
         if (typeof global.NanoCSSInstance !== 'undefined') { ssr_styles = global.NanoCSSInstance.raw }
-        let nfp = (global.HasTransport && global.Opal.Isomorfeus.Transport["$busy?"]()) || (global.HasStore && global.Opal.Isomorfeus.store["$recently_dispatched?"]());
-        global.NeedFurtherPass = (nfp == nil) ? false : nfp;
+        global.NeedFurtherPass = ((global.HasTransport && global.Opal.Isomorfeus.Transport["$busy?"]()) || self.store_busy());
         return [rendered_tree, application_state, ssr_styles, global.Opal.Isomorfeus['$ssr_response_status'](), global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false];
       }
 

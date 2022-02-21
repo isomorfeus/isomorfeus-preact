@@ -58,7 +58,7 @@ module Isomorfeus
         # execute first render pass
         begin
           pass += 1
-          has_transport, has_store, need_further_pass, exception = ctx.exec(javascript)
+          has_transport, need_further_pass, exception = ctx.exec(javascript)
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
         rescue Exception => e
           Isomorfeus.raise_error(error: e)
@@ -95,14 +95,10 @@ module Isomorfeus
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
         else
           start_time = Time.now
-          script_key = if has_transport && has_store
+          script_key = if has_transport
                          :still_busy
-                       elsif has_transport
-                         :transport_busy
-                       elsif has_store
-                         :store_busy
                        else
-                         nil
+                         :store_busy
                        end
           while need_further_pass
             # execute further render passes
