@@ -1,3 +1,9 @@
+module Preact
+  def self.render_to_string(native_preact_element)
+    `Opal.global.Preact.renderToString(native_preact_element)`
+  end
+end
+
 module Isomorfeus
   class TopLevel
     class << self

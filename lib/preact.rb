@@ -294,11 +294,7 @@ module Preact
     end
   end
 
-  if on_ssr?
-    def self.render_to_string(native_preact_element)
-      `Opal.global.Preact.renderToString(native_preact_element)`
-    end
-  end
+  # render_to_string is in top_level_ssr.rb
 
   def self.unmount_component_at_node(element_or_query)
     if `(typeof element_or_query === 'string')` || (`(typeof element_or_query.$class === 'function')` && element_or_query.class == String)
