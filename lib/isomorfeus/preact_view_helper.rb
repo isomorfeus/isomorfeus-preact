@@ -27,7 +27,12 @@ module Isomorfeus
           begin
             init_speednode_context(asset_key, thread_id_asset)
           rescue Exception => e
-            Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
+            if e.message.include?('@hash[:js][:js][:raw]') # asset bundling did not yet finish
+              sleep 2
+              return mount_component(component_name, props, asset_key, skip_ssr: skip_ssr, use_ssr: use_ssr, max_passes: max_passes)
+            else
+              Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
+            end
           end
         else
           unless Isomorfeus.ssr_contexts.key?(thread_id_asset)
@@ -37,8 +42,7 @@ module Isomorfeus
 
         ctx = Isomorfeus.ssr_contexts[thread_id_asset]
         pass = 0
-        # if location_host and scheme are given and if Transport is loaded, connect and then render,
-        # otherwise do not render because only one pass is required
+        # if location_host and scheme are given and if Transport is loaded, connect and then render
         ws_scheme = props[:location_scheme] == 'https:' ? 'wss:' : 'ws:'
         location_host = props[:location_host] ? props[:location_host] : 'localhost'
         api_ws_path = Isomorfeus.respond_to?(:api_websocket_path) ? Isomorfeus.api_websocket_path : ''
