@@ -1,6 +1,7 @@
 module Isomorfeus
   if RUBY_ENGINE == 'opal'
     class << self
+      attr_accessor :browser_history
       attr_accessor :current_user_sid
       attr_accessor :initial_state_fetched
       attr_accessor :top_component

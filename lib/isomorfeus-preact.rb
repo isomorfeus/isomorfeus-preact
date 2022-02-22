@@ -8,10 +8,13 @@ if RUBY_ENGINE == 'opal'
     require 'browser/event_target'
     require 'browser/delegate_native'
     require 'browser/element' # depends on 'preact'
+    require 'browser/history'
   end
 
   require 'isomorfeus/preact/config'
-
+  if on_browser? && `window?.history`
+    Isomorfeus.browser_history = Browser::History.new(`window.history`)
+  end
   # allow mounting of components
   require 'isomorfeus/top_level'
 

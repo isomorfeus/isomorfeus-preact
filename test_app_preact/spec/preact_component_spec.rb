@@ -513,4 +513,17 @@ RSpec.describe 'Preact::Component' do
       expect(result).to be true
     end
   end
+
+  context 'it supports history' do
+    before do
+      @page = visit('/')
+    end
+
+    it 'and can go back' do
+      @page.wait_for_navigation { @page.click_el('#link_welcome') }
+      expect(@page).to have_content('Go back')
+      @page.wait_for_navigation { @page.click_el('#button_back') }
+      expect(@page).to have_content('Rendered!!')
+    end
+  end
 end

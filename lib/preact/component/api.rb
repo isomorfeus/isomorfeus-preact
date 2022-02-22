@@ -66,30 +66,35 @@ module Preact::Component::Api
   end
 
   def get_preact_element(arg, &block)
+    `const operabu = Opal.Preact.render_buffer`
     if block_given?
       # execute block, fetch last element from buffer
       %x{
-        let last_buffer_length = Opal.Preact.render_buffer[Opal.Preact.render_buffer.length - 1].length;
-        let last_buffer_element = Opal.Preact.render_buffer[Opal.Preact.render_buffer.length - 1][last_buffer_length - 1];
+        let last_buffer_length = operabu[operabu.length - 1].length;
+        let last_buffer_element = operabu[operabu.length - 1][last_buffer_length - 1];
         block.$call();
-        // console.log("get_preact_element popping", Opal.Preact.render_buffer, Opal.Preact.render_buffer.toString())
-        let new_element = Opal.Preact.render_buffer[Opal.Preact.render_buffer.length - 1].pop();
+        // console.log("get_preact_element popping", operabu, operabu.toString())
+        let new_element = operabu[operabu.length - 1].pop();
         if (last_buffer_element === new_element) { #{Isomorfeus.raise_error(message: "Block did not create any Preact element!")} }
         return new_element;
       }
     else
       # element was rendered before being passed as arg
       # fetch last element from buffer
-      # `console.log("get_preact_element popping", Opal.Preact.render_buffer, Opal.Preact.render_buffer.toString())`
-      `Opal.Preact.render_buffer[Opal.Preact.render_buffer.length - 1].pop()`
+      # `console.log("get_preact_element popping", operabu, operabu.toString())`
+      `operabu[operabu.length - 1].pop()`
     end
   end
   alias gpe get_preact_element
 
+  def history
+    Isomorfeus.browser_history
+  end
+
   def method_ref(method_symbol, *args)
     method_key = "#{method_symbol}#{args}"
     %x{
-      if (#@native.method_refs && #@native.method_refs[#{method_key}]) { return #@native.method_refs[#{method_key}]; }
+      if (#@native.method_refs?.[#{method_key}]) { return #@native.method_refs[#{method_key}]; }
       if (!#@native.method_refs) { #@native.method_refs = {}; }
       #@native.method_refs[#{method_key}] = { m: #{method(method_symbol)}, a: args };
       return #@native.method_refs[#{method_key}];
