@@ -42,8 +42,8 @@ module Isomorfeus
       end
 
       def execute_init_after_store_classes
-        client_init_after_store_class_names.each do |constant|
-          constant.constantize.send(:init)
+        client_init_after_store_class_names.each do |constant_name|
+          constant_name.constantize.send(:init)
         end
       end
 
