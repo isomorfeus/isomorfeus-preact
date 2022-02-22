@@ -145,12 +145,12 @@ module Preact
             let method_name = '$' + value;
             if (typeof active_component[method_name] === "function") {
               // got a ruby instance
-              if (active_component.native && active_component.native.method_refs && active_component.native.method_refs[value]) { method_ref = active_component.native.method_refs[value]; } // ruby instance with native
-              else if (active_component.method_refs && active_component.method_refs[value]) { method_ref = active_component.method_refs[value]; } // ruby function component
+              if (active_component.native?.method_refs?.[value]) { method_ref = active_component.native.method_refs[value]; } // ruby instance with native
+              else if (active_component.method_refs?.[value]) { method_ref = active_component.method_refs[value]; } // ruby function component
               else { method_ref = active_component.$method_ref(value); } // create the ref
             } else if (typeof active_component.__ruby_instance[method_name] === "function") {
               // got a native instance
-              if (active_component.method_refs && active_component.method_refs[value]) { method_ref = active_component.method_refs[value]; }
+              if (active_component.method_refs?.[value]) { method_ref = active_component.method_refs[value]; }
               else { method_ref = active_component.__ruby_instance.$method_ref(value); } // create ref for native
             }
             if (method_ref) {
