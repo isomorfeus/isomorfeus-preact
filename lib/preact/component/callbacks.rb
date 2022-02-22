@@ -28,11 +28,11 @@ module Preact::Component::Callbacks
           }
           if (self.lucid_preact_component) {
             if (self.lucid_preact_component.prototype.componentDidMount) {
-              let fun_one = self.lucid_preact_component.prototype.componentDidMount;
-              let fun_two = fun;
+              self.lucid_preact_component.prototype.componentDidMountTwo = self.lucid_preact_component.prototype.componentDidMount;
+              self.lucid_preact_component.prototype.componentDidMountOne = fun;
               fun = function() {
-                fun_one();
-                fun_two();
+                this.componentDidMountOne();
+                this.componentDidMountTwo();
               }
             }
             self.lucid_preact_component.prototype.componentDidMount = fun;
