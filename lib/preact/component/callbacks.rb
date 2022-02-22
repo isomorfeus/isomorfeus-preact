@@ -5,11 +5,12 @@ module Preact::Component::Callbacks
         # TODO convert error
         %x{
           var fun = function(error) {
-            Opal.Preact.register_active_component(this);
+            const oper = Opal.Preact;
+            oper.register_active_component(this);
             try {
               #{`this.__ruby_instance`.instance_exec(`error`, &block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
-            Opal.Preact.unregister_active_component(this);
+            oper.unregister_active_component(this);
           }
           if (self.lucid_preact_component) { self.lucid_preact_component.prototype.componentDidCatch = fun; }
           else { self.preact_component.prototype.componentDidCatch = fun; }
@@ -20,22 +21,24 @@ module Preact::Component::Callbacks
       def component_did_mount(&block)
         %x{
           let fun = function() {
-            Opal.Preact.register_active_component(this);
+            const oper = Opal.Preact;
+            oper.register_active_component(this);
             try {
               #{`this.__ruby_instance`.instance_exec(&block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
-            Opal.Preact.unregister_active_component(this);
+            oper.unregister_active_component(this);
           }
           if (self.lucid_preact_component) {
-            if (self.lucid_preact_component.prototype.componentDidMount) {
-              self.lucid_preact_component.prototype.componentDidMountTwo = self.lucid_preact_component.prototype.componentDidMount;
-              self.lucid_preact_component.prototype.componentDidMountOne = fun;
+            let proto = self.lucid_preact_component.prototype;
+            if (proto.componentDidMount) {
+              proto.componentDidMountTwo = proto.componentDidMount;
+              proto.componentDidMountOne = fun;
               fun = function() {
                 this.componentDidMountOne();
                 this.componentDidMountTwo();
               }
             }
-            self.lucid_preact_component.prototype.componentDidMount = fun;
+            proto.componentDidMount = fun;
           } else { self.preact_component.prototype.componentDidMount = fun; }
         }
       end
@@ -43,13 +46,14 @@ module Preact::Component::Callbacks
       def component_did_update(&block)
         %x{
           var fun = function(prev_props, prev_state, snapshot) {
-            Opal.Preact.register_active_component(this);
+            const oper = Opal.Preact;
+            oper.register_active_component(this);
             try {
-              #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: prev_props})`,
-                                                    `Opal.Preact.State.$new({state: prev_state})`,
-                                                    `snapshot`, &block)};
+              #{`this.__ruby_instance`.instance_exec(`oper.Props.$new({props: prev_props})`,
+                                                     `oper.State.$new({state: prev_state})`,
+                                                     `snapshot`, &block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
-            Opal.Preact.unregister_active_component(this);
+            oper.unregister_active_component(this);
           }
           if (self.lucid_preact_component) { self.lucid_preact_component.prototype.componentDidUpdate = fun; }
           else { self.preact_component.prototype.componentDidUpdate = fun; }
@@ -59,12 +63,13 @@ module Preact::Component::Callbacks
       def component_will_unmount(&block)
         %x{
           var fun = function() {
+            const oper = Opal.Preact;
             if (typeof this.unsubscriber === "function") { this.unsubscriber(); };
-            Opal.Preact.register_active_component(this);
+            oper.register_active_component(this);
             try {
               #{`this.__ruby_instance`.instance_exec(&block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
-            Opal.Preact.unregister_active_component(this);
+            oper.unregister_active_component(this);
           }
           if (self.lucid_preact_component) { self.lucid_preact_component.prototype.componentWillUnmount = fun; }
           else { self.preact_component.prototype.componentWillUnmount = fun; }
@@ -75,12 +80,13 @@ module Preact::Component::Callbacks
       def get_derived_state_from_props(&block)
         %x{
           var fun = function(props, state) {
-            Opal.Preact.register_active_component(this);
+            const oper = Opal.Preact;
+            oper.register_active_component(this);
             try {
-              var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: props})`,
-                                                                  `Opal.Preact.State.$new({state: state})`, &block)};
+              var result = #{`this.__ruby_instance`.instance_exec(`oper.Props.$new({props: props})`,
+                                                                  `oper.State.$new({state: state})`, &block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
-            Opal.Preact.unregister_active_component(this);
+            oper.unregister_active_component(this);
             if (typeof result.$to_n === 'function') { result = result.$to_n() }
             if (result === nil) { return null; }
             return result;
@@ -93,12 +99,13 @@ module Preact::Component::Callbacks
       def get_snapshot_before_update(&block)
         %x{
           var fun = function(prev_props, prev_state) {
-            Opal.Preact.register_active_component(this);
+            const oper = Opal.Preact;
+            oper.register_active_component(this);
             try {
-              var result = #{`this.__ruby_instance`.instance_exec(`Opal.Preact.Props.$new({props: prev_props})`,
-                                                                  `Opal.Preact.State.$new({state: prev_state})`, &block)};
+              var result = #{`this.__ruby_instance`.instance_exec(`oper.Props.$new({props: prev_props})`,
+                                                                  `oper.State.$new({state: prev_state})`, &block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
-            Opal.Preact.unregister_active_component(this);
+            oper.unregister_active_component(this);
             if (result === nil) { return null; }
             return result;
           }
