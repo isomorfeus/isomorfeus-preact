@@ -2,8 +2,7 @@ require_relative 'app_loader'
 
 class TestAppApp < Roda
   include Isomorfeus::PreactViewHelper
-  extend Isomorfeus::Transport::Middlewares
-  use_isomorfeus_middlewares
+  use Isomorfeus::AssetManager::RackMiddleware
 
   plugin :public, root: 'public'
 

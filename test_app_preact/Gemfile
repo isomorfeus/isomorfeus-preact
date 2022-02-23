@@ -5,9 +5,6 @@ gem 'wdm', '>= 0.1.1' if Gem.win_platform?
 gem 'isomorfeus-iodine', '~> 0.7.47'
 gem 'roda', '~> 3.53.0'
 
-gem 'opal', '~> 1.4.1'
-gem 'isomorfeus-policy', '~> 2.2.0'
-gem 'isomorfeus-transport', '~> 2.2.0'
 gem 'isomorfeus-preact', path: '..'
 
 group :test do
