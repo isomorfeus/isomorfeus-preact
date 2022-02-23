@@ -1,6 +1,9 @@
 module Isomorfeus
   class TopLevel
     class << self
+      attr_accessor :hydrated
+      attr_accessor :first_pass
+
       if on_browser?
         def mount!
           Isomorfeus.init
@@ -27,7 +30,7 @@ module Isomorfeus
               props_json = root_element.JS.getAttribute('data-iso-props')
               props = `Opal.Hash.$new(JSON.parse(props_json))`
               raw_hydrated = root_element.JS.getAttribute('data-iso-hydrated')
-              hydrated = (raw_hydrated && raw_hydrated == "true")
+              self.hydrated = (raw_hydrated && raw_hydrated == "true")
               %x{
                 if (global.ServerSideRenderingStateJSON) {
                 var state = global.ServerSideRenderingStateJSON;
@@ -41,10 +44,13 @@ module Isomorfeus
               }
               Isomorfeus.execute_init_after_store_classes
               begin
-                result = Isomorfeus::TopLevel.mount_component(component, props, root_element, hydrated)
+                self.first_pass = true
+                result = Isomorfeus::TopLevel.mount_component(component, props, root_element, self.hydrated)
+                self.first_pass = false
                 @tried_another_time = false
                 result
               rescue Exception => e
+                self.first_pass = false
                 if  !@tried_another_time
                   @tried_another_time = true
                   `console.warn("Deferring mount: " + #{e.message})`
