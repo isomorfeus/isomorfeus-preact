@@ -65,7 +65,7 @@ module Isomorfeus
         end
 
         if has_transport
-          sleep 0.001 # give node a chance connecting to ruby by allowing other threads to run
+          sleep 0.001 # give node a chance connecting to ruby by allowing other ruby threads to run
           # wait for first pass to finish
           first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
@@ -172,8 +172,6 @@ module Isomorfeus
         asset_manager.transition(asset_key, asset)
         Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
         ctx = Isomorfeus.ssr_contexts[thread_id_asset]
-        ctx.exec(top_level_mod)
-        ctx.exec(ssr_mod)
         ctx.add_script(key: :first_pass_check, source: 'Opal.Isomorfeus.SSR.first_pass_check()')
         ctx.add_script(key: :first_pass_result, source: 'Opal.Isomorfeus.SSR.first_pass_result()')
         ctx.add_script(key: :still_busy, source: 'Opal.Isomorfeus.SSR.still_busy()')

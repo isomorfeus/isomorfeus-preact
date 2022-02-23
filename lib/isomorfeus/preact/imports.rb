@@ -13,7 +13,11 @@ module Isomorfeus
         Isomorfeus.add_web_js_import('wouter-preact/use-location', 'locationHook')
 
         if Dir.exist?(Isomorfeus.app_root)
-          Isomorfeus.add_common_ruby_import('isomorfeus_loader') if File.exist?(File.join(Isomorfeus.app_root, 'isomorfeus_loader.rb'))
+          if File.exist?(File.join(Isomorfeus.app_root, 'isomorfeus_loader.rb'))
+            Isomorfeus.add_common_ruby_import('isomorfeus_loader')
+            Isomorfeus.add_ssr_ruby_import('isomorfeus/top_level_ssr')
+            Isomorfeus.add_ssr_ruby_import('isomorfeus/ssr')
+          end
         end
       end
     end
