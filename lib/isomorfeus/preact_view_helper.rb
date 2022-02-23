@@ -51,7 +51,7 @@ module Isomorfeus
         # build javascript for rendering first pass
         # it will initialize buffers to guard against leaks, maybe caused by previous exceptions
         javascript = <<~JAVASCRIPT
-        return Opal.Isomorfeus.SSR.first_pass('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{props[:location]}', '#{api_ws_path}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)})
+        return Opal.Isomorfeus.SSR.first_pass('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{props[:location]}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)})
         JAVASCRIPT
 
         finished = false
@@ -65,13 +65,14 @@ module Isomorfeus
         end
 
         if has_transport
+          sleep 0.001 # give node a chance connecting to ruby by allowing other threads to run
           # wait for first pass to finish
           first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
           unless first_pass_finished
             start_time = Time.now
             while !first_pass_finished
-              break if (Time.now - start_time) > 10
+              # break if (Time.now - start_time) > 10
               sleep 0.005
               first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
               Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
@@ -79,13 +80,13 @@ module Isomorfeus
           end
 
           # wait for transport to settle
-          transport_busy = ctx.eval_script(key: :transport_busy)
-          if transport_busy
+          still_busy = ctx.eval_script(key: :still_busy)
+          if still_busy
             start_time = Time.now
-            while transport_busy
+            while still_busy
               break if (Time.now - start_time) > 5
               sleep 0.005
-              transport_busy = ctx.eval_script(key: :transport_busy)
+              still_busy = ctx.eval_script(key: :still_busy)
             end
           end
         end
@@ -95,26 +96,22 @@ module Isomorfeus
           Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
         else
           start_time = Time.now
-          script_key = if has_transport
-                         :still_busy
-                       else
-                         :store_busy
-                       end
+          javascript = <<~JAVASCRIPT
+          return Opal.Isomorfeus.SSR.further_pass('#{component_name}', #{Oj.dump(props, mode: :strict)})
+          JAVASCRIPT
           while need_further_pass
             # execute further render passes
-            javascript = <<~JAVASCRIPT
-            return Opal.Isomorfeus.SSR.further_pass('#{component_name}', #{Oj.dump(props, mode: :strict)})
-            JAVASCRIPT
             pass += 1
             rendered_tree, application_state, @ssr_styles, @ssr_response_status, need_further_pass, exception = ctx.exec(javascript)
             Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
-            if need_further_pass && script_key
-              break if (Time.now - start_time) > 5
-              still_busy = ctx.eval_script(key: script_key)
+            if need_further_pass
+              sleep 0.001 # give other threads a chance
+              # break if (Time.now - start_time) > 5
+              still_busy = ctx.eval_script(key: :still_busy)
               while still_busy
-                break if (Time.now - start_time) > 5
+                # break if (Time.now - start_time) > 5
                 sleep 0.005
-                still_busy = ctx.eval_script(key: script_key)
+                still_busy = ctx.eval_script(key: :still_busy)
               end
               break if pass >= max_passes
             else
@@ -177,21 +174,19 @@ module Isomorfeus
         ctx = Isomorfeus.ssr_contexts[thread_id_asset]
         ctx.exec(top_level_mod)
         ctx.exec(ssr_mod)
-        ctx.add_script(key: :first_pass_check, source: '[global.FirstPassFinished, global.NeedFurtherPass, global.Exception ? { message: global.Exception.message, stack: global.Exception.stack } : false ]')
+        ctx.add_script(key: :first_pass_check, source: 'Opal.Isomorfeus.SSR.first_pass_check()')
         ctx.add_script(key: :first_pass_result, source: 'Opal.Isomorfeus.SSR.first_pass_result()')
         ctx.add_script(key: :still_busy, source: 'Opal.Isomorfeus.SSR.still_busy()')
-        ctx.add_script(key: :store_busy, source: 'Opal.Isomorfeus.SSR.store_busy()')
-        ctx.add_script(key: :transport_busy, source: 'global.Opal.Isomorfeus.Transport["$busy?"]()')
         ctx.add_script(key: :transport_disconnect, source: 'global.Opal.Isomorfeus.SSR.$disconnect_transport()')
       end
     end
 
     def ssr_mod
-      @_ssr_mod ||= Opal.compile(File.read(File.expand_path(File.join(File.dirname(__FILE__), 'ssr.rb'))))
+      @_ssr_mod ||= Opal.compile(File.read(File.expand_path(File.join(File.dirname(__FILE__), 'ssr.rb'))), { use_strict: true })
     end
 
     def top_level_mod
-      @_top_level_mod ||= Opal.compile(File.read(File.expand_path(File.join(File.dirname(__FILE__), 'top_level_ssr.rb'))))
+      @_top_level_mod ||= Opal.compile(File.read(File.expand_path(File.join(File.dirname(__FILE__), 'top_level_ssr.rb'))), { use_strict: true })
     end
   end
 end
