@@ -11,12 +11,15 @@ module LucidComponent::Api
 
       # preloading
       def preload(&block)
-        `base.preload_block = block`
-        component_did_mount do
-          unless self.state.preloaded
-            @_preload_promise.then { self.state.preloaded = true } if @_preload_promise
+        pdm_proc = proc do
+          if !self.state.preloaded && @_preload_promise
+            @_preload_promise.then { self.state.preloaded = true }
           end
         end
+        %x{
+          base.preload_block = block;
+          base.preload_did_mount_proc = pdm_proc;
+        }
       end
 
       def while_loading(option = nil, &block)

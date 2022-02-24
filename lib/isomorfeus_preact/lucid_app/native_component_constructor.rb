@@ -8,6 +8,7 @@ module LucidApp::NativeComponentConstructor
       base.css_styles = null;
       base.css_theme = null;
       base.preload_block = null;
+      base.preload_did_mount_proc = null;
       base.while_loading_block = null;
 
       base.preact_component = class extends Opal.global.Preact.Component {

@@ -23,23 +23,16 @@ module Preact::Component::Callbacks
           let fun = function() {
             const oper = Opal.Preact;
             oper.register_active_component(this);
-            try {
-              #{`this.__ruby_instance`.instance_exec(&block)};
-            } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
+            try { #{`this.__ruby_instance`.instance_exec(&block)}; }
+            catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
+            if (self.preload_did_mount_proc) { #{`this.__ruby_instance`.instance_exec { self.class.JS[:preload_did_mount_proc].call } } }
             oper.unregister_active_component(this);
           }
           if (self.lucid_preact_component) {
-            let proto = self.lucid_preact_component.prototype;
-            if (proto.componentDidMount) {
-              proto.componentDidMountTwo = proto.componentDidMount;
-              proto.componentDidMountOne = fun;
-              fun = function() {
-                this.componentDidMountOne();
-                this.componentDidMountTwo();
-              }
-            }
-            proto.componentDidMount = fun;
-          } else { self.preact_component.prototype.componentDidMount = fun; }
+            self.lucid_preact_component.prototype.componentDidMount = fun;
+          } else {
+            self.preact_component.prototype.componentDidMount = fun;
+          }
         }
       end
 
