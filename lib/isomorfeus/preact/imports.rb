@@ -15,8 +15,9 @@ module Isomorfeus
         if Dir.exist?(Isomorfeus.app_root)
           if File.exist?(File.join(Isomorfeus.app_root, 'isomorfeus_loader.rb'))
             Isomorfeus.add_common_ruby_import('isomorfeus_loader')
-            Isomorfeus.add_ssr_ruby_import('isomorfeus/top_level_ssr')
-            Isomorfeus.add_ssr_ruby_import('isomorfeus/ssr')
+            Isomorfeus.add_ssr_ruby_import('isomorfeus/preact/ssr/top_level')
+            Isomorfeus.add_ssr_ruby_import('isomorfeus/preact/ssr/render_core')
+            Isomorfeus.add_ssr_ruby_import('isomorfeus/preact/ssr/history')
           end
         end
       end

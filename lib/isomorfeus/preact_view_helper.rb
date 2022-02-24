@@ -23,21 +23,14 @@ module Isomorfeus
       render_result = "<div data-iso-env=\"#{Isomorfeus.env}\" data-iso-root=\"#{component_name}\" data-iso-props='#{Oj.dump(props, mode: :strict)}'"
       if !skip_ssr && (Isomorfeus.server_side_rendering || use_ssr)
         thread_id_asset = "#{Thread.current.object_id}#{asset_key}"
-        if Isomorfeus.development?
-          begin
+        begin
+          if Isomorfeus.development?
             init_speednode_context(asset_key, thread_id_asset)
-          rescue Exception => e
-            if e.message.include?('@hash[:js][:js][:raw]') # asset bundling did not yet finish
-              sleep 2
-              return mount_component(component_name, props, asset_key, skip_ssr: skip_ssr, use_ssr: use_ssr, max_passes: max_passes)
-            else
-              Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
-            end
-          end
-        else
-          unless Isomorfeus.ssr_contexts.key?(thread_id_asset)
+          elsif !Isomorfeus.ssr_contexts.key?(thread_id_asset)
             init_speednode_context(asset_key, thread_id_asset)
           end
+        rescue Exception => e
+          Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
         end
 
         ctx = Isomorfeus.ssr_contexts[thread_id_asset]
@@ -51,76 +44,28 @@ module Isomorfeus
         # build javascript for rendering first pass
         # it will initialize buffers to guard against leaks, maybe caused by previous exceptions
         javascript = <<~JAVASCRIPT
-        return Opal.Isomorfeus.SSR.first_pass('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{props[:location]}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)})
+        return Opal.Isomorfeus.SSR.mount_component('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{props[:location]}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)}, #{max_passes})
         JAVASCRIPT
 
-        finished = false
-        # execute first render pass
         begin
-          pass += 1
-          has_transport, need_further_pass, exception = ctx.exec(javascript)
-          Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
+          ctx.exec(javascript)
         rescue Exception => e
           Isomorfeus.raise_error(error: e)
         end
 
-        if has_transport
-          sleep 0.001 # give node a chance connecting to ruby by allowing other ruby threads to run
-          # wait for first pass to finish
-          first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
-          Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
-          unless first_pass_finished
-            start_time = Time.now
-            while !first_pass_finished
-              # break if (Time.now - start_time) > 10
-              sleep 0.005
-              first_pass_finished, need_further_pass, exception = ctx.eval_script(key: :first_pass_check)
-              Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
-            end
-          end
-
-          # wait for transport to settle
-          still_busy = ctx.eval_script(key: :still_busy)
-          if still_busy
-            start_time = Time.now
-            while still_busy
-              break if (Time.now - start_time) > 5
-              sleep 0.005
-              still_busy = ctx.eval_script(key: :still_busy)
-            end
-          end
-        end
-
-        if !need_further_pass
-          rendered_tree, application_state, @ssr_styles, @ssr_response_status, exception = ctx.eval_script(key: :first_pass_result)
-          Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
-        else
+        sleep 0.001 # give other threads that would respond to a request from node/SSR a chance to run
+        rendering = ctx.eval_script(key: :rendering)
+        if rendering
           start_time = Time.now
-          javascript = <<~JAVASCRIPT
-          return Opal.Isomorfeus.SSR.further_pass('#{component_name}', #{Oj.dump(props, mode: :strict)})
-          JAVASCRIPT
-          while need_further_pass
-            # execute further render passes
-            pass += 1
-            rendered_tree, application_state, @ssr_styles, @ssr_response_status, need_further_pass, exception = ctx.exec(javascript)
-            Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
-            if need_further_pass
-              sleep 0.001 # give other threads a chance
-              # break if (Time.now - start_time) > 5
-              still_busy = ctx.eval_script(key: :still_busy)
-              while still_busy
-                # break if (Time.now - start_time) > 5
-                sleep 0.005
-                still_busy = ctx.eval_script(key: :still_busy)
-              end
-              break if pass >= max_passes
-            else
-              break
-            end
+          while rendering
+            break if (Time.now - start_time) > 10
+            sleep 0.005
+            rendering = ctx.eval_script(key: :rendering)
           end
         end
 
-        ctx.eval_script(key: :transport_disconnect) if has_transport
+        rendered_tree, application_state, @ssr_styles, @ssr_response_status, passes, exception = ctx.eval_script(key: :get_result)
+        Isomorfeus.raise_error(message: "Server Side Rendering: #{exception['message']}", stack: exception['stack']) if exception
 
         render_result << " data-iso-hydrated='true'" if rendered_tree
         if Isomorfeus.respond_to?(:current_user) && Isomorfeus.current_user && !Isomorfeus.current_user.anonymous?
@@ -137,7 +82,7 @@ module Isomorfeus
       render_result << '</div>'
       if Isomorfeus.server_side_rendering && !skip_ssr
         render_result = "<script type='application/javascript'>\nServerSideRenderingStateJSON = #{Oj.dump(application_state, mode: :strict)}\n</script>\n" << render_result
-        puts "PreactViewHelper Server Side Rendering rendered #{pass} passes and took ~#{((Time.now - ssr_start_time)*1000).to_i}ms" if Isomorfeus.development?
+        puts "PreactViewHelper Server Side Rendering rendered #{passes} passes and took ~#{((Time.now - ssr_start_time)*1000).to_i}ms" if Isomorfeus.development?
       end
       render_result
     end
@@ -172,10 +117,8 @@ module Isomorfeus
         asset_manager.transition(asset_key, asset)
         Isomorfeus.ssr_contexts[thread_id_asset] = ExecJS.permissive_compile(asset.bundle)
         ctx = Isomorfeus.ssr_contexts[thread_id_asset]
-        ctx.add_script(key: :first_pass_check, source: 'Opal.Isomorfeus.SSR.first_pass_check()')
-        ctx.add_script(key: :first_pass_result, source: 'Opal.Isomorfeus.SSR.first_pass_result()')
-        ctx.add_script(key: :still_busy, source: 'Opal.Isomorfeus.SSR.still_busy()')
-        ctx.add_script(key: :transport_disconnect, source: 'global.Opal.Isomorfeus.SSR.$disconnect_transport()')
+        ctx.add_script(key: :get_result, source: 'Opal.Isomorfeus.SSR.get_result()')
+        ctx.add_script(key: :rendering, source: 'global.Rendering')
       end
     end
 
