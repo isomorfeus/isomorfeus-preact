@@ -7,6 +7,7 @@ module Browser
     alias_native :go
 
     native_reader :length
+    alias :size :length
 
     def push_state(state, title = '', url = `null`)
       `#@native.pushState(#{state.to_n}, #{title}, #{url})`
