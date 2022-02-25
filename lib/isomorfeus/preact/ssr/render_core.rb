@@ -3,7 +3,22 @@ module Isomorfeus
     %x{
       self.first_pass = function(component_name, props) {
         if (global.HasTransport) {
-          #{Isomorfeus::Transport.promise_connect(`global.IsomorfeusSessionId`).then { `self.async_render_pass(component_name, props)` }}
+          #{
+            Isomorfeus.set_current_user(nil)
+            Isomorfeus::Transport.promise_connect(`global.IsomorfeusSessionId`)
+              .then { `self.async_render_pass(component_name, props)` }
+              .fail do
+                %x{
+                  global.ConnectRetries--;
+                  if (global.ConnectRetries > 0) {
+                    self.first_pass(component_name, props);
+                  } else {
+                    global.Exception = new Error('Transport within SSR unable to connect!');
+                    self.finish_render();
+                  }
+                }
+              end
+          }
         } else {
           self.async_render_pass(component_name, props);
         };
@@ -70,6 +85,7 @@ module Isomorfeus
 
       self.mount_component = function(session_id, env, locale, location, transport_ws_url, component_name, props, max_passes) {
         const opi = global.Opal.Isomorfeus;
+        global.ConnectRetries = 5;
         global.RenderPass = 0;
         global.Rendering = true;
         global.MaxPasses = max_passes;
