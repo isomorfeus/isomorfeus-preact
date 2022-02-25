@@ -3,10 +3,7 @@ module Isomorfeus
     %x{
       self.first_pass = function(component_name, props) {
         if (global.HasTransport) {
-          let $$1;
-          global.Opal.send(global.Opal.Isomorfeus.Transport.$promise_connect(global.IsomorfeusSessionId), 'then', [], ($$1 = function(){
-            self.async_render_pass(component_name, props);
-          }, $$1.$$s = this, $$1.$$arity = 0, $$1))
+          #{Isomorfeus::Transport.promise_connect(`global.IsomorfeusSessionId`).then { `self.async_render_pass(component_name, props)` }}
         } else {
           self.async_render_pass(component_name, props);
         };
