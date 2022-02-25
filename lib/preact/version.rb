@@ -1,3 +1,3 @@
 module Preact
-  VERSION = '10.6.53'
+  VERSION = '10.6.54'
 end
