@@ -27,7 +27,7 @@ module LucidComponent::Api
           if @_preload_promise && @_preload_promise.resolved?
             instance_exec(&`base.render_block`)
           else
-            instance_exec(&block)
+            instance_exec(@_preload_promise, &block)
           end
         end
         `base.while_loading_block = wl_block`

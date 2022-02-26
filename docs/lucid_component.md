@@ -76,8 +76,14 @@ class MyComponent < LucidComponent::Base
   end
 
   # The block passed to while_loading will be rendered until the promise is resolved
-  while_loading do
-    DIV "Loading data ... Please wait ..."
+  # The preload promise is passed to the block, which an be used to check for failure.
+  # Failure could also be handled in the preload block itself, setting state to change reander.
+  while_loading do |promise|
+    if promise.rejected?
+      DIV "Sorry, loading failed"
+    else
+      DIV "Loading data ... Please wait ..."
+    end
   end
 
   # the usual render block is shown when the data has been loaded
@@ -101,7 +107,7 @@ class MyComponent < LucidComponent::Base
     if on_browser?
       MyGraph.promise_load.then { |g| @graph = g } # load the graph only on the browser
     else
-      Promise.new
+      Promise.new.resolve
     end
   end
 
