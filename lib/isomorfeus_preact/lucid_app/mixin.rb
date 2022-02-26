@@ -9,6 +9,6 @@ module LucidApp::Mixin
     base.include(::LucidComponent::Api)
     base.include(::LucidApp::Api)
     base.include(::LucidComponent::Initializer)
-    base.include(::LucidI18n::Mixin) if `("lucid_i18n/mixin" in Opal.modules)`
+    base.include(::LucidI18n::Mixin) if `(Opal.modules.hasOwnProperty("lucid_i18n/mixin"))`
   end
 end

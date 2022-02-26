@@ -5,6 +5,6 @@ module LucidFunc::Mixin
     base.extend(::LucidFunc::NativeComponentConstructor)
     base.include(::Preact::Elements)
     base.include(::LucidComponent::Api)
-    base.include(::LucidI18n::Mixin) if `("lucid_i18n/mixin" in Opal.modules)`
+    base.include(::LucidI18n::Mixin) if `(Opal.modules.hasOwnProperty("lucid_i18n/mixin"))`
   end
 end
