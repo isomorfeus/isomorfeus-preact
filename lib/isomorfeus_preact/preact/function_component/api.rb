@@ -1,4 +1,12 @@
 module Preact::FunctionComponent::Api
+  def self.included(base)
+    base.instance_exec do
+      def to_js
+        self.JS[:preact_component]
+      end
+    end
+  end
+
   def props
     @native_props
   end

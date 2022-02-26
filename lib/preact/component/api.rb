@@ -49,6 +49,10 @@ module Preact::Component::Api
       def should_component_update?(&block)
         `base.should_component_update_block = block`
       end
+
+      def to_js
+        self.JS[:preact_component]
+      end
     end
   end
 
