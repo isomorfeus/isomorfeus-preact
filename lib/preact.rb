@@ -130,14 +130,7 @@ module Preact
               let ruby_event = self.native_to_ruby_event(event);
               #{`active_c.__ruby_instance`.instance_exec(`ruby_event`, `info`, &`value`)};
             }
-          } else if (type === "object" && typeof value.m === "object" && typeof value.m.$call === "function" ) {
-            if (!value.preact_event_handler_function) {
-              value.preact_event_handler_function = function(event, info) {
-                let ruby_event = self.native_to_ruby_event(event);
-                if (value.a.length > 0) { value.m.$call.apply(value.m, [ruby_event, info].concat(value.a)); }
-                else { value.m.$call(ruby_event, info); }
-              };
-            }
+          } else if (typeof value.preact_event_handler_function === "function") {
             result[self.lower_camelize(key)] = value.preact_event_handler_function;
           } else if (type === "string" ) {
             let active_component = self.active_component();
@@ -154,12 +147,6 @@ module Preact
               else { method_ref = active_component.__ruby_instance.$method_ref(value); } // create ref for native
             }
             if (method_ref) {
-              if (!method_ref.preact_event_handler_function) {
-                method_ref.preact_event_handler_function = function(event, info) {
-                  let ruby_event = self.native_to_ruby_event(event);
-                  method_ref.m.$call(ruby_event, info)
-                };
-              }
               result[self.lower_camelize(key)] = method_ref.preact_event_handler_function;
             } else {
               let component_name;

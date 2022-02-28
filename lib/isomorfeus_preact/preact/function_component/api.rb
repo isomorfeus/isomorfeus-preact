@@ -120,7 +120,15 @@ module Preact::FunctionComponent::Api
     %x{
       if (#{self}.method_refs?.[#{method_key}]) { return #{self}.method_refs[#{method_key}]; }
       if (!#{self}.method_refs) { #{self}.method_refs = {}; }
-      #{self}.method_refs[#{method_key}] = { m: #{method(method_symbol)}, a: args };
+      #{self}.method_refs[#{method_key}] = { m: null, a: args };
+      let r = #{self}.method_refs[#{method_key}];
+      let dev = #{Isomorfeus.development?};
+      r.preact_event_handler_function = function(event, info) {
+        let ruby_event = Opal.Preact.native_to_ruby_event(event);
+        if (!r.m || dev) { r.m = #{method(method_symbol)} };
+        if (r.a.length > 0) { r.m.$call.apply(r.m, [ruby_event, info].concat(r.a)); }
+        else { r.m.$call(ruby_event, info); }
+      };
       return #{self}.method_refs[#{method_key}];
     }
   end
