@@ -36,7 +36,7 @@ module Browser
               }
               value = a;
             } else if (type === 'object' && (value instanceof HTMLElement)) {
-              value = #{Browser::Element.new(value)};
+              value = #{Browser::Element.new(`value`)};
             } else if (value === null || type === 'undefined' || (type === 'number' && isNaN(value))) {
               return nil;
             }
