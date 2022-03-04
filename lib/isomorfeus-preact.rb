@@ -117,6 +117,7 @@ else
 
   Opal.append_path(__dir__.untaint)
 
+  require 'concurrent/atomic/atomic_fixnum'
   require 'concurrent/atomic/reentrant_read_write_lock'
   require 'zeitwerk'
 
