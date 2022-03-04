@@ -117,7 +117,7 @@ else
 
   Opal.append_path(__dir__.untaint)
 
-  require 'concurrent'
+  require 'concurrent/atomic/reentrant_read_write_lock'
   require 'zeitwerk'
 
   Isomorfeus.zeitwerk = Zeitwerk::Loader.new
