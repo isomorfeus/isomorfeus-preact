@@ -22,13 +22,9 @@ module Isomorfeus
       @ssr_styles = nil
       render_result = "<div data-iso-env=\"#{Isomorfeus.env}\" data-iso-root=\"#{component_name}\" data-iso-props='#{Oj.dump(props, mode: :strict)}'"
       if !skip_ssr && (Isomorfeus.server_side_rendering || use_ssr)
-        thread_id_asset = "#{Thread.current.object_id}#{asset_key}"
+        thread_id_asset = "#{Thread.current.object_id}|#{asset_key}"
         begin
-          if Isomorfeus.development?
-            init_speednode_context(asset_key, thread_id_asset)
-          elsif !Isomorfeus.ssr_contexts.key?(thread_id_asset)
-            init_speednode_context(asset_key, thread_id_asset)
-          end
+          init_speednode_context(asset_key, thread_id_asset) if Isomorfeus.development? || !Isomorfeus.ssr_contexts.key?(thread_id_asset)
         rescue Exception => e
           Isomorfeus.raise_error(message: "Server Side Rendering: Failed creating context for #{asset_key}. Error: #{e.message}", stack: e.backtrace)
         end
