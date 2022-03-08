@@ -7,13 +7,14 @@ module Isomorfeus
             Isomorfeus.set_current_user(nil)
             Isomorfeus::Transport.promise_connect(`global.IsomorfeusSessionId`)
               .then { `self.async_render_pass(component_name, props)` }
-              .fail do
+              .fail do |error|
+                message = "Transport within SSR unable to connect: #{error}\n#{error&.backtrace&.join("\n")}!"
                 %x{
                   global.ConnectRetries--;
                   if (global.ConnectRetries > 0) {
                     self.first_pass(component_name, props);
                   } else {
-                    global.Exception = new Error('Transport within SSR unable to connect!');
+                    global.Exception = new Error(#{message});
                     self.finish_render();
                   }
                 }
@@ -105,7 +106,8 @@ module Isomorfeus
     }
 
     def self.disconnect_transport
-      Isomorfeus::Transport::RequestAgent.agents.each do |agent_id, agent|
+      while Isomorfeus::Transport::RequestAgent.agents.size > 0
+        agent_id, agent = Isomorfeus::Transport::RequestAgent.agents.first
         agent.promise.reject() unless agent.promise.realized?
         Isomorfeus::Transport::RequestAgent.del!(agent_id)
       end
