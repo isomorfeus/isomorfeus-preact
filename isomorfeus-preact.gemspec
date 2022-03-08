@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'dalli', '~> 2.7.11'
   s.add_dependency 'redis', '~> 4.4.0'
   s.add_dependency 'zeitwerk', '~> 2.5.4'
-  s.add_development_dependency 'isomorfeus-puppetmaster', '~> 0.6.5'
+  s.add_development_dependency 'isomorfeus-puppetmaster', '~> 0.6.6'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.11'
 end

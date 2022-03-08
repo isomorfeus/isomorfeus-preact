@@ -10,5 +10,5 @@ gem 'isomorfeus-preact', path: '..'
 
 group :test do
   gem 'rspec', '~> 3.11.0'
-  gem 'isomorfeus-puppetmaster', '~> 0.6.5'
+  gem 'isomorfeus-puppetmaster', '~> 0.6.6'
 end
