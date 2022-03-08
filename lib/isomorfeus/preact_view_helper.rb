@@ -40,7 +40,7 @@ module Isomorfeus
         # build javascript for rendering first pass
         # it will initialize buffers to guard against leaks, maybe caused by previous exceptions
         javascript = <<~JAVASCRIPT
-        return Opal.Isomorfeus.SSR.mount_component('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{props[:location]}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)}, #{max_passes})
+        return Opal.Isomorfeus.SSR.mount_component('#{Thread.current[:isomorfeus_session_id]}', '#{Isomorfeus.env}', '#{props[:locale]}', '#{transport_ws_url}', '#{component_name}', #{Oj.dump(props, mode: :strict)}, #{max_passes})
         JAVASCRIPT
 
         begin

@@ -7,7 +7,6 @@ end
 module Isomorfeus
   class TopLevel
     class << self
-      attr_accessor :ssr_route_path
       attr_accessor :transport_ws_url
 
       def render_component_to_string(component_name, props)

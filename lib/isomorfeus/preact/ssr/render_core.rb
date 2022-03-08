@@ -84,7 +84,7 @@ module Isomorfeus
         return [global.RenderedTree, application_state, ssr_styles, opi['$ssr_response_status'](), global.RenderPass, self.get_exception()];
       }
 
-      self.mount_component = function(session_id, env, locale, location, transport_ws_url, component_name, props, max_passes) {
+      self.mount_component = function(session_id, env, locale, transport_ws_url, component_name, props, max_passes) {
         const opi = global.Opal.Isomorfeus;
         global.ConnectRetries = 5;
         global.RenderPass = 0;
@@ -99,7 +99,6 @@ module Isomorfeus
         if (typeof opi["$current_locale="] === 'function') { opi["$current_locale="](locale); }
         opi['$force_init!']();
         opi['$ssr_response_status='](200);
-        opi.TopLevel['$ssr_route_path='](location);
 
         self.first_pass(component_name, props);
       }
