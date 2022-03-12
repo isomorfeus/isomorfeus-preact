@@ -26,8 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'isomorfeus-asset-manager', '~> 0.14.21'
   s.add_dependency 'isomorfeus-redux', '~> 4.1.18'
   s.add_dependency 'isomorfeus-speednode', '~> 0.5.3'
-  s.add_dependency 'dalli', '~> 2.7.11'
-  s.add_dependency 'redis', '~> 4.4.0'
   s.add_dependency 'zeitwerk', '~> 2.5.4'
   s.add_development_dependency 'isomorfeus-puppetmaster', '~> 0.6.6'
   s.add_development_dependency 'rake'

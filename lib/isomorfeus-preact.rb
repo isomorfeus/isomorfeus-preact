@@ -107,8 +107,8 @@ else
 
   # caches
   require 'isomorfeus/preact/thread_local_component_cache'
-  require 'isomorfeus/preact/memcached_component_cache'
-  require 'isomorfeus/preact/redis_component_cache'
+  # require 'isomorfeus/preact/memcached_component_cache'
+  # require 'isomorfeus/preact/redis_component_cache'
   require 'isomorfeus/preact_view_helper'
 
   Isomorfeus.component_cache_init do
