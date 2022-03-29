@@ -4,11 +4,11 @@ module Preact::Component::Callbacks
       def component_did_catch(&block)
         # TODO convert error
         %x{
-          var fun = function(error) {
+          var fun = function(error, newVNode, oldVNode, errorInfo) {
             const oper = Opal.Preact;
             oper.register_active_component(this);
             try {
-              #{`this.__ruby_instance`.instance_exec(`error`, &block)};
+              #{`this.__ruby_instance`.instance_exec(`error`, `newVNode`, `oldVNode`, `errorInfo`, &block)};
             } catch (e) { console.error(e.message === Opal.nil ? 'error at' : e.message, e.stack); }
             oper.unregister_active_component(this);
           }
