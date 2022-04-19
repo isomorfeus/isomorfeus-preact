@@ -12,6 +12,6 @@ RSpec.describe 'Asset sizes' do
     a = Isomorfeus::AssetManager.new
     a.transition('web.js', asset, analyze: true)
     puts "Max asset sizes: minified: #{asset.bundle.size/1024}kb"
-    expect((asset.bundle.size/1024) < 510).to be true
+    expect((asset.bundle.size/1024) < 515).to be true
   end
 end
