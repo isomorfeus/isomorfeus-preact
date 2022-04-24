@@ -29,7 +29,11 @@ module Preact::ComponentResolution
         # otherwise pass on method missing
         %x{
           var constant = null;
-          if (typeof self.iso_preact_const_cache === 'undefined') { self.iso_preact_const_cache = {}; }
+          try {
+            if (typeof self.iso_preact_const_cache === 'undefined') { self.iso_preact_const_cache = {}; }
+          } catch(err) {
+            return #{_preact_component_class_resolution_original_method_missing(component_name, *args, block)};
+          }
           if (typeof self.iso_preact_const_cache[component_name] !== 'undefined') {
             constant = self.iso_preact_const_cache[component_name]
           } else {
@@ -57,7 +61,11 @@ module Preact::ComponentResolution
     # nesting provided by the compiler.
     %x{
       var constant;
-      if (typeof self.iso_preact_const_cache === 'undefined') { self.iso_preact_const_cache = {}; }
+      try {
+        if (typeof self.iso_preact_const_cache === 'undefined') { self.iso_preact_const_cache = {}; }
+      } catch(err) {
+        return #{_preact_component_resolution_original_method_missing(component_name, *args, block)};
+      }
       if (typeof self.iso_preact_const_cache[component_name] !== 'undefined') {
         constant = self.iso_preact_const_cache[component_name]
       } else if (typeof self.$$is_a_module !== 'undefined') {
