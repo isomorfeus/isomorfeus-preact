@@ -18,12 +18,12 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files -- lib LICENSE README.md node_modules package.json`.split("\n")
   s.require_paths = ['lib']
 
-  s.add_dependency 'concurrent-ruby', '~> 1.1.9'
+  s.add_dependency 'concurrent-ruby', '~> 1.1.10'
   s.add_dependency 'oj', '~> 3.13.13'
   s.add_dependency 'opal', '>= 1.4.0', '< 1.6.0'
   s.add_dependency 'opal-activesupport', '~> 0.3.3'
   s.add_dependency 'opal-zeitwerk', '~> 0.4.1'
-  s.add_dependency 'isomorfeus-asset-manager', '~> 0.14.22'
+  s.add_dependency 'isomorfeus-asset-manager', '~> 0.14.24'
   s.add_dependency 'isomorfeus-redux', '~> 4.2.0'
   s.add_dependency 'isomorfeus-speednode', '~> 0.5.3'
   s.add_dependency 'zeitwerk', '~> 2.5.4'
