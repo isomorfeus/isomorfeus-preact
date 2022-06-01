@@ -158,7 +158,7 @@ end
 ```
 
 #### Custom validation block
-A validate_block can be passed. That block gets a value and is expected to return a value or raise if desired.
+A validate_block can be passed. That block gets a value and is expected to raise if something is wrong.
 Setting a default value, a ensure block, cast and type checks are executed before the validate_block
 Example:
 ```ruby
