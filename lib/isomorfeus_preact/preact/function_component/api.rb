@@ -25,6 +25,10 @@ module Preact::FunctionComponent::Api
     `Opal.global.PreactHooks.useDebugValue(value, formatter)`
   end
 
+  def use_deferred_value(value)
+    `Opal.global.PreactHooks.useDeferredValue(value)`
+  end
+
   def use_effect(*args, &block)
     `Opal.global.PreactHooks.useEffect(function() { #{block.call} }, args)`
   end
@@ -45,10 +49,18 @@ module Preact::FunctionComponent::Api
     [error, reset_error]
   end
 
+  def use_id
+    `Opal.global.PreactHooks.useId()`
+  end
+
   def use_imperative_handle(ruby_ref, *args, &block)
     ref = ruby_ref.to_n
     args = `null` if args.empty?
     `Opal.global.PreactHooks.useImperativeHandle(ref, function() { #{block.call} }, args)`
+  end
+
+  def use_insertion_effect
+    `Opal.global.PreactHooks.useInsertionEffect(function() { #{block.call} }, args)`
   end
 
   def use_layout_effect(&block)
@@ -79,6 +91,18 @@ module Preact::FunctionComponent::Api
     setter = nil
     `[initial, setter] = Opal.global.PreactHooks.useState(initial_value);`
     [initial, proc { |arg| `setter(arg)` }]
+  end
+
+  def use_sync_external_store(subscribe, get_snapshot, get_server_snapshot)
+    gss = get_server_snapshot.nil? ? `null` : `function() { return #{get_server_snapshot.call} }`
+    `Opal.global.PreactHooks.useSyncExternalStore(function() { #{subscribe.call} }, function() { return #{get_snapshot.call}}, gss)`
+  end
+
+  def use_transition
+    is_pending = nil
+    start_transition = nil
+    `[is_pending, start_transition] = Opal.global.PreactHooks.useTransition()`
+    [is_pending, proc { |arg| `start_transition(function(){#{arg&.call}})`}]
   end
 
   def get_preact_element(arg, &block)
